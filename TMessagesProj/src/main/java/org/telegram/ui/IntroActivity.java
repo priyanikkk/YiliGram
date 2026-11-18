@@ -154,8 +154,10 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
 
     @Override
     public View createView(Context context) {
-        logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo).mutate();
-        logoDrawable.setBounds(0, dp(8.666f), dp(115), dp(35));
+        // YILI: YiliGram wordmark instead of the Telegram logo (Telegram API ToS 2.4).
+        logoDrawable = context.getResources().getDrawable(R.drawable.yili_wordmark).mutate();
+        final int logoHeight = dp(26.333f);
+        logoDrawable.setBounds(0, dp(8.666f), logoHeight * logoDrawable.getIntrinsicWidth() / logoDrawable.getIntrinsicHeight(), dp(8.666f) + logoHeight);
         SpannableStringBuilder ssb = new SpannableStringBuilder(LocaleController.getString(R.string.Page1Title));
         ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         titles[0] = ssb;
@@ -795,7 +797,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             loadTexture(R.drawable.intro_tg_plane, 21);
             loadTexture(v -> {
                 Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                paint.setColor(ThemeColors.TELEGRAM_COLOR); // It's logo color, it should not be colored by the theme
+                paint.setColor(0xFF2B2722); // YILI: YiliGram icon graphite (see tools/branding), not themed
                 int size = dp(ICON_HEIGHT_DP);
                 Bitmap bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
                 Canvas c = new Canvas(bm);
