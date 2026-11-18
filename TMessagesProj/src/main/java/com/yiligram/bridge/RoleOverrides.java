@@ -26,15 +26,21 @@ final class RoleOverrides {
 
     private static final float PRESSED = 0.10f;
 
-    /** One override: key name → role with alpha, or a light/dark pair. */
+    /**
+     * One override: theme key name (as in .attheme files, see ThemeColors.createColorKeysMap) → role
+     * with alpha, or a light/dark pair.
+     */
     private static final class Rule {
         final String key;
+        /** For keys that have no .attheme name; -1 otherwise. */
+        final int themeKey;
         final ColorRole light;
         final ColorRole dark;
         final float alpha;
 
-        Rule(String key, ColorRole light, ColorRole dark, float alpha) {
+        Rule(String key, int themeKey, ColorRole light, ColorRole dark, float alpha) {
             this.key = key;
+            this.themeKey = themeKey;
             this.light = light;
             this.dark = dark;
             this.alpha = alpha;
@@ -44,15 +50,20 @@ final class RoleOverrides {
     private static final List<Rule> RULES = new ArrayList<>();
 
     private static void r(String key, ColorRole role) {
-        RULES.add(new Rule(key, role, role, 1f));
+        RULES.add(new Rule(key, -1, role, role, 1f));
     }
 
     private static void r(String key, ColorRole role, float alpha) {
-        RULES.add(new Rule(key, role, role, alpha));
+        RULES.add(new Rule(key, -1, role, role, alpha));
+    }
+
+    /** Override for a key that has no .attheme name (not in ThemeColors.createColorKeysMap). */
+    private static void rk(int themeKey, ColorRole role, float alpha) {
+        RULES.add(new Rule(null, themeKey, role, role, alpha));
     }
 
     private static void ld(String key, ColorRole light, ColorRole dark) {
-        RULES.add(new Rule(key, light, dark, 1f));
+        RULES.add(new Rule(key, -1, light, dark, 1f));
     }
 
     static {
@@ -64,7 +75,7 @@ final class RoleOverrides {
         for (String k : new String[]{"windowBackgroundWhiteGrayText", "windowBackgroundWhiteGrayText2",
                 "windowBackgroundWhiteGrayText3", "windowBackgroundWhiteGrayText4", "windowBackgroundWhiteGrayText5",
                 "windowBackgroundWhiteGrayText6", "windowBackgroundWhiteGrayText7", "windowBackgroundWhiteGrayText8",
-                "windowBackgroundWhiteHintText", "windowBackgroundWhiteGrayIcon", "graySectionText",
+                "windowBackgroundWhiteHintText", "windowBackgroundWhiteGrayIcon", "key_graySectionText",
                 "emptyListPlaceholder"}) {
             r(k, ON_SURFACE_VARIANT);
         }
@@ -81,8 +92,8 @@ final class RoleOverrides {
         r("windowBackgroundWhiteInputField", OUTLINE);
         r("divider", OUTLINE_VARIANT);
         r("graySection", SURFACE_CONTAINER);
-        r("listSelector", ON_SURFACE, PRESSED);
-        r("settings_listSelector", ON_SURFACE, PRESSED);
+        r("listSelectorSDK21", ON_SURFACE, PRESSED);
+        rk(org.telegram.ui.ActionBar.Theme.key_settings_listSelector, ON_SURFACE, PRESSED);
         r("fastScrollInactive", OUTLINE);
         r("fastScrollText", ON_PRIMARY);
         r("text_RedRegular", ERROR);
@@ -140,7 +151,7 @@ final class RoleOverrides {
         r("actionBarDefaultArchivedTitle", ON_SURFACE);
         r("actionBarDefaultArchivedIcon", ON_SURFACE);
         r("actionBarDefaultArchivedSearch", ON_SURFACE);
-        r("actionBarDefaultArchivedSearchPlaceholder", ON_SURFACE_VARIANT);
+        r("actionBarDefaultSearchArchivedPlaceholder", ON_SURFACE_VARIANT);
         r("actionBarDefaultArchivedSelector", ON_SURFACE, PRESSED);
         // Menus (M3: surfaceContainer, items onSurface, icons onSurfaceVariant)
         r("actionBarDefaultSubmenuBackground", SURFACE_CONTAINER);
@@ -229,7 +240,7 @@ final class RoleOverrides {
         r("chat_inBubble", SURFACE_CONTAINER_HIGH);
         r("chat_inBubbleSelected", SURFACE_CONTAINER_HIGHEST);
         r("chat_outBubble", PRIMARY_CONTAINER);
-        r("chat_outBubbleGradient1", PRIMARY_CONTAINER);
+        r("chat_outBubbleGradient", PRIMARY_CONTAINER);
         r("chat_messageTextIn", ON_SURFACE);
         r("chat_messageTextOut", ON_PRIMARY_CONTAINER);
         r("chat_messageLinkIn", PRIMARY);
@@ -335,7 +346,7 @@ final class RoleOverrides {
         }
         boolean dark = s.spec.dark;
         for (Rule rule : RULES) {
-            Integer key = keysByName.get(rule.key);
+            Integer key = rule.themeKey >= 0 ? Integer.valueOf(rule.themeKey) : keysByName.get(rule.key);
             if (key == null) {
                 // Upstream renamed or removed a key: visible in debug logs, harmless otherwise.
                 if (BuildVars.LOGS_ENABLED) {
@@ -356,7 +367,9 @@ final class RoleOverrides {
     static List<String> overriddenKeys() {
         List<String> keys = new ArrayList<>();
         for (Rule rule : RULES) {
-            keys.add(rule.key);
+            if (rule.key != null) {
+                keys.add(rule.key);
+            }
         }
         return keys;
     }

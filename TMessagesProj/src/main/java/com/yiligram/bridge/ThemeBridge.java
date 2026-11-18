@@ -117,11 +117,13 @@ public final class ThemeBridge {
         int primary = s.primary();
         SparseIntArray out = new SparseIntArray(ref.length);
         for (int key = 0; key < ref.length; key++) {
-            String name = names.get(key);
-            if (name == null || key == Theme.key_wallpaperFileOffset) {
+            if (key == Theme.key_wallpaperFileOffset) {
                 continue;
             }
-            out.put(key, transfer(ref[key], name.startsWith("chat_out"), s, primary));
+            // A few keys have no .attheme name; they are transferred all the same.
+            String name = names.get(key);
+            boolean outgoing = name != null && name.startsWith("chat_out");
+            out.put(key, transfer(ref[key], outgoing, s, primary));
         }
         RoleOverrides.apply(out, s, names);
         if (cache.size() > 8) {

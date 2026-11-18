@@ -8,8 +8,9 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-theme = (ROOT / "TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java").read_text(encoding="utf-8")
-keys = set(re.findall(r"public static final int key_([A-Za-z0-9_]+)", theme))
+# RoleOverrides uses the .attheme names, which differ from the Theme.key_* field names for a few keys.
+colors = (ROOT / "TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java").read_text(encoding="utf-8")
+keys = set(re.findall(r'colorKeysMap\.put\(key_[A-Za-z0-9_]+, "([^"]+)"\)', colors))
 overrides = (ROOT / "TMessagesProj/src/main/java/com/yiligram/bridge/RoleOverrides.java").read_text(encoding="utf-8")
 code = re.sub(r"//[^\n]*", "", overrides)  # ignore quoted words in comments
 used = set(re.findall(r'"([A-Za-z][A-Za-z0-9_]*)"', code))
