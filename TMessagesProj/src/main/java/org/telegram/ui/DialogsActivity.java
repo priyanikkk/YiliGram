@@ -8801,9 +8801,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             floatingButton3.setTranslationY(baseTranslationY);
         }
         if (floatingButtonStories != null) {
-            floatingButtonStories.setTranslationY(baseTranslationY - dp(52));
+            floatingButtonStories.setTranslationY(baseTranslationY - dp(FragmentFloatingButton.SUB_BUTTON_OFFSET)); // YILI
             if (storyHint != null) {
-                storyHint.setTranslationY(baseTranslationY - dp(52));
+                storyHint.setTranslationY(baseTranslationY - dp(FragmentFloatingButton.SUB_BUTTON_OFFSET)); // YILI
             }
         }
     }

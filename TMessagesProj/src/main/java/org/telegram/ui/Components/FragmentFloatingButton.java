@@ -71,8 +71,14 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
 
         ScaleStateListAnimator.apply(this);
         if (!isSubButton) {
-            setOutlineProvider(ViewOutlineProviderImpl.BOUNDS_OVAL);
-            setTranslationZ(dpf2(0.5f));
+            // YILI: M3 FAB — rounded square (16dp corners) with a level-3 shadow instead of a circle.
+            setOutlineProvider(new android.view.ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, android.graphics.Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), dp(M3_CORNER_DP));
+                }
+            });
+            setElevation(dpf2(3f));
         }
 
         if (isSubButton) {
@@ -197,8 +203,10 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
                 imageView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
             }
             progressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon, resourcesProvider));
-            final int color = Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider);
-            final int pressedColor = Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider);
+            // YILI: M3 FAB colors (primaryContainer / onPrimaryContainer through the theme bridge).
+            final int color = Theme.getColor(Theme.key_chats_actionBackground, resourcesProvider);
+            final int pressedColor = androidx.core.graphics.ColorUtils.compositeColors(
+                    androidx.core.graphics.ColorUtils.setAlphaComponent(iconColor, 0x1A), color);
             if (recolorBackground) {
                 if (color != themedBackgroundColor || pressedColor != themedBackgroundPressedColor) {
                     themedBackgroundColor = color;
@@ -210,12 +218,16 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
             } else {
                 themedBackgroundColor = color;
                 themedBackgroundPressedColor = pressedColor;
-                setBackground(themedBackground = Theme.createSimpleSelectorCircleDrawable(dp(48), color, pressedColor));
+                setBackground(themedBackground = Theme.createSimpleSelectorRoundRectDrawable(dp(M3_CORNER_DP), color, pressedColor));
             }
         }
     }
 
-    public static final int SIZE = 48;
+    // YILI: M3 FAB is 56dp with 16dp corners and a 16dp edge margin; the 48dp sub button stays
+    // centered above it (20dp margin), SUB_BUTTON_OFFSET above the FAB's bottom edge.
+    public static final int SIZE = 56;
+    public static final int M3_CORNER_DP = 16;
+    public static final int SUB_BUTTON_OFFSET = 60;
 
     public static FrameLayout.LayoutParams createSubButtonLayoutParams() {
         return LayoutHelper.createFrame(48, 48,
@@ -224,9 +236,9 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
     }
 
     public static FrameLayout.LayoutParams createDefaultLayoutParams() {
-        return LayoutHelper.createFrame(48, 48,
+        return LayoutHelper.createFrame(SIZE, SIZE,
                 (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM,
-                20, 0, 20, 14);
+                16, 0, 16, 14);
     }
 
 
