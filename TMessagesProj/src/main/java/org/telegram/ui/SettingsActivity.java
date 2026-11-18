@@ -795,6 +795,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             items.add(UItem.asShadow(null));
         }
 
+        // YILI: YiliGram settings (appearance; plugins later)
+        items.add(SettingCell.Factory.of(1001, 0xFF8C7A5B, 0xFF4A4030, R.drawable.msg_palette, getString(R.string.YiliSettings), getString(R.string.YiliSettingsInfo)));
+        items.add(UItem.asShadow(null));
         items.add(SettingCell.Factory.of(1, IconBackgroundColors.BLUE.top, IconBackgroundColors.BLUE.bottom, R.drawable.settings_account, getString(R.string.SettingsAccount), getString(R.string.SettingsAccountInfo)));
         items.add(SettingCell.Factory.of(2, IconBackgroundColors.ORANGE.top, IconBackgroundColors.ORANGE.bottom, R.drawable.settings_chat, getString(R.string.SettingsChat), getString(R.string.SettingsChatInfo)));
         items.add(SettingCell.Factory.of(3, IconBackgroundColors.GREEN.top, IconBackgroundColors.GREEN.bottom, R.drawable.settings_privacy, getString(R.string.SettingsPrivacySecurity), getString(R.string.SettingsPrivacySecurityInfo)));
@@ -917,6 +920,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             return;
         }
         switch (item.id) {
+            case 1001: // YILI
+                presentSettingFragment(new com.yiligram.ui.YiliAppearanceActivity());
+                break;
             case 1:
                 presentSettingFragment(new UserInfoActivity());
                 break;

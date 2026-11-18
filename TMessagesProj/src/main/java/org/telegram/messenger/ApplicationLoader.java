@@ -305,6 +305,7 @@ public class ApplicationLoader extends Application {
         // (After the isolated widget process returns: it has no SharedPreferences.)
         com.yiligram.config.YiliConfig.init(this);
         com.yiligram.config.YiliAppearance.applyTokens();
+        com.yiligram.bridge.YiliThemeApplier.install(this);
 
         // AndroidUtilities must be initialized before FileLog
         final String helloWorld = AndroidUtilities.getHelloWorld();
