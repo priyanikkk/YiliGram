@@ -56,3 +56,21 @@ def log(data):
         logger.debug(str(data))
     else:
         logger.dump(data)
+
+
+_UtilCallback = jclass("org.telegram.messenger.Utilities$Callback")
+
+
+class Callback(dynamic_proxy(_UtilCallback)):
+    """org.telegram.messenger.Utilities.Callback backed by fn(arg)."""
+
+    def __init__(self, fn):
+        super().__init__()
+        self._fn = fn
+
+    def run(self, arg):
+        try:
+            self._fn(arg)
+        except Exception:
+            import log_utils
+            log_utils.get_logger().exception("Callback failed")

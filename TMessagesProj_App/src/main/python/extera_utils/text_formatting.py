@@ -29,6 +29,9 @@ class RawEntity:
         self.type, self.offset, self.length = type, offset, length
         self.url, self.language, self.document_id, self.collapsed = url, language, document_id, collapsed
 
+    def to_tlrpc_object(self):  # legacy name used by older plugins
+        return self.to_tl()
+
     def to_tl(self):
         cls = {
             TLEntityType.CODE: "TL_messageEntityCode", TLEntityType.PRE: "TL_messageEntityPre",
@@ -141,6 +144,29 @@ def _markdown_to_html(text: str) -> str:
                    TLEntityType.ITALIC: "i", TLEntityType.STRIKETHROUGH: "s"}[t]
             out = regex.sub(rf"<{tag}>\1</{tag}>", out)
     return out
+
+
+class ParsedMessage:
+    """Result of the legacy parse_markdown()/parse_html(): ``.text`` and RawEntity ``.entities``."""
+
+    def __init__(self, text: str, entities: List[RawEntity]):
+        self.text = text
+        self.entities = entities
+
+
+def _parse_raw(text: str, mode: str) -> ParsedMessage:
+    p = _Html()
+    p.feed(_markdown_to_html(text) if mode == "markdown" else text)
+    p.close()
+    return ParsedMessage(p.text, sorted(p.entities, key=lambda e: e.offset))
+
+
+def parse_markdown(text: str) -> ParsedMessage:
+    return _parse_raw(text, "markdown")
+
+
+def parse_html(text: str) -> ParsedMessage:
+    return _parse_raw(text, "html")
 
 
 def parse_text(text: str, parse_mode: Optional[str] = "HTML", is_caption: bool = False) -> Dict[str, Any]:

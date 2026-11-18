@@ -239,6 +239,10 @@ class BasePlugin:
     def set_setting(self, key: str, value: Any, reload_settings: bool = False):
         _engine.set_setting(self.id, key, value, reload_settings)
 
+    def reload_settings(self):
+        """Asks an open settings screen of this plugin to rebuild its items."""
+        _engine._notify("onPluginsChanged")
+
     def export_settings(self) -> Dict[str, Any]:
         return _engine.export_settings(self.id)
 

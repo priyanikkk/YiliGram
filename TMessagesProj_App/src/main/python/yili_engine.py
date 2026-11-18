@@ -25,7 +25,7 @@ import log_utils
 
 # Versions this engine reports to plugins' __app_version__ / __sdk_version__ checks.
 # The app version is the exteraGram release whose SDK surface we implement.
-COMPAT_APP_VERSION = "12.6.4"
+COMPAT_APP_VERSION = "12.10.6"
 SDK_VERSION = "1.4.5.3"
 ENGINE_VERSION = "0.1.0"
 

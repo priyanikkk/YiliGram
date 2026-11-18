@@ -44,7 +44,9 @@ def _acc(account: Optional[int]) -> int:
     return get_selected_account() if account is None else int(account)
 
 
-class _Callback(dynamic_proxy(_RequestDelegate)):
+class RequestCallback(dynamic_proxy(_RequestDelegate)):
+    """org.telegram.tgnet.RequestDelegate backed by fn(response, error)."""
+
     def __init__(self, fn):
         super().__init__()
         self._fn = fn
@@ -59,8 +61,13 @@ class _Callback(dynamic_proxy(_RequestDelegate)):
             log_utils.get_logger().exception("send_request callback failed")
 
 
-def send_request(request, fn: Optional[Callable] = None, account: Optional[int] = None) -> int:
-    return int(_ConnectionsManager.getInstance(_acc(account)).sendRequest(request, _Callback(fn)))
+_Callback = RequestCallback
+
+
+def send_request(request, fn=None, account: Optional[int] = None) -> int:
+    """Sends a TLObject; ``fn`` is a callable(response, error) or a RequestCallback."""
+    delegate = fn if isinstance(fn, RequestCallback) else RequestCallback(fn)
+    return int(_ConnectionsManager.getInstance(_acc(account)).sendRequest(request, delegate))
 
 
 # ---------------------------------------------------------------- controllers
