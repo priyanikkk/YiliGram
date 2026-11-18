@@ -29,6 +29,12 @@
         android:supportsRtl="false"
         android:requestLegacyExternalStorage="true"
         tools:replace="android:supportsRtl">
+        <!-- YILI: debug-only design system gallery: adb shell am start -n ${applicationId}/com.yiligram.ui.DesignGalleryActivity -->
+        <activity
+            android:name="com.yiligram.ui.DesignGalleryActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TMessages" />
+
 
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
 

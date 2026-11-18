@@ -6209,6 +6209,7 @@ public class Theme {
         applyCalculatedArticleCodeColors(currentColorsNoAccent, colors, currentTheme.isDark());
         shouldDrawGradientIcons = gradientIcons;
         currentColors = colors;
+        com.yiligram.bridge.ThemeBridge.syncDesignSystem(currentTheme); // YILI
         if (!messages) {
             boolean async = !(LaunchActivity.getLastFragment() instanceof ChatActivity);
             reloadWallpaper(async);

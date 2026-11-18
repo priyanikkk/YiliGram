@@ -97,6 +97,37 @@ public final class ThemeBridge {
         return YiliColorScheme.generate(spec);
     }
 
+    /**
+     * Keeps the design system ({@link YiliTheme}, used by YiliGram's own components) in step with
+     * the Telegram theme that was just applied: the YiliGram themes use the configured scheme;
+     * any other theme (custom .attheme, Telegram's built-ins) gets a scheme seeded from its accent
+     * color, so new components blend into it.
+     */
+    public static void syncDesignSystem(Theme.ThemeInfo theme) {
+        if (theme == null) {
+            return;
+        }
+        final ColorSchemeSpec spec;
+        try {
+            boolean dark = theme.isDark();
+            if (isYiliTheme(theme.name)) {
+                spec = YiliAppearance.colorSpec(ApplicationLoader.applicationContext, dark);
+            } else {
+                ColorSchemeSpec base = YiliAppearance.colorSpec(ApplicationLoader.applicationContext, dark);
+                int accent = Theme.getColor(Theme.key_windowBackgroundWhiteBlueText);
+                spec = new ColorSchemeSpec(accent, base.variant, dark, false, base.contrast, base.specVersion);
+            }
+        } catch (Throwable t) {
+            FileLog.e(t);
+            return;
+        }
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
+            YiliTheme.apply(spec);
+        } else {
+            org.telegram.messenger.AndroidUtilities.runOnUIThread(() -> YiliTheme.apply(spec));
+        }
+    }
+
     /** Preview colors (background, incoming bubble, outgoing bubble) for theme pickers. */
     @NonNull
     public static int[] previewColors(boolean dark) {

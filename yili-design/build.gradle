@@ -38,6 +38,8 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.9.1'
     implementation 'androidx.core:core:1.16.0'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
+    // Shape morphing (RoundedPolygon, Morph) for M3 Expressive shapes and the loading indicator.
+    api 'androidx.graphics:graphics-shapes:1.0.1'
     compileOnly 'com.google.errorprone:error_prone_annotations:2.36.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
