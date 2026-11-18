@@ -1,0 +1,27 @@
+"""Sends ".md *bold* _italic_ ||spoiler||" with Telegram formatting."""
+from base_plugin import BasePlugin, HookResult, HookStrategy
+from extera_utils.text_formatting import parse_text
+from java import jclass
+
+__id__ = "markdown_send"
+__name__ = "Markdown send"
+__description__ = "Prefix a message with **.md** to format it with Markdown."
+__author__ = "YiliGram"
+__version__ = "1.0"
+
+
+class MarkdownSend(BasePlugin):
+    def on_plugin_load(self):
+        self.add_on_send_message_hook(priority=10)
+
+    def on_send_message_hook(self, account, params):
+        text = getattr(params, "message", None)
+        if not isinstance(text, str) or not text.startswith(".md "):
+            return HookResult()
+        parsed = parse_text(text[4:], "Markdown")
+        params.message = parsed["message"]
+        entities = jclass("java.util.ArrayList")()
+        for e in parsed["entities"]:
+            entities.add(e)
+        params.entities = entities
+        return HookResult(strategy=HookStrategy.MODIFY, params=params)

@@ -78,6 +78,20 @@ python3 -m venv .venv && .venv/bin/pip install -r tools/branding/requirements.tx
 .venv/bin/python tools/branding/gen_wordmark.py
 ```
 
+## Plugins
+
+YiliGram runs exteraGram-compatible Python plugins (`.plugin` / `.py`, Python 3.11 via
+Chaquopy): **Settings → Plugins → Install from file**. Implemented so far: metadata,
+lifecycle, request / response / update / outgoing-message hooks, plugin settings, menu items
+registry, `client_utils`, `android_utils`, `hook_utils` (reflection), `file_utils`,
+`log_utils`, `ui.settings`, `ui.alert`, `ui.bulletin`, `extera_utils.text_formatting`, plus
+safe mode. Java method hooks, the pip installer and the dev server come next (see PLAN.md).
+Examples: [examples/plugins](examples/plugins).
+
+Building needs a host Python 3.11 for Chaquopy: put `yili.buildPython=/path/to/python3.11`
+into `local.properties` (or have `python3.11` on PATH). Engine tests:
+`python3.11 -m unittest discover -s TMessagesProj_App/src/test/python`.
+
 ## Notifications
 
 YiliGram does not use Firebase Cloud Messaging. Until UnifiedPush support lands,

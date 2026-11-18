@@ -419,7 +419,32 @@ public class ConnectionsManager extends BaseController {
         return requestToken;
     }
 
-    private void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
+    private void sendRequestInternal(TLObject object0, RequestDelegate onComplete0, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
+        // YILI: plugin pre_request_hook / post_request_hook (exteraGram-compatible)
+        TLObject hookedObject = object0;
+        RequestDelegate hookedOnComplete = onComplete0;
+        if (object0 != null && com.yiligram.plugins.Plugins.wants(object0.getClass().getSimpleName())) {
+            final String hookName = object0.getClass().getSimpleName();
+            com.yiligram.plugins.PluginEngine.HookResult pre = com.yiligram.plugins.Plugins.preRequest(object0, currentAccount);
+            if (pre.code == com.yiligram.plugins.PluginEngine.RESULT_CANCEL) {
+                return;
+            }
+            if (pre.code == com.yiligram.plugins.PluginEngine.RESULT_MODIFIED && pre.value instanceof TLObject) {
+                hookedObject = (TLObject) pre.value;
+            }
+            if (onComplete0 != null) {
+                final RequestDelegate original = onComplete0;
+                hookedOnComplete = (response, error) -> {
+                    com.yiligram.plugins.PluginEngine.HookResult post = com.yiligram.plugins.Plugins.postRequest(hookName, currentAccount, response, error);
+                    if (post.code == com.yiligram.plugins.PluginEngine.RESULT_CANCEL) {
+                        return;
+                    }
+                    original.run(post.code == com.yiligram.plugins.PluginEngine.RESULT_MODIFIED && post.value instanceof TLObject ? (TLObject) post.value : response, error);
+                };
+            }
+        }
+        final TLObject object = hookedObject;
+        final RequestDelegate onComplete = hookedOnComplete;
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
         }

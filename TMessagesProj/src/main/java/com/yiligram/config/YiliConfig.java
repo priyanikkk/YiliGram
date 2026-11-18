@@ -85,6 +85,11 @@ public final class YiliConfig {
     public static final Key<Float> MOTION_SPEED = new Key<>("motion.speed", Float.class, 1f);
     public static final Key<Float> MOTION_BOUNCE = new Key<>("motion.bounce", Float.class, 1f);
 
+    // Plugins
+    public static final Key<Boolean> PLUGINS_ENABLED = new Key<>("plugins.enabled", Boolean.class, true);
+    public static final Key<Boolean> PLUGINS_DEV_MODE = new Key<>("plugins.devMode", Boolean.class, false);
+    public static final Key<Boolean> PLUGINS_UNKNOWN_SOURCES = new Key<>("plugins.unknownSources", Boolean.class, false);
+
     // ---------------------------------------------------------------- storage
 
     public interface Listener {

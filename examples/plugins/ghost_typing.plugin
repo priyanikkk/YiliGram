@@ -1,0 +1,28 @@
+"""Hides "typing…" from others by dropping the typing requests."""
+from base_plugin import BasePlugin, HookResult, HookStrategy
+from ui.settings import Header, Switch
+
+__id__ = "ghost_typing"
+__name__ = "Ghost typing"
+__description__ = "Others don't see that you are typing."
+__author__ = "YiliGram"
+__version__ = "1.0"
+__sdk_version__ = ">=1.4.4.3"
+
+
+class GhostTyping(BasePlugin):
+    def on_plugin_load(self):
+        self.add_hook("TL_messages_setTyping")
+        self.add_hook("TL_messages_setEncryptedTyping")
+
+    def create_settings(self):
+        return [
+            Header(text="Typing"),
+            Switch(key="enabled", text="Hide typing status", default=True,
+                   subtext="Applies to all chats"),
+        ]
+
+    def pre_request_hook(self, request_name, account, request):
+        if self.get_setting("enabled", True):
+            return HookResult(strategy=HookStrategy.CANCEL)
+        return HookResult()

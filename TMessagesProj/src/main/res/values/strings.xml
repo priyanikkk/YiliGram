@@ -11731,4 +11731,22 @@
     <string name="YiliImportSkipped">Imported. Skipped: %1$s</string>
     <string name="YiliPreviewIn">Hi! How do you like the new look?</string>
     <string name="YiliPreviewOut">Feels like a native Google app 👌</string>
+    <string name="YiliPlugins">Plugins</string>
+    <string name="YiliPluginsInfo">exteraGram-compatible Python plugins</string>
+    <string name="YiliPluginsEngine">Plugin engine</string>
+    <string name="YiliPluginsEngineInfo">Python 3.11 plugins. Changes apply after restarting the app.</string>
+    <string name="YiliPluginsInstall">Install from file</string>
+    <string name="YiliPluginsEmpty">No plugins yet. Install a .plugin file to get started.</string>
+    <string name="YiliPluginsInstalled">Plugin %1$s installed</string>
+    <string name="YiliPluginsInstallFailed">Could not install: %1$s</string>
+    <string name="YiliPluginsDevMode">Developer mode</string>
+    <string name="YiliPluginsDevModeInfo">Verbose plugin logs</string>
+    <string name="YiliPluginsWarning">Plugins run with full access to your account. Install only plugins you trust.</string>
+    <string name="YiliPluginsList">Installed</string>
+    <string name="YiliPluginsStarting">Starting the plugin engine…</string>
+    <string name="YiliPluginDelete">Delete plugin</string>
+    <string name="YiliPluginDeleteConfirm">Delete %1$s?</string>
+    <string name="YiliPluginSettings">Plugin settings</string>
+    <string name="YiliPluginNoSettings">This plugin has no settings.</string>
+    <string name="YiliPluginBy">by %1$s</string>
 </resources>

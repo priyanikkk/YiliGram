@@ -1,0 +1,22 @@
+"""Turns ".hello Alice" into "Hello, Alice! 👋" before it is sent."""
+from base_plugin import BasePlugin, HookResult, HookStrategy
+
+__id__ = "hello_command"
+__name__ = "Hello command"
+__description__ = "Type **.hello Alice** to greet Alice."
+__author__ = "YiliGram"
+__version__ = "1.0"
+__app_version__ = ">=12.5.1"
+__sdk_version__ = ">=1.4.4.3"
+
+
+class HelloPlugin(BasePlugin):
+    def on_plugin_load(self):
+        self.add_on_send_message_hook()
+
+    def on_send_message_hook(self, account, params):
+        text = getattr(params, "message", None)
+        if not isinstance(text, str) or not text.startswith(".hello "):
+            return HookResult()
+        params.message = f"Hello, {text[len('.hello '):].strip()}! 👋"
+        return HookResult(strategy=HookStrategy.MODIFY, params=params)

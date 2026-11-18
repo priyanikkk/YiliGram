@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.telegram.build-app-plugin'
+apply plugin: 'com.chaquo.python'
 
 repositories {
     mavenCentral()
@@ -170,7 +171,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 24 // YILI: Chaquopy 17 needs API 24
         targetSdkVersion 36
         versionName YILI_VERSION_NAME
         ndkVersion "27.2.12479018"
@@ -199,3 +200,23 @@ android {
 }
 
 // YILI: no google-services plugin, see TMessagesProj/build.gradle.
+
+// YILI: Python 3.11 for exteraGram-compatible plugins. Chaquopy installs the preinstalled packages
+// at build time with a host Python of the same version: set yili.buildPython in local.properties
+// (or YILI_BUILD_PYTHON), otherwise python3.11 from PATH is used.
+chaquopy {
+    defaultConfig {
+        version "3.11"
+        def buildPy = rootProject.ext.yiliSecret.call('yili.buildPython', 'YILI_BUILD_PYTHON')
+        buildPython(buildPy ? buildPy : "python3.11")
+        pip {
+            install "requests"
+            install "beautifulsoup4"
+            install "lxml"
+            install "pillow"
+            install "PyYAML"
+            install "packaging"
+        }
+    }
+}
+

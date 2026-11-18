@@ -1,0 +1,24 @@
+"""Shows the current Material 3 colors — an example of the yili_ui module."""
+from base_plugin import BasePlugin
+from ui.bulletin import BulletinHelper
+from ui.settings import Header, Text
+
+import yili_ui
+
+__id__ = "yili_colors"
+__name__ = "M3 colors"
+__description__ = "Shows the Material 3 color roles YiliGram is using."
+__author__ = "YiliGram"
+__version__ = "1.0"
+
+ROLES = ["primary", "primaryContainer", "secondaryContainer", "tertiaryContainer", "surface", "surfaceContainerHigh"]
+
+
+class YiliColors(BasePlugin):
+    def create_settings(self):
+        items = [Header(text="Dark mode" if yili_ui.is_dark() else "Light mode")]
+        for role in ROLES:
+            argb = yili_ui.color(role) & 0xFFFFFFFF
+            items.append(Text(text=role, subtext=f"#{argb:08X}",
+                              on_click=lambda view, r=role, a=argb: BulletinHelper.show_info(f"{r}: #{a:08X}")))
+        return items

@@ -4438,7 +4438,19 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         });
     }
 
-    public void sendMessage(SendMessageParams sendMessageParams) {
+    public void sendMessage(SendMessageParams sendMessageParams0) {
+        // YILI: plugin on_send_message_hook (exteraGram-compatible)
+        SendMessageParams hookedParams = sendMessageParams0;
+        if (com.yiligram.plugins.Plugins.wantsSendMessage()) {
+            com.yiligram.plugins.PluginEngine.HookResult r = com.yiligram.plugins.Plugins.sendMessage(sendMessageParams0, currentAccount);
+            if (r.code == com.yiligram.plugins.PluginEngine.RESULT_CANCEL) {
+                return;
+            }
+            if (r.code == com.yiligram.plugins.PluginEngine.RESULT_MODIFIED && r.value instanceof SendMessageParams) {
+                hookedParams = (SendMessageParams) r.value;
+            }
+        }
+        final SendMessageParams sendMessageParams = hookedParams;
         final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
                 sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
         String message = sendMessageParams.message;

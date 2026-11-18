@@ -317,4 +317,22 @@
     <string name="YiliImportSkipped">Импортировано. Пропущено: %1$s</string>
     <string name="YiliPreviewIn">Привет! Как тебе новый вид?</string>
     <string name="YiliPreviewOut">Как родное приложение Google 👌</string>
+    <string name="YiliPlugins">Плагины</string>
+    <string name="YiliPluginsInfo">Python-плагины, совместимые с exteraGram</string>
+    <string name="YiliPluginsEngine">Движок плагинов</string>
+    <string name="YiliPluginsEngineInfo">Плагины на Python 3.11. Изменения применяются после перезапуска приложения.</string>
+    <string name="YiliPluginsInstall">Установить из файла</string>
+    <string name="YiliPluginsEmpty">Плагинов пока нет. Установите файл .plugin, чтобы начать.</string>
+    <string name="YiliPluginsInstalled">Плагин %1$s установлен</string>
+    <string name="YiliPluginsInstallFailed">Не удалось установить: %1$s</string>
+    <string name="YiliPluginsDevMode">Режим разработчика</string>
+    <string name="YiliPluginsDevModeInfo">Подробные логи плагинов</string>
+    <string name="YiliPluginsWarning">Плагины получают полный доступ к аккаунту. Устанавливайте только те, которым доверяете.</string>
+    <string name="YiliPluginsList">Установленные</string>
+    <string name="YiliPluginsStarting">Запуск движка плагинов…</string>
+    <string name="YiliPluginDelete">Удалить плагин</string>
+    <string name="YiliPluginDeleteConfirm">Удалить %1$s?</string>
+    <string name="YiliPluginSettings">Настройки плагина</string>
+    <string name="YiliPluginNoSettings">У этого плагина нет настроек.</string>
+    <string name="YiliPluginBy">автор: %1$s</string>
 </resources>

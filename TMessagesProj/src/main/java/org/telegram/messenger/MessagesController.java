@@ -17914,7 +17914,26 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     // must be run from Utilities.stageQueue
+    // YILI: guards against re-hooking an Updates object a plugin replaced
+    private static final ThreadLocal<Boolean> yiliInUpdatesHook = new ThreadLocal<>();
+
     public void processUpdates(final TLRPC.Updates updates, boolean fromQueue) {
+        // YILI: plugin on_updates_hook (exteraGram-compatible)
+        if (updates != null && yiliInUpdatesHook.get() == null && com.yiligram.plugins.Plugins.wants(updates.getClass().getSimpleName())) {
+            com.yiligram.plugins.PluginEngine.HookResult r = com.yiligram.plugins.Plugins.updates(updates, currentAccount);
+            if (r.code == com.yiligram.plugins.PluginEngine.RESULT_CANCEL) {
+                return;
+            }
+            if (r.code == com.yiligram.plugins.PluginEngine.RESULT_MODIFIED && r.value instanceof TLRPC.Updates && r.value != updates) {
+                yiliInUpdatesHook.set(Boolean.TRUE);
+                try {
+                    processUpdates((TLRPC.Updates) r.value, fromQueue);
+                } finally {
+                    yiliInUpdatesHook.remove();
+                }
+                return;
+            }
+        }
         if (updates instanceof TLRPC.TL_updates || updates instanceof TLRPC.TL_updatesCombined) {
             boolean hasMessageIdUpdates = false;
             for (int i = 0; i < updates.updates.size(); i++) {
@@ -18472,6 +18491,31 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean processUpdateArray(ArrayList<TLRPC.Update> updates, ArrayList<TLRPC.User> usersArr, ArrayList<TLRPC.Chat> chatsArr, boolean fromGetDifference, int date) {
+        // YILI: plugin on_update_hook — cancelled updates are dropped, modified ones replaced
+        if (com.yiligram.plugins.Plugins.engine() != null && !updates.isEmpty()) {
+            ArrayList<TLRPC.Update> filtered = null;
+            for (int i = 0; i < updates.size(); i++) {
+                TLRPC.Update update = updates.get(i);
+                TLRPC.Update result = update;
+                if (update != null && com.yiligram.plugins.Plugins.wants(update.getClass().getSimpleName())) {
+                    com.yiligram.plugins.PluginEngine.HookResult r = com.yiligram.plugins.Plugins.update(update, currentAccount);
+                    if (r.code == com.yiligram.plugins.PluginEngine.RESULT_CANCEL) {
+                        result = null;
+                    } else if (r.code == com.yiligram.plugins.PluginEngine.RESULT_MODIFIED && r.value instanceof TLRPC.Update) {
+                        result = (TLRPC.Update) r.value;
+                    }
+                }
+                if (result != update && filtered == null) {
+                    filtered = new ArrayList<>(updates.subList(0, i));
+                }
+                if (filtered != null && result != null) {
+                    filtered.add(result);
+                }
+            }
+            if (filtered != null) {
+                updates = filtered;
+            }
+        }
         if (updates.isEmpty()) {
             if (usersArr != null || chatsArr != null) {
                 AndroidUtilities.runOnUIThread(() -> {

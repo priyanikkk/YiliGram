@@ -45,6 +45,10 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
             "ndk;${NDK_VERSION}" "cmake;${CMAKE_VERSION}" "platforms;android-36" "build-tools;36.0.0" > /dev/null
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'  # Chaquopy installs the plugin runtime's packages with it
+
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Check M3 theme bridge keys
@@ -52,6 +56,9 @@ jobs:
 
       - name: Design system unit tests
         run: ./gradlew --no-daemon :yili-design:testDebugUnitTest
+
+      - name: Plugin engine tests
+        run: python3.11 -m unittest discover -s TMessagesProj_App/src/test/python
 
       - name: Decide build type
         id: mode

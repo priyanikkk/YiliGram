@@ -146,7 +146,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 24 // YILI: Chaquopy 17 needs API 24
         targetSdkVersion 36
 
         ndk {

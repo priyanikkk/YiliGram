@@ -1,0 +1,21 @@
+"""Test plugin: ".ping" is not sent; a "pong" snackbar appears instead."""
+from base_plugin import BasePlugin, HookResult, HookStrategy
+from ui.bulletin import BulletinHelper
+
+__id__ = "ping_bulletin"
+__name__ = "Ping"
+__description__ = "Send **.ping** to check that plugins work. Nothing is sent."
+__author__ = "YiliGram"
+__version__ = "1.0"
+
+
+class Ping(BasePlugin):
+    def on_plugin_load(self):
+        self.add_on_send_message_hook(priority=100)
+        self.logger.info("ping plugin loaded")
+
+    def on_send_message_hook(self, account, params):
+        if getattr(params, "message", None) == ".ping":
+            BulletinHelper.show_success("pong 🏓 (from a YiliGram plugin)")
+            return HookResult(strategy=HookStrategy.CANCEL)
+        return HookResult()
