@@ -46,19 +46,24 @@ android {
         localeFilters += ["zz"]
     }
 
+    // YILI: debug builds use the standard Android debug key; release builds are signed with
+    // the key described in keystore.properties (git-ignored, see keystore.properties.example)
+    // or YILI_KEYSTORE_* environment variables. Without either, release APKs are unsigned.
+    def keystoreProps = new Properties()
+    def keystorePropsFile = rootProject.file('keystore.properties')
+    if (keystorePropsFile.exists()) {
+        keystorePropsFile.withInputStream { keystoreProps.load(it) }
+    }
+    def ks = { String key, String env -> (keystoreProps.getProperty(key) ?: System.getenv(env))?.trim() }
+    def releaseStoreFile = ks('storeFile', 'YILI_KEYSTORE_FILE')
     signingConfigs {
-        debug {
-            storeFile file("../TMessagesProj/config/release.keystore")
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-        }
-
-        release {
-            storeFile file("../TMessagesProj/config/release.keystore")
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
+        if (releaseStoreFile) {
+            release {
+                storeFile rootProject.file(releaseStoreFile)
+                storePassword ks('storePassword', 'YILI_KEYSTORE_PASSWORD')
+                keyAlias ks('keyAlias', 'YILI_KEY_ALIAS')
+                keyPassword ks('keyPassword', 'YILI_KEY_PASSWORD')
+            }
         }
     }
 
@@ -72,7 +77,6 @@ android {
         debug {
             debuggable true
             jniDebuggable true
-            signingConfig signingConfigs.debug
             applicationIdSuffix ".beta"
             minifyEnabled false
             shrinkResources false
@@ -84,7 +88,7 @@ android {
         standalone {
             debuggable false
             jniDebuggable false
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.findByName('release')
             applicationIdSuffix ".web"
             minifyEnabled true
             shrinkResources true
@@ -96,7 +100,7 @@ android {
         release {
             debuggable false
             jniDebuggable false
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.findByName('release')
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
@@ -122,7 +126,7 @@ android {
     productFlavors {
         bundleAfat {
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+                abiFilters(*rootProject.ext.yiliAbiFilters.call(["armeabi-v7a", "arm64-v8a", "x86", "x86_64"]))
             }
             ext {
                 abiVersionCode = 1
@@ -131,7 +135,7 @@ android {
         }
         afat {
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+                abiFilters(*rootProject.ext.yiliAbiFilters.call(["armeabi-v7a", "arm64-v8a", "x86", "x86_64"]))
             }
             sourceSets.debug {
                 manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
@@ -149,11 +153,11 @@ android {
         }
     }
 
-    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
+    defaultConfig.versionCode = Integer.parseInt(YILI_VERSION_CODE)
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            outputFileName = "app.apk"
+            outputFileName = "YiliGram-${YILI_VERSION_NAME}-${variant.buildType.name}.apk"
             output.versionCodeOverride = defaultConfig.versionCode * 10 + variant.productFlavors.get(0).abiVersionCode
         }
     }
@@ -168,7 +172,7 @@ android {
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion 36
-        versionName APP_VERSION_NAME
+        versionName YILI_VERSION_NAME
         ndkVersion "27.2.12479018"
 
         multiDexEnabled true
@@ -194,4 +198,4 @@ android {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
+// YILI: no google-services plugin, see TMessagesProj/build.gradle.

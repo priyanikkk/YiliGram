@@ -1,0 +1,10 @@
+# Copy to local.properties (git-ignored) and fill in.
+
+# Android SDK location (Android Studio writes this line automatically).
+sdk.dir=/path/to/Android/Sdk
+
+# Telegram API credentials: https://my.telegram.org → API development tools.
+# Required for every build except CI pull-request builds (-PyiliSkipApiCheck).
+# Alternatively export YILI_API_ID / YILI_API_HASH.
+yili.apiId=1234567
+yili.apiHash=0123456789abcdef0123456789abcdef

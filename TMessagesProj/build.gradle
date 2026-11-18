@@ -148,6 +148,15 @@ android {
         minSdkVersion 23
         targetSdkVersion 36
 
+        ndk {
+            abiFilters(*rootProject.ext.yiliAbiFilters.call(["armeabi-v7a", "arm64-v8a", "x86", "x86_64"]))
+        }
+
+        // YILI: Telegram API credentials (https://my.telegram.org), see local.properties.example.
+        buildConfigField "int", "YILI_API_ID", (rootProject.ext.yiliSecret.call('yili.apiId', 'YILI_API_ID') ?: "0")
+        buildConfigField "String", "YILI_API_HASH", "\"" + rootProject.ext.yiliSecret.call('yili.apiHash', 'YILI_API_HASH') + "\""
+        buildConfigField "String", "YILI_RELEASES_URL", "\"" + YILI_RELEASES_URL + "\""
+
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 
         multiDexEnabled true
@@ -255,7 +264,25 @@ def getProps(String propName) {
         return "";
     }
 }
-apply plugin: 'com.google.gms.google-services'
+// YILI: no Firebase project (push goes through UnifiedPush), so no google-services plugin.
+
+task checkYiliApiCredentials {
+    // CI builds of pull requests (no secrets available) pass -PyiliSkipApiCheck: the APK
+    // compiles but cannot log in.
+    onlyIf { !project.hasProperty('yiliSkipApiCheck') }
+    doFirst {
+        def apiId = rootProject.ext.yiliSecret.call('yili.apiId', 'YILI_API_ID')
+        def apiHash = rootProject.ext.yiliSecret.call('yili.apiHash', 'YILI_API_HASH')
+        if (!(apiId ==~ /\d+/) || !(apiHash ==~ /[0-9a-fA-F]{32}/)) {
+            throw new GradleException(
+                "Telegram API credentials are missing or malformed.\n" +
+                "Get api_id / api_hash at https://my.telegram.org and put them into local.properties:\n" +
+                "    yili.apiId=1234567\n    yili.apiHash=0123456789abcdef0123456789abcdef\n" +
+                "or export YILI_API_ID / YILI_API_HASH. See local.properties.example.")
+        }
+    }
+}
+preBuild.dependsOn checkYiliApiCredentials
 
 task checkVisibility {
     doFirst {

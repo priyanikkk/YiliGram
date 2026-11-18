@@ -3,18 +3,29 @@ buildscript {
     repositories {
         mavenCentral()
         google()
-        maven { url 'https://developer.huawei.com/repo/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath 'com.google.gms:google-services:4.5.0'
-        classpath 'com.huawei.agconnect:agcp:1.9.1.301'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
     }
 }
 repositories {
     google()
+}
+
+// YILI: build secrets come from local.properties or environment variables, never from git.
+ext.yiliLocalProps = new Properties()
+def yiliLocalPropsFile = rootProject.file('local.properties')
+if (yiliLocalPropsFile.exists()) {
+    yiliLocalPropsFile.withInputStream { ext.yiliLocalProps.load(it) }
+}
+// Local builds may restrict native ABIs to speed up compilation: -PyiliAbis=arm64-v8a,x86_64
+ext.yiliAbiFilters = { List<String> defaults ->
+    project.hasProperty('yiliAbis') ? project.property('yiliAbis').toString().split(',')*.trim() : defaults
+}
+ext.yiliSecret = { String propName, String envName ->
+    def value = ext.yiliLocalProps.getProperty(propName) ?: System.getenv(envName)
+    return value != null ? value.trim() : ""
 }
 
 // Strip JLatexMath fonts we don't ship (transitive AAR assets from
