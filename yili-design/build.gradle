@@ -1,0 +1,45 @@
+// YiliGram design system: Material 3 Expressive tokens, color generation and widgets.
+// Independent of Telegram code so it can be unit-tested on the JVM.
+apply plugin: 'com.android.library'
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+android {
+    namespace 'com.yiligram.design'
+    compileSdkVersion 36
+    buildToolsVersion '36.0.0'
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 36
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    compileOptions {
+        // material-color-utilities uses switch expressions and java.util.Optional/stream.
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
+    compileOnly 'com.google.errorprone:error_prone_annotations:2.36.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+
+    testImplementation 'junit:junit:4.13.2'
+}
