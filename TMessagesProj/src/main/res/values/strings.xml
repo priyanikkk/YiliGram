@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">Telegram</string>
-    <string name="AppNameBeta">Telegram Beta</string>
+    <string name="AppName">YiliGram</string>
+    <string name="AppNameBeta">YiliGram Beta</string>
     <string name="LanguageName">English</string>
     <string name="English">English</string>
     <string name="LanguageNameInEnglish">English</string>
@@ -1815,7 +1815,7 @@
     <string name="NotificationGroupFew">%1$s sent %3$s to the group %2$s</string>
     <string name="NotificationGroupAlbum">%1$s sent an album to the group %2$s</string>
     <string name="NotificationGroupForwardedFew">%1$s forwarded %3$s to the group %2$s</string>
-    <string name="NotificationHiddenName">Telegram</string>
+    <string name="NotificationHiddenName">YiliGram</string>
     <string name="NotificationHiddenChatName">Telegram</string>
     <string name="NotificationHiddenChatUserName">User</string>
     <string name="NotificationHiddenMessage">New message</string>
@@ -2634,7 +2634,7 @@
     <string name="DirectShareInfo">Show recent chats in Android share menu</string>
     <string name="Emoji">Emoji</string>
     <string name="LargeEmoji">Large Emoji</string>
-    <string name="TelegramVersion">Telegram for Android %1$s</string>
+    <string name="TelegramVersion">YiliGram for Android %1$s</string>
     <string name="DebugMenu">Debug Menu</string>
     <string name="DebugMenuLongPress">Long press again for debug menu</string>
     <string name="DebugSendLogs">Send Logs</string>
@@ -4213,13 +4213,13 @@
     <string name="ViewMessageStatistic">Message Statistic</string>
     <string name="ViewMessage">Open Message</string>
     <!--Intro view-->
-    <string name="Page1Title">Telegram</string>
+    <string name="Page1Title">YiliGram</string>
     <string name="Page2Title">Fast</string>
     <string name="Page3Title">Free</string>
     <string name="Page4Title">Secure</string>
     <string name="Page5Title">Powerful</string>
     <string name="Page6Title">Cloud-Based</string>
-    <string name="Page1Message">The world\'s **fastest** messaging app.\nIt is **free** and **secure**.</string>
+    <string name="Page1Message">An **unofficial** Telegram client\nbuilt on the **Telegram API**.</string>
     <string name="Page2Message">**Telegram** delivers messages faster than\nany other application.</string>
     <string name="Page3Message">**Telegram** provides free unlimited cloud storage for chats and media.</string>
     <string name="Page4Message">**Telegram** keeps your messages safe\nfrom hacker attacks.</string>

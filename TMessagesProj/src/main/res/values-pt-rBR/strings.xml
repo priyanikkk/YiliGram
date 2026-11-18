@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">Telegram</string>
-    <string name="AppNameBeta">Telegram Beta</string>
     <string name="LanguageName">Português (Brasil)</string>
     <string name="English">Inglês</string>
     <string name="LanguageNameInEnglish">Portuguese (Brazil)</string>
@@ -180,7 +178,6 @@
     <string name="NotificationGroupFew">%1$s enviou %3$s ao grupo %2$s</string>
     <string name="NotificationGroupAlbum">%1$s enviou um álbum para o grupo %2$s</string>
     <string name="NotificationGroupForwardedFew">%1$s encaminhou %3$s ao grupo %2$s</string>
-    <string name="NotificationHiddenName">Telegram</string>
     <string name="NotificationHiddenChatName">Telegram</string>
     <string name="NotificationHiddenChatUserName">Usuário</string>
     <string name="NotificationHiddenMessage">Nova mensagem</string>
@@ -576,7 +573,6 @@
     <string name="DirectShareInfo">Mostra chats recentes no menu compartilhar.</string>
     <string name="Emoji">Emoji</string>
     <string name="LargeEmoji">Emoji Grande</string>
-    <string name="TelegramVersion">Telegram para Android %1$s</string>
     <string name="DebugMenu">Menu de Depuração</string>
     <string name="DebugMenuLongPress">Segure de novo para ver o menu de depuração</string>
     <string name="DebugSendLogs">Enviar Logs</string>
@@ -1192,13 +1188,11 @@
     <string name="PermissionDrawAboveOtherAppsTitle">Picture-in-Picture</string>
     <string name="PermissionDrawAboveOtherAppsGroupCallTitle">Chat de vídeo flutuante</string>
     <!--Intro view-->
-    <string name="Page1Title">Telegram</string>
     <string name="Page2Title">Rápido</string>
     <string name="Page3Title">Gratuito</string>
     <string name="Page4Title">Seguro</string>
     <string name="Page5Title">Poderoso</string>
     <string name="Page6Title">Baseado em Nuvem</string>
-    <string name="Page1Message">O aplicativo de mensagem mais **rápido** do mundo.\nÉ **gratuito** e **seguro**.</string>
     <string name="Page2Message">O **Telegram** entrega mensagens mais rápido que qualquer outro app.</string>
     <string name="Page3Message">O **Telegram** oferece espaço em\nnuvem ilimitado e gratuito para\nchats e mídias.</string>
     <string name="Page4Message">O **Telegram** mantém suas mensagens\nseguras contra ataques de hackers.</string>

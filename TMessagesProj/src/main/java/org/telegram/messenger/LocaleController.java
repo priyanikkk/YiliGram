@@ -4784,7 +4784,7 @@ public class LocaleController {
         final Context context = ApplicationLoader.applicationContext;
         String value;
 
-        if (BuildVars.USE_CLOUD_STRINGS) {
+        if (BuildVars.USE_CLOUD_STRINGS && !com.yiligram.branding.YiliStrings.isLocalOnly(key, stringRes)) { // YILI
             value = localizationExternal.getByResNameOrResId(context, key, stringRes);
             if (value != null) {
                 return value;
