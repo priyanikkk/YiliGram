@@ -295,6 +295,13 @@ final class RoleOverrides {
         r("chat_unreadMessagesStartText", ON_SURFACE_VARIANT);
         r("chat_unreadMessagesStartArrowIcon", ON_SURFACE_VARIANT);
         r("chat_selectedBackground", PRIMARY, 0.12f);
+        // Service messages and date chips: tonal chips readable on the plain M3 background (Telegram would
+        // derive them from the wallpaper, which gives white text on a near-white chip here).
+        r("chat_serviceBackground", SURFACE_CONTAINER_HIGH);
+        r("chat_serviceBackgroundSelected", SURFACE_CONTAINER_HIGHEST);
+        r("chat_serviceText", ON_SURFACE_VARIANT);
+        r("chat_serviceLink", PRIMARY);
+        r("chat_serviceIcon", ON_SURFACE_VARIANT);
 
         // ---- Profile -----------------------------------------------------------------------
         r("avatar_backgroundActionBarBlue", SURFACE);
