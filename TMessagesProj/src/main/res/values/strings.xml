@@ -11679,4 +11679,6 @@
     <string name="FpnvConsentSimSlot">SIM Slot</string>
     <string name="FpnvConsentSimSlotValue">SIM %1$d</string>
     <string name="FpnvConsentPhoneNumber">Phone Number</string>
+    <string name="YiliThemeLight">Material You</string>
+    <string name="YiliThemeDark">Material You Dark</string>
 </resources>

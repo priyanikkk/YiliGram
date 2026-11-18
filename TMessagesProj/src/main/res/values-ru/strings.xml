@@ -265,4 +265,6 @@
     <string name="RemindDayYearAt">\'Напомнить\' d MMM yyyy \'в\' HH:mm</string>
     <string name="NotificationHiddenName">YiliGram</string>
     <string name="TelegramVersion">YiliGram для Android %1$s</string>
+    <string name="YiliThemeLight">Material You</string>
+    <string name="YiliThemeDark">Material You, тёмная</string>
 </resources>

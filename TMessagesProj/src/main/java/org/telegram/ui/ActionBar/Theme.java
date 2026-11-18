@@ -1550,7 +1550,11 @@ public class Theme {
         }
 
         public String getName() {
-            if ("Blue".equals(name)) {
+            if (com.yiligram.bridge.ThemeBridge.THEME_LIGHT.equals(name)) { // YILI
+                return getString(R.string.YiliThemeLight);
+            } else if (com.yiligram.bridge.ThemeBridge.THEME_DARK.equals(name)) {
+                return getString(R.string.YiliThemeDark);
+            } else if ("Blue".equals(name)) {
                 return getString(R.string.ThemeClassic);
             } else if ("Dark Blue".equals(name)) {
                 return getString(R.string.ThemeDark);
@@ -1680,6 +1684,8 @@ public class Theme {
                 isDark = DARK;
             } else if ("Blue".equals(name) || "Arctic Blue".equals(name) || "Day".equals(name)) {
                 isDark = LIGHT;
+            } else if (com.yiligram.bridge.ThemeBridge.isYiliTheme(name)) { // YILI
+                isDark = com.yiligram.bridge.ThemeBridge.isDarkTheme(name) ? DARK : LIGHT;
             }
             if (isDark == UNKNOWN) {
                 String[] wallpaperLink = new String[1];
@@ -4098,6 +4104,16 @@ public class Theme {
         themes.add(themeInfo);
         themesDict.put("Night", themeInfo);
 
+        // YILI: Material 3 themes generated from the YiliGram color settings are the defaults.
+        ThemeInfo yiliLight = createYiliThemeInfo(false);
+        themes.add(yiliLight);
+        themesDict.put(yiliLight.name, yiliLight);
+        ThemeInfo yiliDark = createYiliThemeInfo(true);
+        themes.add(yiliDark);
+        themesDict.put(yiliDark.name, yiliDark);
+        currentDayTheme = defaultTheme = yiliLight;
+        currentNightTheme = yiliDark;
+
         String themesString = themeConfig.getString("themes2", null);
 
         int remoteVersion = themeConfig.getInt("remote_version", 0);
@@ -4404,6 +4420,20 @@ public class Theme {
         }
         applyTheme(applyingTheme, false, false, switchToTheme == 2);
         AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions);
+    }
+
+    // YILI: built-in Material 3 theme; colors come from com.yiligram.bridge.ThemeBridge.
+    private static ThemeInfo createYiliThemeInfo(boolean dark) {
+        ThemeInfo info = new ThemeInfo();
+        info.name = dark ? com.yiligram.bridge.ThemeBridge.THEME_DARK : com.yiligram.bridge.ThemeBridge.THEME_LIGHT;
+        info.assetName = dark ? com.yiligram.bridge.ThemeBridge.ASSET_DARK : com.yiligram.bridge.ThemeBridge.ASSET_LIGHT;
+        int[] preview = com.yiligram.bridge.ThemeBridge.previewColors(dark);
+        info.previewBackgroundColor = preview[0];
+        info.previewInColor = preview[1];
+        info.previewOutColor = preview[2];
+        info.sortIndex = 0;
+        info.isDark = dark ? ThemeInfo.DARK : ThemeInfo.LIGHT;
+        return info;
     }
 
     private static void sortAccents(ThemeInfo info) {
@@ -7656,6 +7686,9 @@ public class Theme {
     }
 
     public static SparseIntArray getThemeFileValues(File file, String assetName, String[] wallpaperLink) {
+        if (com.yiligram.bridge.ThemeBridge.isYiliAsset(assetName)) { // YILI: generated M3 theme
+            return com.yiligram.bridge.ThemeBridge.getThemeFileValues(assetName);
+        }
         FileInputStream stream = null;
         SparseIntArray stringMap = new SparseIntArray();
         try {

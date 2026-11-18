@@ -32,13 +32,15 @@ public final class YiliColorScheme {
     @NonNull public final ColorSchemeSpec spec;
     private final int[] colors;
     private final TonalPalette neutralPalette;
+    private final TonalPalette neutralVariantPalette;
     private final TonalPalette primaryPalette;
 
-    private YiliColorScheme(@NonNull ColorSchemeSpec spec, int[] colors,
-                            TonalPalette neutralPalette, TonalPalette primaryPalette) {
+    private YiliColorScheme(@NonNull ColorSchemeSpec spec, int[] colors, TonalPalette neutralPalette,
+                            TonalPalette neutralVariantPalette, TonalPalette primaryPalette) {
         this.spec = spec;
         this.colors = colors;
         this.neutralPalette = neutralPalette;
+        this.neutralVariantPalette = neutralVariantPalette;
         this.primaryPalette = primaryPalette;
     }
 
@@ -52,7 +54,8 @@ public final class YiliColorScheme {
         if (spec.dark && spec.amoled) {
             applyAmoled(colors, scheme.neutralPalette);
         }
-        return new YiliColorScheme(spec, colors, scheme.neutralPalette, scheme.primaryPalette);
+        return new YiliColorScheme(spec, colors, scheme.neutralPalette, scheme.neutralVariantPalette,
+                scheme.primaryPalette);
     }
 
     static DynamicScheme createDynamicScheme(ColorSchemeSpec spec) {
@@ -100,6 +103,12 @@ public final class YiliColorScheme {
     @ColorInt
     public int neutralTone(int tone) {
         return neutralPalette.tone(tone);
+    }
+
+    /** Arbitrary tone (0..100) of the neutral variant palette (slightly tinted greys). */
+    @ColorInt
+    public int neutralVariantTone(int tone) {
+        return neutralVariantPalette.tone(tone);
     }
 
     /** Arbitrary tone (0..100) of the primary palette. */

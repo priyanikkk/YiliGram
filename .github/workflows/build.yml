@@ -47,6 +47,12 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      - name: Check M3 theme bridge keys
+        run: python3 tools/check_theme_keys.py
+
+      - name: Design system unit tests
+        run: ./gradlew --no-daemon :yili-design:testDebugUnitTest
+
       - name: Decide build type
         id: mode
         env:
