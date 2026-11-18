@@ -8,7 +8,6 @@ It includes the following components:
 | Telegram for Android | https://github.com/DrKLO/Telegram | GPL-2.0-or-later (`LICENSE.upstream-GPL-2.0`) |
 | Native libraries bundled by Telegram (FFmpeg, libvpx, dav1d, Opus, libyuv, OpenH264, BoringSSL, WebRTC, TDLib parts, rlottie, SQLite, …) | git submodules under `TMessagesProj/jni` | see each submodule's license file |
 | Google Sans Flex font | https://github.com/googlefonts/googlesans-flex | SIL Open Font License 1.1 (`branding/fonts/OFL.txt`); "Google Sans" is a trademark of Google LLC (`branding/fonts/TRADEMARKS.md`) |
-
 | material-color-utilities (Java) | https://github.com/material-foundation/material-color-utilities | Apache-2.0 (`yili-design/src/main/java/com/yiligram/design/mcu/LICENSE`) |
 | androidx.graphics:graphics-shapes | https://developer.android.com/jetpack/androidx/releases/graphics | Apache-2.0 |
 | Chaquopy (Python on Android) | https://github.com/chaquo/chaquopy | MIT |

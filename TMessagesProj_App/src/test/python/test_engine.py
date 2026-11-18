@@ -141,3 +141,30 @@ class EngineTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(os.environ.get("YILI_NETWORK_TESTS") == "1", "needs network (YILI_NETWORK_TESTS=1)")
+class PipTest(unittest.TestCase):
+    def setUp(self):
+        import yili_pip
+        self.pip = yili_pip
+        self.libs = tempfile.mkdtemp()
+        yili_pip.init(self.libs)
+
+    def tearDown(self):
+        sys.path.remove(self.libs)
+        shutil.rmtree(self.libs)
+
+    def test_install_import_release(self):
+        self.pip.install(["tinydb>=4"], "demo")
+        import importlib
+        importlib.invalidate_caches()
+        tinydb = importlib.import_module("tinydb")
+        self.assertTrue(hasattr(tinydb, "TinyDB"))
+        self.assertIn("tinydb", self.pip.release("demo"))
+        self.assertFalse(any(n.startswith("tinydb") for n in os.listdir(self.libs)))
+
+    def test_rejects_c_extension_only_package(self):
+        with self.assertRaises(self.pip.PipError) as ctx:
+            self.pip.install(["numpy"], "demo")
+        self.assertIn("No pure-Python wheel", str(ctx.exception))

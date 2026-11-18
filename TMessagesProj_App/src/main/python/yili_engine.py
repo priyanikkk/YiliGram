@@ -152,6 +152,8 @@ def init(plugins_dir: str, bridge=None, developer_mode: bool = False) -> str:
     _bridge = bridge
     log_utils.developer_mode = bool(developer_mode)
     os.makedirs(os.path.join(_dir, "settings"), exist_ok=True)
+    import yili_pip
+    yili_pip.init(os.path.join(_dir, "libs"))
     try:
         with open(_state_path(), encoding="utf-8") as f:
             _state.update(json.load(f))
@@ -212,16 +214,13 @@ def compatibility_error(meta: Dict[str, Any]) -> Optional[str]:
         return f"Needs app version {meta.get('app_version')}"
     if not check_version(meta.get("sdk_version"), SDK_VERSION):
         return f"Needs SDK {meta.get('sdk_version')}"
-    missing = []
-    for req in meta.get("requirements", []):
-        mod = re.split(r"[<>=!~\[; ]", req, 1)[0].strip().replace("-", "_").lower()
-        aliases = {"pyyaml": "yaml", "pillow": "PIL", "beautifulsoup4": "bs4"}
+    requirements = meta.get("requirements", [])
+    if requirements:
+        import yili_pip
         try:
-            __import__(aliases.get(mod, mod))
-        except Exception:
-            missing.append(req)
-    if missing:
-        return "Missing packages: " + ", ".join(missing)
+            yili_pip.install(requirements, meta["id"], _logger)
+        except Exception as e:
+            return str(e)
     return None
 
 
@@ -341,6 +340,11 @@ def install(path: str) -> str:
 
 def delete(plugin_id: str):
     unload(plugin_id)
+    try:
+        import yili_pip
+        yili_pip.release(plugin_id)
+    except Exception:
+        _logger.exception("could not release requirements of %s", plugin_id)
     rec = _plugins.pop(plugin_id, None)
     if rec:
         try:
