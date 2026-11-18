@@ -11749,4 +11749,8 @@
     <string name="YiliPluginSettings">Plugin settings</string>
     <string name="YiliPluginNoSettings">This plugin has no settings.</string>
     <string name="YiliPluginBy">by %1$s</string>
+    <string name="YiliPluginInstallTitle">Install plugin?</string>
+    <string name="YiliPluginInstall">Install</string>
+    <string name="YiliPluginUpdate">Update</string>
+    <string name="YiliPluginUpdateFrom">Update from version %1$s</string>
 </resources>

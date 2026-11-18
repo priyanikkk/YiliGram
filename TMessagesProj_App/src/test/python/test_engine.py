@@ -121,6 +121,16 @@ class EngineTest(unittest.TestCase):
         self.assertEqual(report["safe_mode_disabled"], "hello_command")
         self.assertFalse(engine._state["enabled"]["hello_command"])
 
+    def test_inspect_does_not_install(self):
+        meta = json.loads(engine.inspect(os.path.join(EXAMPLES, "ghost_typing.plugin")))
+        self.assertEqual(meta["id"], "ghost_typing")
+        self.assertIsNone(meta["error"])
+        self.assertIsNone(meta["installed_version"])
+        self.assertNotIn("ghost_typing", engine._plugins)
+        self.install("ghost_typing.plugin")
+        meta = json.loads(engine.inspect(os.path.join(EXAMPLES, "ghost_typing.plugin")))
+        self.assertEqual(meta["installed_version"], "1.0")
+
     def test_duplicate_id_prefers_installed_file(self):
         self.install("hello_command.plugin")
         stray = os.path.join(self.dir, "zzz_copy.py")

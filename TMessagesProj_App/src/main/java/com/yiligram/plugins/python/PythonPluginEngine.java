@@ -171,6 +171,13 @@ public final class PythonPluginEngine implements PluginEngine {
 
     @NonNull
     @Override
+    public String inspect(@NonNull File file) {
+        PyObject e = engine;
+        return e == null ? "{\"error\":\"Plugin engine is not running\"}" : e.callAttr("inspect", file.getAbsolutePath()).toString();
+    }
+
+    @NonNull
+    @Override
     public String settingsJson(@NonNull String id) {
         PyObject e = engine;
         return e == null ? "[]" : e.callAttr("settings_json", id).toString();

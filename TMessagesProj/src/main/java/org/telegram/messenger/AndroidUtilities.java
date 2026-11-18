@@ -4361,6 +4361,10 @@ public class AndroidUtilities {
     }
 
     public static boolean openForView(File f, String fileName, String mimeType, final Activity activity, Theme.ResourcesProvider resourcesProvider, boolean restrict) {
+        // YILI: .plugin files from chats open the plugin installer
+        if (f != null && f.exists() && activity != null && com.yiligram.ui.PluginInstallPrompt.handle(activity, f, fileName != null ? fileName : f.getName(), resourcesProvider)) {
+            return true;
+        }
         if (f != null && f.exists()) {
             String realMimeType = null;
             Intent intent = new Intent(Intent.ACTION_VIEW);

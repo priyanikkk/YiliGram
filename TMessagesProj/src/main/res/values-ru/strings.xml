@@ -335,4 +335,8 @@
     <string name="YiliPluginSettings">Настройки плагина</string>
     <string name="YiliPluginNoSettings">У этого плагина нет настроек.</string>
     <string name="YiliPluginBy">автор: %1$s</string>
+    <string name="YiliPluginInstallTitle">Установить плагин?</string>
+    <string name="YiliPluginInstall">Установить</string>
+    <string name="YiliPluginUpdate">Обновить</string>
+    <string name="YiliPluginUpdateFrom">Обновление с версии %1$s</string>
 </resources>

@@ -60,6 +60,10 @@ public interface PluginEngine {
 
     void delete(@NonNull String id);
 
+    /** Plugin metadata (JSON: id, name, version, author, description, error, installed_version), nothing runs. */
+    @NonNull
+    String inspect(@NonNull File file);
+
     /**
      * JSON array describing the plugin's create_settings() items: {kind, text, subtext, key,
      * value, items, hint, accent, red, clickable}. kind: header, divider, switch, selector,

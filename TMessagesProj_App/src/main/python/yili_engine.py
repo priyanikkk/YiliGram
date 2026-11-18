@@ -315,6 +315,18 @@ def set_enabled(plugin_id: str, enabled: bool) -> Optional[str]:
     return None
 
 
+def inspect(path: str) -> str:
+    """Metadata of a plugin file without installing or running it (JSON, with "error")."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            meta = parse_metadata(f.read())
+    except Exception as e:
+        return json.dumps({"error": f"Not a valid plugin: {e}"})
+    meta["error"] = validate_metadata(meta)
+    meta["installed_version"] = str(_plugins[meta["id"]]["meta"].get("version")) if meta.get("id") in _plugins else None
+    return json.dumps(meta, default=str)
+
+
 def install(path: str) -> str:
     """Copies a plugin file into the plugins dir. Returns JSON {id, error, updated}."""
     with open(path, encoding="utf-8") as f:
