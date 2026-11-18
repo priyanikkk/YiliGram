@@ -100,8 +100,11 @@ def analyze(path: str, exports: Dict[str, Set[str]]) -> Dict:
                 if name not in own and name not in attrs and name not in exports.get("BasePlugin", set()) \
                         and not name.startswith("_"):
                     report["missing_methods"].add(name)
-    if re.search(r"com\.exteragram\.", src):
-        report["notes"].append("references com.exteragram.* classes")
+    shimmed = ("com.exteragram.messenger.plugins", "com.exteragram.messenger.plugins.ui")
+    other = sorted({m for m in re.findall(r"com\.exteragram\.[A-Za-z0-9_.]+", src)
+                    if not any(m == s or m.startswith(s + ".") and m.count(".") == s.count(".") + 1 for s in shimmed)})
+    if other:
+        report["notes"].append("uses exteraGram internals: " + ", ".join(other[:4]) + (" …" if len(other) > 4 else ""))
     return report
 
 

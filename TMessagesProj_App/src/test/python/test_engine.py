@@ -131,6 +131,15 @@ class EngineTest(unittest.TestCase):
         meta = json.loads(engine.inspect(os.path.join(EXAMPLES, "ghost_typing.plugin")))
         self.assertEqual(meta["installed_version"], "1.0")
 
+    def test_exteragram_plugin_manager_shim(self):
+        self.install("hello_command.plugin")
+        from com.exteragram.messenger.plugins import PluginsController  # served by yili_extera_compat
+        pc = PluginsController.getInstance()
+        self.assertEqual(pc.plugins.get("hello_command").getName(), "Hello command")
+        self.assertIsNone(pc.plugins.get("nope"))
+        self.assertTrue(pc.setPluginEnabled("hello_command", True))
+        self.assertTrue(pc.isPluginEnabled("hello_command"))
+
     def test_duplicate_id_prefers_installed_file(self):
         self.install("hello_command.plugin")
         stray = os.path.join(self.dir, "zzz_copy.py")

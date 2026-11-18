@@ -154,6 +154,8 @@ def init(plugins_dir: str, bridge=None, developer_mode: bool = False) -> str:
     os.makedirs(os.path.join(_dir, "settings"), exist_ok=True)
     import yili_pip
     yili_pip.init(os.path.join(_dir, "libs"))
+    import yili_extera_compat
+    yili_extera_compat.install()
     try:
         with open(_state_path(), encoding="utf-8") as f:
             _state.update(json.load(f))
