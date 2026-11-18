@@ -205,6 +205,7 @@ def scan():
             if validate_metadata(meta):
                 continue
             pid = meta["id"]
+            meta["warning"] = _static_warning(path)
             if pid in found and os.path.basename(found[pid]["path"]) == pid + ".plugin":
                 continue  # duplicate id: the installed <id>.plugin wins over stray copies
             old = _plugins.get(pid, {})
@@ -217,6 +218,19 @@ def scan():
             unload(pid)
         _plugins.clear()
         _plugins.update(found)
+
+
+def _static_warning(path: str) -> Optional[str]:
+    """Features this build cannot provide yet, found with ast (the plugin still loads)."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            tree = ast.parse(f.read())
+    except Exception:
+        return None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute) and node.attr in ("hook_method", "hook_all_methods", "hook_all_constructors"):
+            return "Uses Java method hooks, which this YiliGram build does not support yet: some features may not work"
+    return None
 
 
 def compatibility_error(meta: Dict[str, Any]) -> Optional[str]:
@@ -392,7 +406,7 @@ def list_plugins() -> str:
             "id": pid, "name": m.get("name"), "description": m.get("description"),
             "author": m.get("author"), "version": str(m.get("version")), "icon": m.get("icon"),
             "enabled": bool(_state["enabled"].get(pid)), "loaded": rec.get("instance") is not None,
-            "error": _state["errors"].get(pid), "has_settings": _has_settings(rec),
+            "error": _state["errors"].get(pid), "warning": m.get("warning"), "has_settings": _has_settings(rec),
             "category": m.get("category"),
         })
     return json.dumps(out)

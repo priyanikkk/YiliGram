@@ -40,6 +40,8 @@ public interface PluginEngine {
         public boolean loaded;
         public boolean hasSettings;
         @Nullable public String error;
+        /** Non-fatal: features the plugin uses that this build does not support. */
+        @Nullable public String warning;
     }
 
     /** Starts the runtime and loads enabled plugins (background thread). */

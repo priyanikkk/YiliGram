@@ -93,6 +93,8 @@ public class PluginsActivity extends UniversalFragment {
             String sub;
             if (!TextUtils.isEmpty(p.error)) {
                 sub = "⚠ " + p.error;
+            } else if (!TextUtils.isEmpty(p.warning)) {
+                sub = "v" + p.version + "\nⓘ " + p.warning;
             } else {
                 sub = "v" + p.version + (TextUtils.isEmpty(p.author) ? "" : " · " + formatString(R.string.YiliPluginBy, p.author))
                         + (TextUtils.isEmpty(p.description) ? "" : "\n" + p.description);

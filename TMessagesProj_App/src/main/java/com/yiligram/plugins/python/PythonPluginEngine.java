@@ -125,6 +125,7 @@ public final class PythonPluginEngine implements PluginEngine {
                 p.loaded = o.optBoolean("loaded");
                 p.hasSettings = o.optBoolean("has_settings");
                 p.error = o.isNull("error") ? null : o.optString("error");
+                p.warning = o.isNull("warning") ? null : o.optString("warning");
                 list.add(p);
             }
         } catch (Throwable t) {
