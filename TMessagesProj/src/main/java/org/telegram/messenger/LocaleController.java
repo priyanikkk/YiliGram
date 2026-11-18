@@ -4781,6 +4781,12 @@ public class LocaleController {
 
     @Nullable
     private String getStringV2(String key, @StringRes int stringRes, String fallback) {
+        // YILI: "Telegram" → "YiliGram" where the string names the app, see YiliStrings.
+        return com.yiligram.branding.YiliStrings.rebrand(ApplicationLoader.applicationContext, key, stringRes,
+                getStringV2Upstream(key, stringRes, fallback));
+    }
+
+    private String getStringV2Upstream(String key, @StringRes int stringRes, String fallback) {
         final Context context = ApplicationLoader.applicationContext;
         String value;
 
