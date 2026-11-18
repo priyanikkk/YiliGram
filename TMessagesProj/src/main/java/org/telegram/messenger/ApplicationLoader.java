@@ -301,6 +301,11 @@ public class ApplicationLoader extends Application {
             return;
         }
 
+        // YILI: settings and design tokens must be ready before Theme's static initializer runs.
+        // (After the isolated widget process returns: it has no SharedPreferences.)
+        com.yiligram.config.YiliConfig.init(this);
+        com.yiligram.config.YiliAppearance.applyTokens();
+
         // AndroidUtilities must be initialized before FileLog
         final String helloWorld = AndroidUtilities.getHelloWorld();
 
