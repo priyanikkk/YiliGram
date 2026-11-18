@@ -175,6 +175,14 @@ def init(plugins_dir: str, bridge=None, developer_mode: bool = False) -> str:
     for pid in list(_plugins):
         if _state["enabled"].get(pid):
             load(pid)
+    if developer_mode:
+        try:
+            import yili_devserver
+            yili_devserver.start()
+            report["dev_server"] = yili_devserver.PORT
+        except Exception as e:
+            _logger.exception("dev server failed to start")
+            report["dev_server_error"] = str(e)
     return json.dumps(report)
 
 

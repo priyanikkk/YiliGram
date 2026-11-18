@@ -168,3 +168,30 @@ class PipTest(unittest.TestCase):
         with self.assertRaises(self.pip.PipError) as ctx:
             self.pip.install(["numpy"], "demo")
         self.assertIn("No pure-Python wheel", str(ctx.exception))
+
+
+class DevServerTest(unittest.TestCase):
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        engine._plugins.clear()
+        engine._hooks.clear()
+        engine._send_hooks.clear()
+        engine._state = {"enabled": {}, "loading": None, "errors": {}}
+        engine.init(self.dir)
+        import yili_devserver
+        self.dev = yili_devserver
+
+    def tearDown(self):
+        shutil.rmtree(self.dir)
+
+    def test_protocol(self):
+        self.assertTrue(self.dev.handle({"@": "ping", "#": "1"})["pong"])
+        with open(os.path.join(EXAMPLES, "hello_command.plugin"), encoding="utf-8") as f:
+            res = self.dev.handle({"@": "write_plugin", "#": "2", "content": f.read()})
+        self.assertTrue(res["success"], res)
+        self.assertEqual(res["#"], "2")
+        plugins = self.dev.handle({"@": "get_plugins", "#": "3"})["plugins"]
+        self.assertTrue(plugins[0]["enabled"])
+        self.assertTrue(self.dev.handle({"@": "reload_plugin", "#": "4", "plugin_id": "hello_command"})["success"])
+        self.assertTrue(self.dev.handle({"@": "remove_plugin", "#": "5", "plugin_id": "hello_command"})["success"])
+        self.assertIn("Unknown command", self.dev.handle({"@": "nope", "#": "6"})["error"])

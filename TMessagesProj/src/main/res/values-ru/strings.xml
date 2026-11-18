@@ -326,7 +326,7 @@
     <string name="YiliPluginsInstalled">Плагин %1$s установлен</string>
     <string name="YiliPluginsInstallFailed">Не удалось установить: %1$s</string>
     <string name="YiliPluginsDevMode">Режим разработчика</string>
-    <string name="YiliPluginsDevModeInfo">Подробные логи плагинов</string>
+    <string name="YiliPluginsDevModeInfo">Подробные логи и dev-сервер на порту 42690. К нему может подключиться любое приложение на телефоне — выключайте, когда не разрабатываете.</string>
     <string name="YiliPluginsWarning">Плагины получают полный доступ к аккаунту. Устанавливайте только те, которым доверяете.</string>
     <string name="YiliPluginsList">Установленные</string>
     <string name="YiliPluginsStarting">Запуск движка плагинов…</string>

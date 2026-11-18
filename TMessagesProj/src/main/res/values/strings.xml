@@ -11740,7 +11740,7 @@
     <string name="YiliPluginsInstalled">Plugin %1$s installed</string>
     <string name="YiliPluginsInstallFailed">Could not install: %1$s</string>
     <string name="YiliPluginsDevMode">Developer mode</string>
-    <string name="YiliPluginsDevModeInfo">Verbose plugin logs</string>
+    <string name="YiliPluginsDevModeInfo">Verbose logs and the dev server on port 42690. Any app on this phone can reach it — turn off when not developing.</string>
     <string name="YiliPluginsWarning">Plugins run with full access to your account. Install only plugins you trust.</string>
     <string name="YiliPluginsList">Installed</string>
     <string name="YiliPluginsStarting">Starting the plugin engine…</string>
