@@ -1,46 +1,104 @@
-## Telegram messenger for Android
+# YiliGram
 
-[Telegram](https://telegram.org) is a messaging app with a focus on speed and security. It’s superfast, simple and free.
-This repo contains the official source code for [Telegram App for Android](https://play.google.com/store/apps/details?id=org.telegram.messenger).
+YiliGram is an **unofficial** Telegram client for Android, based on the official
+[Telegram for Android](https://github.com/DrKLO/Telegram) source code. It uses the
+[Telegram API](https://core.telegram.org/api) but is not affiliated with or endorsed by Telegram.
 
-## Creating your Telegram Application
+Goals:
 
-We welcome all developers to use our API and source code to create applications on our platform.
-There are several things we require from **all developers** for the moment.
+- **Material 3 Expressive** design: dynamic color, expressive shapes, spring motion.
+- **Deep customization**: colors, shapes, fonts, density, motion, navigation and more, in one place.
+- **Plugins**: a Python plugin engine compatible with exteraGram plugins.
 
-1. [**Obtain your own api_id**](https://core.telegram.org/api/obtaining_api_id) for your application.
-2. Please **do not** use the name Telegram for your app — or make sure your users understand that it is unofficial.
-3. Kindly **do not** use our standard logo (white paper plane in a blue circle) as your app's logo.
-3. Please study our [**security guidelines**](https://core.telegram.org/mtproto/security_guidelines) and take good care of your users' data and privacy.
-4. Please remember to publish **your** code too in order to comply with the licences.
+See [PLAN.md](PLAN.md) for the roadmap and architecture.
 
-### API, Protocol documentation
+> Status: early development (stage 1: fork, rebranding, build). Not ready for daily use.
 
-Telegram API manuals: https://core.telegram.org/api
+## Building
 
-MTproto protocol manuals: https://core.telegram.org/mtproto
+### Requirements
 
-### Compilation Guide
+| Tool | Version |
+|---|---|
+| JDK | 21 |
+| Android SDK | platform 36, build-tools 36.0.0 |
+| Android NDK | 27.2.12479018 |
+| CMake | 3.22.1 (from the SDK manager) |
 
-**Note**: In order to support [reproducible builds](https://core.telegram.org/reproducible-builds), this repo contains dummy release.keystore,  google-services.json and filled variables inside BuildVars.java. Before publishing your own APKs please make sure to replace all these files with your own.
+The native part (MTProto, media codecs, VoIP) is compiled from source, so a full build
+takes 30–60 minutes the first time and needs ~15 GB of disk space.
 
-You will require Android Studio 2025.1.4, Android NDK 27.2.12479018 and Android SDK 36.
+### Steps
 
-1. Clone the Telegram source code with its submodules:
+1. Clone with submodules:
    ```bash
-   git clone --recursive --shallow-submodules https://github.com/DrKLO/Telegram.git Telegram
+   git clone --recursive --shallow-submodules https://github.com/yiligram/YiliGram.git
    ```
-   In case you forgot the `--recursive` flag, change to the `Telegram` directory and run:
+   For an existing clone: `git submodule update --init --recursive --depth 1`.
+2. Get your own `api_id` and `api_hash` at <https://my.telegram.org> (API development tools).
+3. Copy `local.properties.example` to `local.properties` and fill in `sdk.dir`,
+   `yili.apiId` and `yili.apiHash`. Environment variables `YILI_API_ID` / `YILI_API_HASH`
+   work too. **Never commit these values.**
+4. Build a debug APK:
    ```bash
-   git submodule init && git submodule update --init --recursive --depth=1
+   ./gradlew :TMessagesProj_App:assembleAfatDebug
    ```
-2. Copy your release.keystore into TMessagesProj/config
-3. Fill out RELEASE_KEY_PASSWORD, RELEASE_KEY_ALIAS, RELEASE_STORE_PASSWORD in gradle.properties to access your  release.keystore
-4.  Go to https://console.firebase.google.com/, create two android apps with application IDs org.telegram.messenger and org.telegram.messenger.beta, turn on firebase messaging and download google-services.json, which should be copied to the same folder as TMessagesProj.
-5. Open the project in the Studio (note that it should be opened, NOT imported).
-6. Fill out values in TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java – there’s a link for each of the variables showing where and which data to obtain.
-7. You are ready to compile Telegram.
+   To speed up local builds, compile native code for one ABI only:
+   `./gradlew -PyiliAbis=arm64-v8a :TMessagesProj_App:assembleAfatDebug`.
+   The APK is written to `TMessagesProj_App/build/outputs/apk/afat/debug/`.
 
-### Localization
+### Release signing
 
-We moved all translations to https://translations.telegram.org/en/android/. Please use it.
+Debug builds are signed with the standard Android debug key. For release builds, create a
+keystore and describe it in `keystore.properties` (see `keystore.properties.example`; the
+file and `*.jks` are git-ignored), then run:
+
+```bash
+./gradlew :TMessagesProj_App:assembleAfatRelease
+```
+
+Without `keystore.properties` (or the `YILI_KEYSTORE_*` environment variables) the
+release APK is left unsigned.
+
+### Continuous integration
+
+`.github/workflows/build.yml` builds a debug APK on every push and pull request, and a
+signed release APK for `v*` tags (published as a GitHub release). It needs these
+repository secrets: `YILI_API_ID`, `YILI_API_HASH`, `YILI_KEYSTORE_BASE64`,
+`YILI_KEYSTORE_PASSWORD`, `YILI_KEY_ALIAS`, `YILI_KEY_PASSWORD`.
+
+### Branding assets
+
+Launcher, monochrome (themed), notification and splash icons are generated from
+`branding/logo.png`, and the wordmark from `branding/fonts/GoogleSansFlex.ttf`:
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r tools/branding/requirements.txt
+.venv/bin/python tools/branding/gen_icons.py
+.venv/bin/python tools/branding/gen_wordmark.py
+```
+
+## Notifications
+
+YiliGram does not use Firebase Cloud Messaging. Until UnifiedPush support lands,
+notifications are delivered through Telegram's background connection (like on devices
+without Google Play Services).
+
+## License
+
+YiliGram is free software: you can redistribute it and/or modify it under the terms of the
+**GNU General Public License, version 3 or (at your option) any later version**
+([LICENSE](LICENSE)).
+
+Telegram for Android is licensed under the GNU GPL version 2 or later
+([LICENSE.upstream-GPL-2.0](LICENSE.upstream-GPL-2.0)); YiliGram uses the "or later"
+option. The source code of every YiliGram release must stay publicly available.
+Third-party components and their licenses are listed in [NOTICE.md](NOTICE.md).
+
+## Telegram API Terms of Service
+
+YiliGram follows the [Telegram API Terms of Service](https://core.telegram.org/api/terms):
+it uses its own `api_id`, does not use the name "Telegram" or the Telegram logo as its own
+name or logo, and tells users that it is an unofficial client built on the Telegram API.
+If you build and distribute your own version, you are responsible for complying with these
+terms, starting with obtaining your own `api_id`.
