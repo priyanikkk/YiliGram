@@ -72,7 +72,10 @@ public final class YiliStrings {
         if (value == null || value.indexOf("Telegram") < 0 || !refersToApp(context, key, res)) {
             return value;
         }
-        return value.replace("Telegram", "YiliGram");
+        // Only the first mention names the app; later ones are about the service, e.g.
+        // ContactsPermissionAlert: "YiliGram needs access ... synced with Telegram's cloud servers".
+        int i = value.indexOf("Telegram");
+        return value.substring(0, i) + "YiliGram" + value.substring(i + "Telegram".length());
     }
 
     private static boolean refersToApp(Context context, String key, int res) {

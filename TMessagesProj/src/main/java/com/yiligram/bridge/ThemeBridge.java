@@ -54,6 +54,8 @@ public final class ThemeBridge {
 
     private static int[] referenceLight;
     private static int[] referenceDark;
+    /** Keys defined by the dark reference file; the others follow Theme's fallback keys. */
+    private static SparseIntArray referenceDarkDefined;
     private static final Map<ColorSchemeSpec, SparseIntArray> cache = new HashMap<>();
 
     private ThemeBridge() {
@@ -126,6 +128,9 @@ public final class ThemeBridge {
             out.put(key, transfer(ref[key], outgoing, s, primary));
         }
         RoleOverrides.apply(out, s, names);
+        if (s.spec.dark) {
+            applyFallbacks(out, referenceDarkDefined, ref.length);
+        }
         if (cache.size() > 8) {
             cache.clear();
         }
@@ -133,11 +138,43 @@ public final class ThemeBridge {
         return out;
     }
 
+    /**
+     * Like Telegram itself: a key the dark reference file does not define takes the (already
+     * bridged) value of its fallback key, e.g. glass_tabUnselected → windowBackgroundWhiteBlackText.
+     * Otherwise such keys would keep light-theme defaults (dark text on dark surfaces).
+     */
+    private static void applyFallbacks(SparseIntArray out, SparseIntArray defined, int count) {
+        if (defined == null) {
+            return;
+        }
+        for (int key = 0; key < count; key++) {
+            if (defined.indexOfKey(key) >= 0 || RoleOverrides.isOverridden(key)) {
+                continue;
+            }
+            int target = key;
+            // Follow chains (a → b → c) up to a defined or overridden key.
+            for (int depth = 0; depth < 8; depth++) {
+                int next = Theme.getFallbackKey(target); // 0 = no fallback
+                if (next <= 0) {
+                    break;
+                }
+                target = next;
+                if (defined.indexOfKey(target) >= 0 || RoleOverrides.isOverridden(target)) {
+                    break;
+                }
+            }
+            if (target != key && out.indexOfKey(target) >= 0) {
+                out.put(key, out.get(target));
+            }
+        }
+    }
+
     private static int[] reference(boolean dark) {
         if (dark) {
             if (referenceDark == null) {
                 int[] r = ThemeColors.createDefaultColors();
                 SparseIntArray night = Theme.getThemeFileValues(null, REFERENCE_DARK_ASSET, null);
+                referenceDarkDefined = night;
                 for (int i = 0; i < night.size(); i++) {
                     int key = night.keyAt(i);
                     if (key >= 0 && key < r.length) {

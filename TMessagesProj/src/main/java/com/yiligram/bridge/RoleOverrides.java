@@ -332,6 +332,12 @@ final class RoleOverrides {
     }
 
     private static Map<String, Integer> keysByName;
+    /** Theme keys that have an override; filled on first {@link #apply}. */
+    private static final android.util.SparseBooleanArray overridden = new android.util.SparseBooleanArray();
+
+    static boolean isOverridden(int key) {
+        return overridden.get(key);
+    }
 
     private RoleOverrides() {
     }
@@ -354,6 +360,7 @@ final class RoleOverrides {
                 }
                 continue;
             }
+            overridden.put(key, true);
             int color = s.get(dark ? rule.dark : rule.light);
             if (rule.alpha < 1f) {
                 int a = Math.round(((color >>> 24) & 0xFF) * rule.alpha);
