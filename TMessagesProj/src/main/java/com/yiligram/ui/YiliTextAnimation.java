@@ -182,10 +182,25 @@ public final class YiliTextAnimation implements TextWatcher {
             paint.setMaskFilter(mf);
             paint.setAlpha(a);
             canvas.restore();
-            if (v != null) {
-                v.postInvalidateOnAnimation();
+            if (v != null && !frameScheduled) {
+                // TextView caches drawn text per block (hardware display lists) and redraws a block only
+                // when its text or spans change, so a plain invalidate() froze the animation on real
+                // devices. Re-setting this span marks its block dirty for the next frame.
+                frameScheduled = true;
+                v.postOnAnimation(() -> {
+                    frameScheduled = false;
+                    if (v.getText() instanceof Spannable) {
+                        Spannable sp = (Spannable) v.getText();
+                        int s0 = sp.getSpanStart(this), s1 = sp.getSpanEnd(this);
+                        if (s0 >= 0 && s1 > s0) {
+                            sp.setSpan(this, s0, s1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                    }
+                });
             }
         }
+
+        private boolean frameScheduled;
 
         /** 0..1 with a ~8% overshoot near the end (back-out). */
         private static float overshoot(float t) {

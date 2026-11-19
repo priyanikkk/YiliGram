@@ -392,7 +392,7 @@
     <string name="YiliUpdateAuto">Проверять обновления при запуске</string>
     <string name="YiliUpdateCheck">Проверить обновления</string>
     <string name="YiliUpdateChecking">Проверяю обновления…</string>
-    <string name="YiliUpdateInfo">Новые версии берутся с %1$s. Обновление скачивается и устанавливается прямо из приложения.</string>
+    <string name="YiliUpdateInfo">Новые версии приходят в «Избранное» (tools/release/publish.sh) или берутся с %1$s. Обновление скачивается и устанавливается прямо из приложения.</string>
     <string name="YiliM3Controls">Элементы Material 3</string>
     <string name="YiliM3ControlsInfo">Переключатели и слайдеры в стиле Material 3</string>
     <string name="YiliBubbleTails">Хвостики у пузырей</string>

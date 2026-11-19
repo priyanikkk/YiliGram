@@ -95,8 +95,23 @@ public final class YiliUpdater {
         return m.find() ? "https://api.github.com/repos/" + m.group(1) + "/" + m.group(2) + "/releases/latest" : null;
     }
 
+    /** Telegram (Saved Messages) is always available; GitHub when YILI_RELEASES_URL is a repo. */
     public static boolean isConfigured() {
-        return apiUrl() != null;
+        return true;
+    }
+
+    private final TelegramUpdateSource telegram = new TelegramUpdateSource();
+    {
+        telegram.onChanged = () -> {
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
+            if (telegram.file != null) {
+                openInstaller();
+            }
+        };
+    }
+
+    private boolean useTelegram() {
+        return telegram.hasUpdate();
     }
 
     static String currentVersion() {
@@ -120,6 +135,9 @@ public final class YiliUpdater {
     }
 
     public BetaUpdate getUpdate() {
+        if (useTelegram()) {
+            return new BetaUpdate(telegram.versionName, telegram.versionCode, telegram.notes);
+        }
         if (version == null) {
             return null;
         }
@@ -128,6 +146,20 @@ public final class YiliUpdater {
     }
 
     public void checkForUpdate(boolean force, Runnable whenDone) {
+        final boolean hadTelegram = useTelegram();
+        telegram.check(() -> {
+            if (useTelegram() != hadTelegram) {
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
+            }
+            if (useTelegram()) {
+                if (whenDone != null) whenDone.run();
+            } else {
+                checkGitHub(force, whenDone);
+            }
+        });
+    }
+
+    private void checkGitHub(boolean force, Runnable whenDone) {
         final String url = apiUrl();
         if (url == null || checking) {
             if (whenDone != null) whenDone.run();
@@ -214,6 +246,14 @@ public final class YiliUpdater {
     }
 
     public void downloadUpdate() {
+        if (useTelegram()) {
+            if (telegram.file != null) {
+                openInstaller();
+            } else {
+                telegram.download();
+            }
+            return;
+        }
         if (downloading || fileUrl == null) return;
         if (getDownloadedFile() != null) {
             openInstaller();
@@ -247,6 +287,10 @@ public final class YiliUpdater {
     }
 
     public void cancelDownload() {
+        if (useTelegram()) {
+            telegram.cancel();
+            return;
+        }
         if (!downloading) return;
         if (downloadTask != null) downloadTask.cancel(false);
         downloading = false;
@@ -254,14 +298,15 @@ public final class YiliUpdater {
     }
 
     public boolean isDownloading() {
-        return downloading;
+        return useTelegram() ? telegram.downloading : downloading;
     }
 
     public float getProgress() {
-        return progress;
+        return useTelegram() ? telegram.progress : progress;
     }
 
     public File getDownloadedFile() {
+        if (useTelegram()) return telegram.file;
         if (path == null) return null;
         File f = new File(path);
         if (!f.exists()) {
