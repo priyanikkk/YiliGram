@@ -703,6 +703,8 @@ public class MessageDrawable extends Drawable {
 
     private void generatePath(Path path, Rect bounds, int padding, int rad, int smallRad, int nearRad, int top, boolean drawFullBottom, boolean drawFullTop, boolean customPaint) {
         path.rewind();
+        // YILI: bubbles without tails (all corners rounded), YiliGram appearance -> Bubbles
+        final boolean noTail = currentType == TYPE_TEXT && !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.BUBBLE_TAILS);
         int heightHalf = (bounds.height() - padding) >> 1;
         if (rad > heightHalf) {
             rad = heightHalf;
@@ -711,7 +713,7 @@ public class MessageDrawable extends Drawable {
             // LEFT-BOTTOM <- RIGHT-BOTTOM
             if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
                 int radToUse = botButtonsBottom ? nearRad : rad;
-                if (currentType == TYPE_MEDIA) {
+                if (currentType == TYPE_MEDIA || noTail) {
                     path.moveTo(bounds.right - dp(8) - radToUse, bounds.bottom - padding);
                 } else {
                     path.moveTo(bounds.right - dp(2.6f), bounds.bottom - padding);
@@ -762,7 +764,12 @@ public class MessageDrawable extends Drawable {
                     path.lineTo(bounds.right - padding, top - topY + currentBackgroundHeight);
                 }
             } else {
-                if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
+                if (noTail && (drawFullBubble || customPaint || drawFullBottom)) {
+                    int radToUse = botButtonsBottom ? nearRad : rad;
+                    path.lineTo(bounds.right - dp(8), bounds.bottom - padding - radToUse);
+                    rect.set(bounds.right - dp(8) - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - dp(8), bounds.bottom - padding);
+                    path.arcTo(rect, 0, 90, false);
+                } else if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
                     path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
                     rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
                     path.arcTo(rect, 180, -83, false);
@@ -774,7 +781,7 @@ public class MessageDrawable extends Drawable {
             if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
                 int radToUse = botButtonsBottom ? nearRad : rad;
 
-                if (currentType == TYPE_MEDIA) {
+                if (currentType == TYPE_MEDIA || noTail) {
                     path.moveTo(bounds.left + dp(8) + radToUse, bounds.bottom - padding);
                 } else {
                     path.moveTo(bounds.left + dp(2.6f), bounds.bottom - padding);
@@ -819,7 +826,12 @@ public class MessageDrawable extends Drawable {
                     path.lineTo(bounds.left + padding, top - topY + currentBackgroundHeight);
                 }
             } else {
-                if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
+                if (noTail && (drawFullBubble || customPaint || drawFullBottom)) {
+                    int radToUse = botButtonsBottom ? nearRad : rad;
+                    path.lineTo(bounds.left + dp(8), bounds.bottom - padding - radToUse);
+                    rect.set(bounds.left + dp(8), bounds.bottom - padding - radToUse * 2, bounds.left + dp(8) + radToUse * 2, bounds.bottom - padding);
+                    path.arcTo(rect, 180, -90, false);
+                } else if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
                     path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
                     rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
                     path.arcTo(rect, 0, 83, false);

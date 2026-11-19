@@ -73,6 +73,8 @@ public final class YiliConfig {
     public static final Key<ColorSpecVersion> COLOR_SPEC = new Key<>("color.spec", ColorSpecVersion.class, ColorSpecVersion.M3_EXPRESSIVE_2025);
 
     // Shape
+    /** Telegram's bubble tails; off = every corner rounded, as in Google Messages. */
+    public static final Key<Boolean> BUBBLE_TAILS = new Key<>("shape.bubbleTails", Boolean.class, true);
     public static final Key<Float> SHAPE_ROUNDNESS = new Key<>("shape.roundness", Float.class, 1f);
 
     // Type

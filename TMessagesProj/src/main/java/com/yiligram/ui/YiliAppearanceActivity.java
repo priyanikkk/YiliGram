@@ -65,6 +65,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_VOICE_ONLY = 15;
     private static final int ID_TAB_LABELS = 16;
     private static final int ID_HEADER_CALL = 17;
+    private static final int ID_BUBBLE_TAILS = 18;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -155,6 +156,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asHeader(getString(R.string.YiliShapeHeader)));
         items.add(UItem.asIntSlideView(1, 0, Math.round(YiliConfig.get(YiliConfig.SHAPE_ROUNDNESS) * 100), 200,
                 val -> val + "%", val -> YiliConfig.set(YiliConfig.SHAPE_ROUNDNESS, val / 100f)));
+        items.add(UItem.asButtonCheck(ID_BUBBLE_TAILS, getString(R.string.YiliBubbleTails), getString(R.string.YiliBubbleTailsInfo))
+                .setChecked(YiliConfig.get(YiliConfig.BUBBLE_TAILS)));
         items.add(UItem.asShadow(null));
 
         // ---- Font
@@ -260,6 +263,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
+                break;
+            case ID_BUBBLE_TAILS:
+                YiliConfig.set(YiliConfig.BUBBLE_TAILS, !YiliConfig.get(YiliConfig.BUBBLE_TAILS));
                 break;
             case ID_HEADER_CALL:
                 YiliConfig.set(YiliConfig.HEADER_CALL_BUTTON, !YiliConfig.get(YiliConfig.HEADER_CALL_BUTTON));

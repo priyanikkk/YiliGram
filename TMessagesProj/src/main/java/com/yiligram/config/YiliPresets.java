@@ -66,6 +66,7 @@ public final class YiliPresets {
                     .with(YiliConfig.SEED_COLOR, 0xFF6750A4)
                     .with(YiliConfig.SCHEME_VARIANT, SchemeVariant.EXPRESSIVE)
                     .with(YiliConfig.SHAPE_ROUNDNESS, 1.5f)
+                    .with(YiliConfig.BUBBLE_TAILS, false)
                     .with(YiliConfig.MOTION_BOUNCE, 1f),
             new Preset("calm", R.string.YiliPresetCalm)
                     .with(YiliConfig.DYNAMIC_COLOR, false)
