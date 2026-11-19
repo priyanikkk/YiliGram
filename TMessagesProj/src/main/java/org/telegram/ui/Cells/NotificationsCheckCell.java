@@ -217,7 +217,8 @@ public class NotificationsCheckCell extends FrameLayout {
             );
         }
         if (drawLine) {
-            int x = LocaleController.isRTL ? dp(76) : getMeasuredWidth() - dp(76) - 1;
+            final int sep = com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_CONTROLS) ? 90 : 76; // YILI: room for the wider M3 switch
+            int x = LocaleController.isRTL ? dp(sep) : getMeasuredWidth() - dp(sep) - 1;
             int y = (getMeasuredHeight() - dp(22)) / 2;
             canvas.drawRect(x, y, x + 2, y + dp(22), Theme.dividerPaint);
         }

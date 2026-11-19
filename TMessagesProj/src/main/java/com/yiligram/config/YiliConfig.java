@@ -74,6 +74,8 @@ public final class YiliConfig {
 
     // Shape
     /** Telegram's bubble tails; off = every corner rounded, as in Google Messages. */
+    /** Material 3 selection controls (switches) instead of Telegram's. */
+    public static final Key<Boolean> M3_CONTROLS = new Key<>("shape.m3Controls", Boolean.class, true);
     public static final Key<Boolean> BUBBLE_TAILS = new Key<>("shape.bubbleTails", Boolean.class, true);
     public static final Key<Float> SHAPE_ROUNDNESS = new Key<>("shape.roundness", Float.class, 1f);
 

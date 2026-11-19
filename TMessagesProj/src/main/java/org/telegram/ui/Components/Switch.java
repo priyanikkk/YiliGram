@@ -376,9 +376,84 @@ public class Switch extends View implements Theme.Colorable {
         invalidate();
     }
 
+    // YILI: Material 3 switch (52x32dp track with outline, thumb grows from 16 to 24dp, check icon).
+    // Drawn over the view's own 37dp box, aligned to its trailing edge; the parent stops clipping it.
+    private final android.graphics.Path m3Check = new android.graphics.Path();
+
+    private boolean drawM3() {
+        return overrideColorProgress == 0 && iconDrawable == null && drawIconType == 0
+                && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_CONTROLS);
+    }
+
+    private void drawM3Switch(Canvas canvas) {
+        final float d = AndroidUtilities.density;
+        final float w = 52 * d, h = 32 * d;
+        final boolean rtl = org.telegram.messenger.LocaleController.isRTL;
+        final float left = rtl ? 0 : getMeasuredWidth() - w;
+        final float top = (getMeasuredHeight() - h) / 2f;
+        final float p = progress;
+        final boolean pressed = isPressed();
+
+        final int trackOff = Theme.getColor(trackColorKey == Theme.key_fill_RedNormal ? Theme.key_switchTrack : trackColorKey, resourcesProvider);
+        final int trackOn = processColor(Theme.getColor(trackCheckedColorKey, resourcesProvider));
+        final int outline = com.yiligram.bridge.ThemeBridge.isYiliTheme(Theme.getActiveTheme().getKey())
+                ? com.yiligram.design.YiliTheme.colors().get(com.yiligram.design.color.ColorRole.OUTLINE)
+                : Theme.getColor(Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
+        final int thumbOn = processColor(Theme.getColor(thumbCheckedColorKey, resourcesProvider));
+
+        // Track: filled, with a 2dp outline that fades out as it turns on.
+        rectF.set(left, top, left + w, top + h);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(androidx.core.graphics.ColorUtils.blendARGB(trackOff, trackOn, p));
+        canvas.drawRoundRect(rectF, h / 2f, h / 2f, paint);
+        if (p < 1f) {
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(2 * d);
+            paint.setColor(androidx.core.graphics.ColorUtils.setAlphaComponent(outline, (int) (Color.alpha(outline) * (1f - p))));
+            rectF.inset(d, d);
+            canvas.drawRoundRect(rectF, h / 2f - d, h / 2f - d, paint);
+            paint.setStyle(Paint.Style.FILL);
+        }
+
+        // Thumb: 16dp off, 24dp on, 28dp while pressed; centered 16dp from the track's ends.
+        final float r = (pressed ? 14 : 8 + 4 * p) * d;
+        final float cx = rtl ? left + w - h / 2f - (w - h) * p : left + h / 2f + (w - h) * p;
+        final float cy = top + h / 2f;
+        paint.setColor(androidx.core.graphics.ColorUtils.blendARGB(outline, thumbOn, p));
+        canvas.drawCircle(cx, cy, r, paint);
+
+        if (rippleDrawable != null) {
+            rippleDrawable.setBounds((int) (cx - 20 * d), (int) (cy - 20 * d), (int) (cx + 20 * d), (int) (cy + 20 * d));
+            rippleDrawable.draw(canvas);
+        }
+
+        // Check icon inside the thumb when on.
+        if (p > 0.5f) {
+            float a = (p - 0.5f) * 2f;
+            paint2.setColor(trackOn);
+            paint2.setAlpha((int) (255 * a));
+            paint2.setStrokeWidth(2 * d);
+            m3Check.rewind();
+            m3Check.moveTo(cx - 5 * d, cy);
+            m3Check.lineTo(cx - 1.5f * d, cy + 3.5f * d);
+            m3Check.lineTo(cx + 5 * d, cy - 3.5f * d);
+            paint2.setStyle(Paint.Style.STROKE);
+            paint2.setStrokeJoin(Paint.Join.ROUND);
+            canvas.drawPath(m3Check, paint2);
+            paint2.setAlpha(255);
+        }
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (getVisibility() != VISIBLE) {
+            return;
+        }
+        if (drawM3()) {
+            if (getParent() instanceof android.view.ViewGroup && ((android.view.ViewGroup) getParent()).getClipChildren()) {
+                ((android.view.ViewGroup) getParent()).setClipChildren(false);
+            }
+            drawM3Switch(canvas);
             return;
         }
 
