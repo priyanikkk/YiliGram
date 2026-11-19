@@ -313,6 +313,10 @@
     <string name="YiliFontWeight">Насиченість</string>
     <string name="YiliFontInfo">Roboto Flex — шрифт Material 3 Expressive. Символи, яких немає у шрифті, малюються системним шрифтом. Зміна шрифту застосовується після перезапуску YiliGram.</string>
     <string name="YiliFontRestart">Перезапустіть YiliGram, щоб застосувати шрифт</string>
+    <string name="YiliNavHeader">Нижні вкладки</string>
+    <string name="YiliNavContacts">Вкладка «Контакти»</string>
+    <string name="YiliNavProfile">Вкладка «Профіль»</string>
+    <string name="YiliNavInfo">Приховані вкладки лишаються доступні: контакти — з меню списку чатів, профіль — з налаштувань.</string>
     <string name="YiliMenusHeader">Меню</string>
     <string name="YiliMenuMessage">Меню повідомлення</string>
     <string name="YiliMenuMessageHeader">Показувати в меню повідомлення</string>

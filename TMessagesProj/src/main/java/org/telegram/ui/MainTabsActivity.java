@@ -287,6 +287,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     @Override
     public void onResume() {
         super.onResume();
+        checkUi_yiliTabs(true); // YILI: tabs hidden in YiliGram settings
         blur3_updateColors();
         checkContactsTabBadge();
         checkUnreadCount(true);
@@ -367,6 +368,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             tabsView.setViewVisible(view, true, false);
         }
         checkUi_callTabVisible(getUserConfig().showCallsTab, false);
+        checkUi_yiliTabs(false); // YILI
 
         selectTab(viewPager.getCurrentPosition(), false);
 
@@ -914,6 +916,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     }
 
     private boolean canScrollInternal(MotionEvent ev, boolean forward) {
+        // YILI: never swipe onto a hidden tab
+        if (viewPager != null) {
+            final int target = viewPager.getCurrentPosition() + (forward ? 1 : -1);
+            if (isYiliHiddenPosition(target)) {
+                return false;
+            }
+        }
         final BaseFragment fragment = getCurrentVisibleFragment();
         if (fragment instanceof TabFragmentDelegate) {
             final TabFragmentDelegate delegate = (TabFragmentDelegate) fragment;
@@ -1106,6 +1115,24 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         tabsView.setEnabled(factor > 1);
         tabsView.setAlpha(factor);
         tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+    }
+
+    // YILI: Contacts and Profile tabs can be hidden (YiliGram appearance -> Navigation)
+    private static boolean isYiliHiddenPosition(int position) {
+        return position == POSITION_CONTACTS && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.HIDE_CONTACTS_TAB)
+                || position == POSITION_PROFILE && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.HIDE_PROFILE_TAB);
+    }
+
+    private void checkUi_yiliTabs(boolean animated) {
+        if (tabsView == null) {
+            return;
+        }
+        tabsView.setViewVisible(tabs[INDEX_CONTACTS], !isYiliHiddenPosition(POSITION_CONTACTS), animated);
+        tabsView.setViewVisible(tabs[INDEX_PROFILE], !isYiliHiddenPosition(POSITION_PROFILE), animated);
+        if (viewPager != null && isYiliHiddenPosition(viewPager.getCurrentPosition())) {
+            selectTab(POSITION_CHATS, animated);
+            viewPager.scrollToPosition(POSITION_CHATS);
+        }
     }
 
     private void checkUi_callTabVisible(boolean callTabsVisible, boolean animated) {
