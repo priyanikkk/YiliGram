@@ -99,4 +99,29 @@ public interface PluginEngine {
      * {@code LaunchActivity.handleIntent}. Returns true if a before-handler consumed the intent.
      */
     boolean onIntent(boolean before, @NonNull android.content.Intent intent);
+
+    /** Plugins' menu items of one {@code MenuItemType}, highest priority first. */
+    @NonNull
+    java.util.List<MenuItem> getMenuItems(@NonNull String menuType);
+
+    /** Calls the item's {@code on_click(context)}. */
+    void clickMenuItem(@NonNull String itemId, @NonNull java.util.Map<String, Object> context);
+
+    final class MenuItem {
+        @NonNull
+        public final String id;
+        @NonNull
+        public final String text;
+        @Nullable
+        public final String subtext;
+        @Nullable
+        public final String icon;
+
+        public MenuItem(@NonNull String id, @NonNull String text, @Nullable String subtext, @Nullable String icon) {
+            this.id = id;
+            this.text = text;
+            this.subtext = subtext;
+            this.icon = icon;
+        }
+    }
 }

@@ -3714,6 +3714,12 @@ public class ChatActivity extends BaseFragment implements
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(final int id) {
+                if (com.yiligram.plugins.PluginMenus.isPluginId(id)) {
+                    // YILI: menu items added by plugins (MenuItemType.CHAT_ACTION_MENU)
+                    com.yiligram.plugins.PluginMenus.onActionBarItem(com.yiligram.plugins.PluginMenus.CHAT_ACTION_MENU,
+                            id, com.yiligram.plugins.PluginMenus.chatContext(ChatActivity.this));
+                    return;
+                }
                 // the chat's menu is also opened from the sidebar: what it does is in the chat
                 if (id != chat_menu_options && id != chat_menu_topics_panel && id != -1 && topicsPanel != null && topicsPanel.isOpen()) {
                     topicsPanel.close();
@@ -4466,6 +4472,8 @@ public class ChatActivity extends BaseFragment implements
                 feeItemGap.setVisibility(View.GONE);
                 feeItemText.setVisibility(View.GONE);
             }
+            // YILI: menu items added by plugins (MenuItemType.CHAT_ACTION_MENU)
+            com.yiligram.plugins.PluginMenus.addSubItems(com.yiligram.plugins.PluginMenus.CHAT_ACTION_MENU, headerItem);
         } else if (chatMode == MODE_EDIT_BUSINESS_LINK) {
             headerItem = menu.addItem(chat_menu_options, otherIcon);
             updateTopicsPanelItem();
@@ -31957,6 +31965,11 @@ public class ChatActivity extends BaseFragment implements
                 icons.add(R.drawable.msg_calendar2);
             }
 
+            if (!suggestEdit) {
+                // YILI: menu items added by plugins (MenuItemType.MESSAGE_CONTEXT_MENU)
+                com.yiligram.plugins.PluginMenus.addMessageOptions(items, options, icons);
+            }
+
             if (options.isEmpty() && optionsView == null) {
                 return false;
             }
@@ -35316,6 +35329,11 @@ public class ChatActivity extends BaseFragment implements
                         }
                     }
                 }, getResourceProvider(), AlertsCreator.SUGGEST_DATE_PICKER_MODE_EDIT).show(), AmountUtils.Amount.of(suggestedPost != null ? suggestedPost.price : null), !ChatObject.canManageMonoForum(currentAccount, getDialogId()));
+                break;
+            }
+            default: {
+                // YILI: menu items added by plugins (MenuItemType.MESSAGE_CONTEXT_MENU)
+                com.yiligram.plugins.PluginMenus.clickMessageOption(option, this, selectedObject, selectedObjectGroup);
                 break;
             }
         }

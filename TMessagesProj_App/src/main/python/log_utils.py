@@ -1,7 +1,7 @@
 """Plugin logging (``self.logger`` in plugins, ``from log_utils import get_logger``)."""
 import enum
-import inspect
 import os
+import sys
 import time
 import traceback
 from typing import Any, Callable, List, Optional
@@ -133,8 +133,9 @@ class Logger:
         message = str(msg) % args if args else str(msg)
         location = None
         try:
-            frame = inspect.stack()[stacklevel + 2]
-            location = f"{os.path.basename(frame.filename)}:{frame.function}:{frame.lineno}"
+            # 0 = _emit, 1 = info()/error()/..., 2 = the code that logged (stacklevel=1).
+            frame = sys._getframe(stacklevel + 1)
+            location = f"{os.path.basename(frame.f_code.co_filename)}:{frame.f_code.co_name}:{frame.f_lineno}"
         except Exception:
             pass
         record = LogRecord(level, self.tag, message, location, tb)

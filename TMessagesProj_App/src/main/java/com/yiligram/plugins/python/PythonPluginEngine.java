@@ -260,4 +260,34 @@ public final class PythonPluginEngine implements PluginEngine {
         PyObject r = e.callAttr("dispatch_intent", before, intent);
         return r != null && r.toBoolean();
     }
+
+    @NonNull
+    @Override
+    public java.util.List<MenuItem> getMenuItems(@NonNull String menuType) {
+        PyObject e = engine;
+        java.util.ArrayList<MenuItem> out = new java.util.ArrayList<>();
+        if (e == null) {
+            return out;
+        }
+        try {
+            JSONArray a = new JSONArray(e.callAttr("menu_items_json", menuType).toString());
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                out.add(new MenuItem(o.getString("id"), o.getString("text"),
+                        o.isNull("subtext") ? null : o.optString("subtext"),
+                        o.isNull("icon") ? null : o.optString("icon")));
+            }
+        } catch (Exception ex) {
+            FileLog.e(ex);
+        }
+        return out;
+    }
+
+    @Override
+    public void clickMenuItem(@NonNull String itemId, @NonNull java.util.Map<String, Object> context) {
+        PyObject e = engine;
+        if (e != null) {
+            e.callAttr("click_menu_item_java", itemId, context);
+        }
+    }
 }

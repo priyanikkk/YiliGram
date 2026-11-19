@@ -191,4 +191,30 @@ public final class Plugins {
             return false;
         }
     }
+
+    @NonNull
+    public static java.util.List<PluginEngine.MenuItem> menuItems(@NonNull String menuType) {
+        PluginEngine e = engine;
+        if (e == null) {
+            return java.util.Collections.emptyList();
+        }
+        try {
+            return e.getMenuItems(menuType);
+        } catch (Throwable t) {
+            FileLog.e(t);
+            return java.util.Collections.emptyList();
+        }
+    }
+
+    public static void clickMenuItem(@NonNull String itemId, @NonNull java.util.Map<String, Object> context) {
+        PluginEngine e = engine;
+        if (e == null) {
+            return;
+        }
+        try {
+            e.clickMenuItem(itemId, context);
+        } catch (Throwable t) {
+            FileLog.e(t);
+        }
+    }
 }

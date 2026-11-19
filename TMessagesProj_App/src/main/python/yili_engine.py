@@ -639,8 +639,11 @@ def create_settings(plugin_id: str) -> List[Any]:
 
 # ---------------------------------------------------------------- menu items
 
+_menu_counter = iter(range(1, 1 << 62))
+
+
 def add_menu_item(plugin, item) -> str:
-    item_id = item.item_id or f"{_plugin_id_of(plugin)}:{len(_menu_items)}"
+    item_id = item.item_id or f"{_plugin_id_of(plugin)}:{next(_menu_counter)}"
     _menu_items[item_id] = (plugin, item)
     _notify("onPluginsChanged")
     return item_id
@@ -655,6 +658,20 @@ def menu_items(menu_type: str) -> List[Any]:
     items = [(p, i) for p, i in _menu_items.values() if i.menu_type.value == menu_type]
     items.sort(key=lambda t: -t[1].priority)
     return items
+
+
+def menu_items_json(menu_type: str) -> str:
+    """Items for the Java menus. ``condition`` (MVEL) is not evaluated yet: items always show."""
+    return json.dumps([{"id": iid, "text": str(i.text), "subtext": i.subtext, "icon": i.icon}
+                       for iid, (p, i) in sorted(((k, v) for k, v in _menu_items.items()
+                                                  if v[1].menu_type.value == menu_type),
+                                                 key=lambda kv: -kv[1][1].priority)])
+
+
+def click_menu_item_java(item_id: str, context) -> None:
+    """Java passes a java.util.Map; plugins get a dict."""
+    ctx = {str(k): context.get(k) for k in context.keySet().toArray()}
+    click_menu_item(item_id, ctx)
 
 
 def click_menu_item(item_id: str, context: Dict[str, Any]):

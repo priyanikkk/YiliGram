@@ -10,3 +10,4 @@ exteraGram-compatible plugins for YiliGram. Install one from **Settings → Plug
 | `yili_colors.plugin` | YiliGram's optional `yili_ui` module (M3 colors), `Text` settings with `on_click` |
 | `ping_bulletin.plugin` | `ui.bulletin.BulletinHelper`; a quick self-test that sends nothing |
 | `hook_titles.plugin` | Java method hooks: `MethodHook` on `ActionBar.setTitle` rewrites an argument |
+| `menu_items.plugin` | `MenuItemData` in the message, chat, profile and main menus; shows the `on_click` context |

@@ -2560,6 +2560,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (getParentActivity() == null) {
                     return;
                 }
+                if (com.yiligram.plugins.PluginMenus.isPluginId(id)) {
+                    // YILI: menu items added by plugins (MenuItemType.PROFILE_ACTION_MENU)
+                    com.yiligram.plugins.PluginMenus.onActionBarItem(com.yiligram.plugins.PluginMenus.PROFILE_ACTION_MENU, id,
+                            com.yiligram.plugins.PluginMenus.profileContext(ProfileActivity.this, userId, chatId, getDialogId(), getUserInfo(), getChatInfo()));
+                    return;
+                }
                 if (id == -1) {
                     if (sharedMediaLayout != null && sharedMediaLayout.scrollSlidingTextTabStrip != null && sharedMediaLayout.scrollSlidingTextTabStrip.isReordering()) {
                         stopTabsReorder();
@@ -12579,6 +12585,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             otherItem.hideSubItem(edit_avatar);
             otherItem.hideSubItem(delete_avatar);
         }
+
+        // YILI: menu items added by plugins (MenuItemType.PROFILE_ACTION_MENU)
+        com.yiligram.plugins.PluginMenus.addSubItems(com.yiligram.plugins.PluginMenus.PROFILE_ACTION_MENU, otherItem);
 
         isCallAvailable = callItemVisible;
 

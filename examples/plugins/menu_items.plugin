@@ -1,0 +1,31 @@
+"""Example of plugin menu items: one entry in each Telegram menu.
+
+Each click shows what the ``on_click`` context contains for that menu.
+"""
+from base_plugin import BasePlugin, MenuItemData, MenuItemType
+from ui.bulletin import BulletinHelper
+
+__id__ = "menu_items"
+__name__ = "Menu items demo"
+__description__ = "Adds a **Plugin demo** item to the message menu, the chat and profile ⋮ menus and the main ⋮ menu."
+__author__ = "YiliGram"
+__version__ = "1.0"
+
+
+class MenuItemsDemo(BasePlugin):
+    def on_plugin_load(self):
+        for menu in (MenuItemType.MESSAGE_CONTEXT_MENU, MenuItemType.CHAT_ACTION_MENU,
+                     MenuItemType.PROFILE_ACTION_MENU, MenuItemType.MAIN_MENU):
+            self.add_menu_item(MenuItemData(menu_type=menu, text="Plugin demo", icon="msg_info",
+                                            on_click=lambda ctx, m=menu: self.on_click(m, ctx)))
+
+    def on_click(self, menu, ctx):
+        keys = sorted(k for k, v in ctx.items() if v is not None)
+        self.logger.info("%s clicked, context: %s", menu.value, keys)
+        detail = ""
+        message = ctx.get("message")
+        if message is not None:
+            detail = f" — message #{message.getId()}"
+        elif ctx.get("user") is not None:
+            detail = f" — {ctx['user'].first_name}"
+        BulletinHelper.show_info(f"{menu.value}{detail}")

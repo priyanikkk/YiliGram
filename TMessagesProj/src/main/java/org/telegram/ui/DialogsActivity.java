@@ -13394,6 +13394,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
             presentFragment(new ChatActivity(args));
         });
+        // YILI: menu items added by plugins. Telegram 13 has no drawer: DRAWER_MENU items go here too.
+        com.yiligram.plugins.PluginMenus.addItemOptions(io, this);
         if (ApplicationLoader.applicationLoaderInstance != null) {
             ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
         }
