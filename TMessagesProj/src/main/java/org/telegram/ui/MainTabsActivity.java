@@ -1129,6 +1129,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         }
         tabsView.setViewVisible(tabs[INDEX_CONTACTS], !isYiliHiddenPosition(POSITION_CONTACTS), animated);
         tabsView.setViewVisible(tabs[INDEX_PROFILE], !isYiliHiddenPosition(POSITION_PROFILE), animated);
+        final boolean labels = com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TAB_LABELS);
+        for (GlassTabView tab : tabs) {
+            tab.setLabelHidden(!labels);
+        }
         if (viewPager != null && isYiliHiddenPosition(viewPager.getCurrentPosition())) {
             selectTab(POSITION_CHATS, animated);
             viewPager.scrollToPosition(POSITION_CHATS);

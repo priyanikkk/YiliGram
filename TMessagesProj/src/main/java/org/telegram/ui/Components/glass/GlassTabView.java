@@ -118,6 +118,29 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         checkVisualWidth();
+        checkLabelHidden();
+    }
+
+    // YILI: icon-only main tabs (YiliGram appearance -> Bottom tabs -> Labels)
+    private boolean labelHidden;
+    private float labelHiddenOffset;
+
+    public void setLabelHidden(boolean hidden) {
+        if (labelHidden != hidden) {
+            labelHidden = hidden;
+            checkLabelHidden();
+        }
+    }
+
+    private void checkLabelHidden() {
+        // Icons are centered 16dp from the top when the label is shown; center them in the tab.
+        labelHiddenOffset = labelHidden && getHeight() > 0 ? Math.max(0, getHeight() / 2f - dpf2(16)) : 0;
+        textView.setVisibility(labelHidden ? INVISIBLE : VISIBLE);
+        imageView.setTranslationY(labelHiddenOffset);
+        if (backupImageView != null) {
+            backupImageView.setTranslationY(labelHiddenOffset);
+        }
+        invalidate();
     }
 
     private void checkVisualWidth() {
@@ -177,7 +200,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
 
             final float gap = dpf2(1.33f);
             final float cx = viewWidth / 2f + dpf2(11);
-            final float cy = dpf2(10);
+            final float cy = dpf2(10) + labelHiddenOffset;
             final float height = dpf2(16);
             final float width = Math.max(height, counter.getCurrentWidth() + dp(8));
             final float rOuter = dpf2(9.333f);

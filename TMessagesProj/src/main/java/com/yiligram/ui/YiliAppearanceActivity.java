@@ -63,6 +63,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_HIDE_PROFILE = 13;
     private static final int ID_GIFT_BUTTON = 14;
     private static final int ID_VOICE_ONLY = 15;
+    private static final int ID_TAB_LABELS = 16;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -198,6 +199,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
 
         // ---- Navigation
         items.add(UItem.asHeader(getString(R.string.YiliNavHeader)));
+        items.add(UItem.asCheck(ID_TAB_LABELS, getString(R.string.YiliNavLabels)).setChecked(YiliConfig.get(YiliConfig.TAB_LABELS)));
         items.add(UItem.asCheck(ID_HIDE_CONTACTS, getString(R.string.YiliNavContacts)).setChecked(!YiliConfig.get(YiliConfig.HIDE_CONTACTS_TAB)));
         items.add(UItem.asCheck(ID_HIDE_PROFILE, getString(R.string.YiliNavProfile)).setChecked(!YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB)));
         items.add(UItem.asShadow(getString(R.string.YiliNavInfo)));
@@ -251,6 +253,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
+                break;
+            case ID_TAB_LABELS:
+                YiliConfig.set(YiliConfig.TAB_LABELS, !YiliConfig.get(YiliConfig.TAB_LABELS));
                 break;
             case ID_GIFT_BUTTON:
                 YiliConfig.set(YiliConfig.HIDE_GIFT_BUTTON, !YiliConfig.get(YiliConfig.HIDE_GIFT_BUTTON));

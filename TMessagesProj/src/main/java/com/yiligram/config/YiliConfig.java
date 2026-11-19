@@ -94,6 +94,7 @@ public final class YiliConfig {
     public static final Key<String> HIDDEN_MESSAGE_ITEMS = new Key<>("menu.message.hidden", String.class, "");
 
     public static final Key<Boolean> HIDE_CONTACTS_TAB = new Key<>("nav.hideContacts", Boolean.class, false);
+    public static final Key<Boolean> TAB_LABELS = new Key<>("nav.labels", Boolean.class, true);
     public static final Key<Boolean> HIDE_PROFILE_TAB = new Key<>("nav.hideProfile", Boolean.class, false);
 
     public static final Key<Boolean> HIDE_GIFT_BUTTON = new Key<>("input.hideGift", Boolean.class, false);
