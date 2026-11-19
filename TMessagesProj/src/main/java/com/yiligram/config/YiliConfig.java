@@ -97,6 +97,8 @@ public final class YiliConfig {
     public static final Key<Boolean> TAB_LABELS = new Key<>("nav.labels", Boolean.class, true);
     public static final Key<Boolean> HIDE_PROFILE_TAB = new Key<>("nav.hideProfile", Boolean.class, false);
 
+    /** Call button in a private chat's header; when off, Call moves to the ⋮ menu (Telegram's own fallback). */
+    public static final Key<Boolean> HEADER_CALL_BUTTON = new Key<>("header.call", Boolean.class, true);
     public static final Key<Boolean> HIDE_GIFT_BUTTON = new Key<>("input.hideGift", Boolean.class, false);
     public static final Key<Boolean> VOICE_ONLY = new Key<>("input.voiceOnly", Boolean.class, false);
 

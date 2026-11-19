@@ -4249,8 +4249,8 @@ public class ChatActivity extends BaseFragment implements
                 audioCallIconItem.setContentDescription(LocaleController.getString(R.string.Call));
                 userFull = getMessagesController().getUserFull(currentUser.id);
                 if (userFull != null && userFull.phone_calls_available) {
-                    showAudioCallAsIcon = !inPreviewMode;
-                    audioCallIconItem.setVisibility(View.VISIBLE);
+                    showAudioCallAsIcon = !inPreviewMode && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.HEADER_CALL_BUTTON); // YILI
+                    audioCallIconItem.setVisibility(showAudioCallAsIcon ? View.VISIBLE : View.GONE);
                 } else {
                     showAudioCallAsIcon = false;
                     audioCallIconItem.setVisibility(View.GONE);
@@ -24791,7 +24791,7 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
                 if (headerItem != null) {
-                    showAudioCallAsIcon = userInfo.phone_calls_available && !inPreviewMode;
+                    showAudioCallAsIcon = userInfo.phone_calls_available && !inPreviewMode && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.HEADER_CALL_BUTTON); // YILI
                     if (userInfo.phone_calls_available) {
                         if (showAudioCallAsIcon) {
                             if (audioCallIconItem != null) {
@@ -30584,8 +30584,8 @@ public class ChatActivity extends BaseFragment implements
         if (currentUser != null && audioCallIconItem != null) {
             TLRPC.UserFull userFull = getMessagesController().getUserFull(currentUser.id);
             if (userFull != null && userFull.phone_calls_available) {
-                showAudioCallAsIcon = !inPreviewMode;
-                audioCallIconItem.setVisibility(View.VISIBLE);
+                showAudioCallAsIcon = !inPreviewMode && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.HEADER_CALL_BUTTON); // YILI
+                audioCallIconItem.setVisibility(showAudioCallAsIcon ? View.VISIBLE : View.GONE);
             } else {
                 showAudioCallAsIcon = false;
                 audioCallIconItem.setVisibility(View.GONE);

@@ -64,6 +64,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_GIFT_BUTTON = 14;
     private static final int ID_VOICE_ONLY = 15;
     private static final int ID_TAB_LABELS = 16;
+    private static final int ID_HEADER_CALL = 17;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -204,6 +205,12 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asCheck(ID_HIDE_PROFILE, getString(R.string.YiliNavProfile)).setChecked(!YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB)));
         items.add(UItem.asShadow(getString(R.string.YiliNavInfo)));
 
+        // ---- Chat header
+        items.add(UItem.asHeader(getString(R.string.YiliHeaderHeader)));
+        items.add(UItem.asButtonCheck(ID_HEADER_CALL, getString(R.string.YiliHeaderCall), getString(R.string.YiliHeaderCallInfo))
+                .setChecked(YiliConfig.get(YiliConfig.HEADER_CALL_BUTTON)));
+        items.add(UItem.asShadow(null));
+
         // ---- Input panel
         items.add(UItem.asHeader(getString(R.string.YiliInputHeader)));
         items.add(UItem.asCheck(ID_GIFT_BUTTON, getString(R.string.YiliInputGift)).setChecked(!YiliConfig.get(YiliConfig.HIDE_GIFT_BUTTON)));
@@ -253,6 +260,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
+                break;
+            case ID_HEADER_CALL:
+                YiliConfig.set(YiliConfig.HEADER_CALL_BUTTON, !YiliConfig.get(YiliConfig.HEADER_CALL_BUTTON));
                 break;
             case ID_TAB_LABELS:
                 YiliConfig.set(YiliConfig.TAB_LABELS, !YiliConfig.get(YiliConfig.TAB_LABELS));
