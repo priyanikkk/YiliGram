@@ -61,6 +61,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_MESSAGE_MENU = 11;
     private static final int ID_HIDE_CONTACTS = 12;
     private static final int ID_HIDE_PROFILE = 13;
+    private static final int ID_GIFT_BUTTON = 14;
+    private static final int ID_VOICE_ONLY = 15;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -200,6 +202,13 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asCheck(ID_HIDE_PROFILE, getString(R.string.YiliNavProfile)).setChecked(!YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB)));
         items.add(UItem.asShadow(getString(R.string.YiliNavInfo)));
 
+        // ---- Input panel
+        items.add(UItem.asHeader(getString(R.string.YiliInputHeader)));
+        items.add(UItem.asCheck(ID_GIFT_BUTTON, getString(R.string.YiliInputGift)).setChecked(!YiliConfig.get(YiliConfig.HIDE_GIFT_BUTTON)));
+        items.add(UItem.asButtonCheck(ID_VOICE_ONLY, getString(R.string.YiliInputVoiceOnly), getString(R.string.YiliInputVoiceOnlyInfo))
+                .setChecked(YiliConfig.get(YiliConfig.VOICE_ONLY)));
+        items.add(UItem.asShadow(getString(R.string.YiliInputInfo)));
+
         // ---- Menus
         items.add(UItem.asHeader(getString(R.string.YiliMenusHeader)));
         int hiddenCount = com.yiligram.config.YiliMenus.hiddenMessageItems().size();
@@ -242,6 +251,12 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
+                break;
+            case ID_GIFT_BUTTON:
+                YiliConfig.set(YiliConfig.HIDE_GIFT_BUTTON, !YiliConfig.get(YiliConfig.HIDE_GIFT_BUTTON));
+                break;
+            case ID_VOICE_ONLY:
+                YiliConfig.set(YiliConfig.VOICE_ONLY, !YiliConfig.get(YiliConfig.VOICE_ONLY));
                 break;
             case ID_MESSAGE_MENU:
                 presentFragment(new YiliMenusActivity());

@@ -6867,6 +6867,9 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (!SharedConfig.inappCamera) {
             hasRecordVideo = false;
         }
+        if (com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.VOICE_ONLY)) {
+            hasRecordVideo = false; // YILI: the record button only records voice
+        }
         boolean currentModeVideo = false;
         if (hasRecordVideo) {
             if (SharedConfig.hasCameraCache) {
@@ -11133,6 +11136,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         final TLRPC.UserFull myUserInfo = MessagesController.getInstance(currentAccount).getUserFull(UserConfig.getInstance(currentAccount).getClientUserId());
         final TLRPC.User user = getParentFragment() == null ? null : getParentFragment().getCurrentUser();
         final boolean visible =
+            !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.HIDE_GIFT_BUTTON) && // YILI
             !MessagesController.getInstance(currentAccount).premiumPurchaseBlocked() &&
             getParentFragment() != null && user != null &&
             !BuildVars.IS_BILLING_UNAVAILABLE &&

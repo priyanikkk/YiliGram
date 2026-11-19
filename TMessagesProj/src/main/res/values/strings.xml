@@ -11786,6 +11786,11 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliFontWeight">Font weight</string>
     <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
     <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliInputHeader">Input panel</string>
+    <string name="YiliInputGift">Gift button</string>
+    <string name="YiliInputVoiceOnly">Voice messages only</string>
+    <string name="YiliInputVoiceOnlyInfo">The record button no longer switches to video messages</string>
+    <string name="YiliInputInfo">Applies to chats opened after the change.</string>
     <string name="YiliNavHeader">Bottom tabs</string>
     <string name="YiliNavContacts">Contacts tab</string>
     <string name="YiliNavProfile">Profile tab</string>

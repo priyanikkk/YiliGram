@@ -96,6 +96,9 @@ public final class YiliConfig {
     public static final Key<Boolean> HIDE_CONTACTS_TAB = new Key<>("nav.hideContacts", Boolean.class, false);
     public static final Key<Boolean> HIDE_PROFILE_TAB = new Key<>("nav.hideProfile", Boolean.class, false);
 
+    public static final Key<Boolean> HIDE_GIFT_BUTTON = new Key<>("input.hideGift", Boolean.class, false);
+    public static final Key<Boolean> VOICE_ONLY = new Key<>("input.voiceOnly", Boolean.class, false);
+
     public static final Key<Boolean> PLUGINS_ENABLED = new Key<>("plugins.enabled", Boolean.class, true);
     public static final Key<Boolean> PLUGINS_DEV_MODE = new Key<>("plugins.devMode", Boolean.class, false);
     public static final Key<Boolean> PLUGINS_UNKNOWN_SOURCES = new Key<>("plugins.unknownSources", Boolean.class, false);
