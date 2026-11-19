@@ -483,6 +483,11 @@ def _drop_registrations(plugin_id: str):
             hook_utils._unhook_plugin(plugin_id)
         except Exception:
             pass
+        try:
+            import intents
+            intents.drop_plugin(plugin_id)
+        except Exception:
+            pass
 
 
 def hook_summary() -> str:
@@ -572,6 +577,11 @@ def dispatch_update(name: str, account: int, update: Any) -> List[Any]:
 
 def dispatch_updates(name: str, account: int, updates: Any) -> List[Any]:
     return _dispatch(name, _hooks_for(name), "on_updates_hook", "updates", updates, name, account)
+
+
+def dispatch_intent(before: bool, intent: Any) -> bool:
+    import intents
+    return intents.dispatch_intent(bool(before), intent)
 
 
 def dispatch_send_message(account: int, params: Any) -> List[Any]:

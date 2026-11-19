@@ -21,6 +21,7 @@ public final class Plugins {
     private static volatile Set<String> requestHooks = Collections.emptySet();
     private static volatile String[] substringHooks = new String[0];
     private static volatile boolean sendMessageHooks;
+    private static volatile boolean intentHooks;
 
     private Plugins() {
     }
@@ -165,6 +166,29 @@ public final class Plugins {
         } catch (Throwable t) {
             FileLog.e(t);
             return PluginEngine.HookResult.DEFAULT;
+        }
+    }
+
+    /** Called by the intents module when its first handler is added or its last one removed. */
+    public static void setIntentHooks(boolean enabled) {
+        intentHooks = enabled;
+    }
+
+    public static boolean wantsIntents() {
+        return engine != null && intentHooks;
+    }
+
+    /** Runs intents-module handlers; true if a before-handler consumed the intent. */
+    public static boolean intent(boolean before, @NonNull android.content.Intent intent) {
+        PluginEngine e = engine;
+        if (e == null || !intentHooks) {
+            return false;
+        }
+        try {
+            return e.onIntent(before, intent);
+        } catch (Throwable t) {
+            FileLog.e(t);
+            return false;
         }
     }
 }

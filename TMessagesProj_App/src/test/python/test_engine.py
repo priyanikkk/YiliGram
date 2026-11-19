@@ -214,3 +214,78 @@ class DevServerTest(unittest.TestCase):
         self.assertTrue(self.dev.handle({"@": "reload_plugin", "#": "4", "plugin_id": "hello_command"})["success"])
         self.assertTrue(self.dev.handle({"@": "remove_plugin", "#": "5", "plugin_id": "hello_command"})["success"])
         self.assertIn("Unknown command", self.dev.handle({"@": "nope", "#": "6"})["error"])
+
+
+class _FakeUri:
+    def __init__(self, url):
+        self.url = url
+
+    def toString(self):
+        return self.url
+
+
+class _FakeIntent:
+    def __init__(self, url, action="android.intent.action.VIEW", flags=0, categories=()):
+        self.data = _FakeUri(url) if url else None
+        self.action = action
+        self.flags = flags
+        self.categories = categories
+
+    def getData(self):
+        return self.data
+
+    def getAction(self):
+        return self.action
+
+    def getFlags(self):
+        return self.flags
+
+    def getType(self):
+        return None
+
+    def getCategories(self):
+        cats = list(self.categories)
+        return types.SimpleNamespace(toArray=lambda: cats) if cats else None
+
+
+class IntentsTest(unittest.TestCase):
+    def setUp(self):
+        import intents
+        self.intents = intents
+        intents._handlers.clear()
+        self.IM = intents.IntentsManager
+
+    def test_filters_arguments_and_consume(self):
+        seen = []
+        self.IM.new_global_before_handler(lambda id: seen.append(("chat", id)), scheme="tg", host="chat",
+                                          required_path_args_names=["id"])
+        self.IM.new_global_before_handler(lambda user_id, path=None: seen.append(("profile", user_id, path)),
+                                          scheme="tg", host="profile", path="user/{user_id}")
+        stop = self.IM.new_global_before_handler(lambda: True, scheme="tg", host="stop")
+        self.assertFalse(self.intents.dispatch_intent(True, _FakeIntent("tg://chat")))
+        self.assertFalse(self.intents.dispatch_intent(True, _FakeIntent("tg://chat?id=5")))
+        self.assertFalse(self.intents.dispatch_intent(True, _FakeIntent("tg://profile/user/42")))
+        self.assertEqual(seen, [("chat", "5"), ("profile", "42", "/user/42")])
+        self.assertTrue(self.intents.dispatch_intent(True, _FakeIntent("tg://stop")))
+        stop.unhandle()
+        self.assertFalse(self.intents.dispatch_intent(True, _FakeIntent("tg://stop")))
+        with self.assertRaises(self.IM.HandlerNotRegistered):
+            self.IM.unhandle(stop.handler_id)
+
+    def test_priority_kwargs_and_after(self):
+        order = []
+        self.IM.new_global_before_handler(lambda **kw: order.append(("b10", kw["host"])), scheme="https", priority=10)
+        self.IM.new_global_before_handler(lambda *a: order.append(("b0", a[1])), scheme="https", priority=0)
+        self.IM.new_global_after_handler(lambda scheme: order.append(("after", scheme)) or True, scheme="https")
+        self.assertFalse(self.intents.dispatch_intent(True, _FakeIntent("https://t.me/x")))
+        self.assertFalse(self.intents.dispatch_intent(False, _FakeIntent("https://t.me/x")))
+        self.assertEqual(order, [("b0", "https"), ("b10", "t.me"), ("after", "https")])
+
+    def test_flags_and_parse(self):
+        hits = []
+        self.IM.new_global_before_handler(lambda: hits.append(1), whitelist_flags=[4], blacklist_flags=[1])
+        self.intents.dispatch_intent(True, _FakeIntent(None, flags=4))
+        self.intents.dispatch_intent(True, _FakeIntent(None, flags=5))
+        self.intents.dispatch_intent(True, _FakeIntent(None, flags=0))
+        self.assertEqual(hits, [1])
+        self.assertEqual(self.IM.parse("tg://chat?id=123"), {"scheme": "tg", "host": "chat", "query": "id=123"})

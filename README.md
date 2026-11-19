@@ -22,19 +22,22 @@ See [PLAN.md](PLAN.md) for the roadmap and architecture.
 |---|---|
 | JDK | 21 |
 | Android SDK | platform 36, build-tools 36.0.0 |
-| Android NDK | 27.2.12479018 |
-| CMake | 3.22.1 (from the SDK manager) |
+| Android NDK | 27.2.12479018, and 30.0.16248370 for the `yili-hook` module |
+| CMake | 3.22.1, and 3.31.6 for `yili-hook` (both from the SDK manager) |
 
 The native part (MTProto, media codecs, VoIP) is compiled from source, so a full build
 takes 30–60 minutes the first time and needs ~15 GB of disk space.
 
 ### Steps
 
-1. Clone with submodules:
+1. Clone with submodules (some of LSPlant's nested submodules use SSH URLs; the `-c` option
+   fetches them over HTTPS):
    ```bash
-   git clone --recursive --shallow-submodules https://github.com/yiligram/YiliGram.git
+   git -c url."https://github.com/".insteadOf=git@github.com: \
+       clone --recursive --shallow-submodules https://github.com/yiligram/YiliGram.git
    ```
-   For an existing clone: `git submodule update --init --recursive --depth 1`.
+   For an existing clone:
+   `git -c url."https://github.com/".insteadOf=git@github.com: submodule update --init --recursive --depth 1`.
 2. Get your own `api_id` and `api_hash` at <https://my.telegram.org> (API development tools).
 3. Copy `local.properties.example` to `local.properties` and fill in `sdk.dir`,
    `yili.apiId` and `yili.apiHash`. Environment variables `YILI_API_ID` / `YILI_API_HASH`
@@ -81,12 +84,15 @@ python3 -m venv .venv && .venv/bin/pip install -r tools/branding/requirements.tx
 ## Plugins
 
 YiliGram runs exteraGram-compatible Python plugins (`.plugin` / `.py`, Python 3.11 via
-Chaquopy): **Settings → Plugins → Install from file**. Implemented so far: metadata,
-lifecycle, request / response / update / outgoing-message hooks, plugin settings, menu items
-registry, `client_utils`, `android_utils`, `hook_utils` (reflection), `file_utils`,
-`log_utils`, `ui.settings`, `ui.alert`, `ui.bulletin`, `extera_utils.text_formatting`, plus
-safe mode. Java method hooks, the pip installer and the dev server come next (see PLAN.md).
-Examples: [examples/plugins](examples/plugins).
+Chaquopy): **Settings → Plugins → Install from file**, or tap a `.plugin` file in a chat.
+Implemented: metadata, lifecycle, request / response / update / outgoing-message hooks,
+**Xposed-style Java method hooks** (`hook_method`, `hook_all_methods`, `hook_all_constructors`,
+`MethodHook`, `MethodReplacement`; [LSPlant](https://github.com/LSPosed/LSPlant) underneath),
+plugin settings, `client_utils`, `android_utils`, `hook_utils`, `file_utils`, `log_utils`,
+`intents`, `ui.settings`, `ui.alert`, `ui.bulletin`, `extera_utils.text_formatting`, the pip
+installer for pure-Python `__requirements__`, the dev server (developer mode) and safe mode.
+Examples: [examples/plugins](examples/plugins). Static compatibility check of third-party
+plugins: `python3.11 tools/plugin_compat.py path/to/*.plugin`.
 
 Building needs a host Python 3.11 for Chaquopy: put `yili.buildPython=/path/to/python3.11`
 into `local.properties` (or have `python3.11` on PATH). Engine tests:

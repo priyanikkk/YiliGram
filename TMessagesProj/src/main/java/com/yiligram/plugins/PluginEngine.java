@@ -93,4 +93,10 @@ public interface PluginEngine {
     HookResult onSendMessage(int account, @NonNull Object params);
 
     void onAppEvent(@NonNull String event);
+
+    /**
+     * Intent / deeplink handlers of the {@code intents} module, around
+     * {@code LaunchActivity.handleIntent}. Returns true if a before-handler consumed the intent.
+     */
+    boolean onIntent(boolean before, @NonNull android.content.Intent intent);
 }

@@ -1549,8 +1549,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         return handleIntent(intent, isNew, restore, fromPassword, null, true, false);
     }
 
-    @SuppressLint("Range")
+    // YILI: plugins' intents module (IntentsManager) runs around Telegram's intent handling.
     private boolean handleIntent(Intent intent, boolean isNew, boolean restore, boolean fromPassword, Browser.Progress progress, boolean rebuildFragments, boolean openedTelegram) {
+        if (intent == null || !com.yiligram.plugins.Plugins.wantsIntents()) {
+            return handleIntentUpstream(intent, isNew, restore, fromPassword, progress, rebuildFragments, openedTelegram);
+        }
+        if (com.yiligram.plugins.Plugins.intent(true, intent)) {
+            return true;
+        }
+        boolean handled = handleIntentUpstream(intent, isNew, restore, fromPassword, progress, rebuildFragments, openedTelegram);
+        com.yiligram.plugins.Plugins.intent(false, intent);
+        return handled;
+    }
+
+    @SuppressLint("Range")
+    private boolean handleIntentUpstream(Intent intent, boolean isNew, boolean restore, boolean fromPassword, Browser.Progress progress, boolean rebuildFragments, boolean openedTelegram) {
         if (GiftInfoBottomSheet.handleIntent(intent, progress)) {
             return true;
         }

@@ -250,4 +250,14 @@ public final class PythonPluginEngine implements PluginEngine {
             PluginApi.PLUGINS_QUEUE.postRunnable(() -> e.callAttr("app_event", event));
         }
     }
+
+    @Override
+    public boolean onIntent(boolean before, @NonNull android.content.Intent intent) {
+        PyObject e = engine;
+        if (e == null) {
+            return false;
+        }
+        PyObject r = e.callAttr("dispatch_intent", before, intent);
+        return r != null && r.toBoolean();
+    }
 }
