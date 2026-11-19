@@ -115,6 +115,7 @@ public class MaxFileSizeCell extends FrameLayout {
             }
         });
         seekBarView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        seekBarView.setM3Style(true); // YILI: Material 3 slider
         addView(seekBarView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.TOP | Gravity.LEFT, 6, 36, 6, 0));
 
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);

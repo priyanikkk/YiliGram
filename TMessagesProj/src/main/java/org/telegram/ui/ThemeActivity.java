@@ -344,6 +344,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                 }
             });
             sizeBar.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+            sizeBar.setM3Style(true); // YILI: Material 3 slider
             addView(sizeBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 5, 5, 39, 0));
 
             final boolean showCompactMode = BuildVars.DEBUG_PRIVATE_VERSION;
@@ -473,6 +474,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                 }
             });
             sizeBar.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+            sizeBar.setM3Style(true); // YILI: Material 3 slider
             addView(sizeBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 5, 5, 39, 0));
         }
 

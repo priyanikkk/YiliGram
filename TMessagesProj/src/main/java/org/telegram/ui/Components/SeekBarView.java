@@ -465,6 +465,11 @@ public class SeekBarView extends FrameLayout implements Theme.Colorable {
         }
         int y = (getMeasuredHeight() - thumbSize) / 2;
         innerPaint1.setColor(getThemedColor(Theme.key_player_progressBackground));
+        if (m3Style && !twoSided && minProgress <= 0 && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_CONTROLS)) {
+            drawM3(canvas, thumbX);
+            drawTimestampLabel(canvas);
+            return;
+        }
 
         float centerY = getMeasuredHeight() / 2f;
         float left = selectorWidth / 2f, right = getMeasuredWidth() - selectorWidth / 2;
@@ -671,6 +676,64 @@ public class SeekBarView extends FrameLayout implements Theme.Colorable {
                 return 0;
             }
         });
+    }
+
+    // YILI: Material 3 Expressive slider for settings screens: 16dp track, 4dp handle bar with
+    // 6dp gaps, stop indicator at the end. Players keep Telegram's thin bar (m3Style stays false).
+    private boolean m3Style;
+    private final Paint m3Paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    public SeekBarView setM3Style(boolean m3) {
+        m3Style = m3;
+        invalidate();
+        return this;
+    }
+
+    private void drawM3(Canvas canvas, int thumbX) {
+        final float d = AndroidUtilities.density;
+        final float cy = getMeasuredHeight() / 2f;
+        final float left = selectorWidth / 2f, right = getMeasuredWidth() - selectorWidth / 2f;
+        final float x = left + thumbX;
+        final float trackH = 16 * d, outer = 8 * d, inner = 2 * d, gap = 6 * d;
+        final float handleW = (pressed ? 2 : 4) * d;
+        final float handleH = Math.min(44 * d, getMeasuredHeight());
+        final boolean yili = com.yiligram.bridge.ThemeBridge.isYiliTheme(Theme.getActiveTheme().getKey());
+        final int active = yili ? com.yiligram.design.YiliTheme.colors().primary() : outerPaint1.getColor();
+        final int inactive = yili ? com.yiligram.design.YiliTheme.colors().secondaryContainer() : innerPaint1.getColor();
+
+        // Active part: left end rounded, right end small radius before the gap.
+        final float aEnd = x - handleW / 2f - gap;
+        if (aEnd > left) {
+            m3Paint.setColor(active);
+            drawM3Segment(canvas, left, cy - trackH / 2f, aEnd, cy + trackH / 2f, outer, inner);
+        }
+        final float iStart = x + handleW / 2f + gap;
+        if (iStart < right) {
+            m3Paint.setColor(inactive);
+            drawM3Segment(canvas, iStart, cy - trackH / 2f, right, cy + trackH / 2f, inner, outer);
+            // Stop indicator: 4dp dot 6dp from the end.
+            m3Paint.setColor(active);
+            if (right - iStart > 12 * d) {
+                canvas.drawCircle(right - 8 * d, cy, 2 * d, m3Paint);
+            }
+        }
+        m3Paint.setColor(active);
+        rect.set(x - handleW / 2f, cy - handleH / 2f, x + handleW / 2f, cy + handleH / 2f);
+        canvas.drawRoundRect(rect, handleW / 2f, handleW / 2f, m3Paint);
+    }
+
+    private final android.graphics.Path m3Path = new android.graphics.Path();
+    private final float[] m3Radii = new float[8];
+
+    private void drawM3Segment(Canvas canvas, float l, float t, float r, float b, float leftRadius, float rightRadius) {
+        float maxR = (r - l) / 2f;
+        float lr = Math.min(leftRadius, maxR), rr = Math.min(rightRadius, maxR);
+        m3Radii[0] = m3Radii[1] = m3Radii[6] = m3Radii[7] = lr;
+        m3Radii[2] = m3Radii[3] = m3Radii[4] = m3Radii[5] = rr;
+        rect.set(l, t, r, b);
+        m3Path.rewind();
+        m3Path.addRoundRect(rect, m3Radii, android.graphics.Path.Direction.CW);
+        canvas.drawPath(m3Path, m3Paint);
     }
 
     private void drawProgressBar(Canvas canvas, RectF rect, Paint paint) {

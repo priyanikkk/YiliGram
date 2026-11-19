@@ -449,6 +449,7 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
 
 
                     linearLayout.addView(textContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 20, 0, 21, 10, 21, 0));
+                    slideChooseView.setM3Style(true); // YILI: Material 3 slider
                     linearLayout.addView(slideChooseView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 38, 0, 5, 0, 5, 4));
                     SaveToGallerySettingsHelper.Settings settings = getSettings();
                     long currentValue = settings.limitVideo;

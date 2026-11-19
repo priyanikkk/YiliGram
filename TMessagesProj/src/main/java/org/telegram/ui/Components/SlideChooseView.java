@@ -222,6 +222,12 @@ public class SlideChooseView extends View {
         float selectedIndexAnimated = selectedIndexAnimatedHolder.set(selectedIndex);
         float movingAnimated = movingAnimatedHolder.set(moving ? 1 : 0);
         int cy = getMeasuredHeight() / 2 + AndroidUtilities.dp(11);
+        // YILI: Material 3 Expressive discrete slider (16dp track, handle bar, stop indicators)
+        final boolean m3 = dashedFrom == -1 && (minIndex == Integer.MIN_VALUE || minIndex <= 0)
+                && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_CONTROLS);
+        if (m3) {
+            drawM3(canvas, cy, selectedIndexAnimated, movingAnimated);
+        }
 
         for (int a = 0; a < optionsStr.length; a++) {
             int cx = sideSide + (lineSize + gapSize * 2 + circleSize) * a + circleSize / 2;
@@ -230,8 +236,8 @@ public class SlideChooseView extends View {
             int color = ColorUtils.blendARGB(getThemedColor(Theme.key_switchTrack), Theme.multAlpha(getThemedColor(Theme.key_switchTrackChecked), minIndex != Integer.MIN_VALUE && a <= minIndex ? .50f : 1.0f), ut);
             paint.setColor(color);
             linePaint.setColor(color);
-            canvas.drawCircle(cx, cy, AndroidUtilities.lerp(circleSize / 2, AndroidUtilities.dp(6), t), paint);
-            if (a != 0) {
+            if (!m3) canvas.drawCircle(cx, cy, AndroidUtilities.lerp(circleSize / 2, AndroidUtilities.dp(6), t), paint);
+            if (a != 0 && !m3) {
                 int x = cx - circleSize / 2 - gapSize - lineSize;
                 int width = lineSize;
                 if (dashedFrom != -1 && a - 1 >= dashedFrom) {
@@ -285,11 +291,67 @@ public class SlideChooseView extends View {
             }
         }
 
+        if (m3) {
+            return;
+        }
         float cx = sideSide + (lineSize + gapSize * 2 + circleSize) * selectedIndexAnimated + circleSize / 2;
         paint.setColor(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_switchTrackChecked), 80));
         canvas.drawCircle(cx, cy, AndroidUtilities.dp(12 * movingAnimated), paint);
         paint.setColor(getThemedColor(Theme.key_switchTrackChecked));
         canvas.drawCircle(cx, cy, AndroidUtilities.dp(6), paint);
+    }
+
+    private final android.graphics.RectF m3Rect = new android.graphics.RectF();
+    private final android.graphics.Path m3Path = new android.graphics.Path();
+    private final float[] m3Radii = new float[8];
+
+    private void m3Segment(Canvas canvas, float l, float t, float r, float b, float lr, float rr) {
+        float max = (r - l) / 2f;
+        lr = Math.min(lr, max);
+        rr = Math.min(rr, max);
+        m3Radii[0] = m3Radii[1] = m3Radii[6] = m3Radii[7] = lr;
+        m3Radii[2] = m3Radii[3] = m3Radii[4] = m3Radii[5] = rr;
+        m3Rect.set(l, t, r, b);
+        m3Path.rewind();
+        m3Path.addRoundRect(m3Rect, m3Radii, android.graphics.Path.Direction.CW);
+        canvas.drawPath(m3Path, paint);
+    }
+
+    private void drawM3(Canvas canvas, float cy, float index, float moving) {
+        final float d = AndroidUtilities.density;
+        final int step = lineSize + gapSize * 2 + circleSize;
+        final float first = sideSide + circleSize / 2f;
+        final float last = first + step * (optionsStr.length - 1);
+        final float left = first - 8 * d, right = last + 8 * d;
+        final float x = first + step * index;
+        final float h = 16 * d, gap = 6 * d, handleW = (moving > 0.5f ? 2 : 4) * d, handleH = 28 * d;
+        final int active = getThemedColor(Theme.key_switchTrackChecked);
+        final int inactive = com.yiligram.bridge.ThemeBridge.isYiliTheme(Theme.getActiveTheme().getKey())
+                ? com.yiligram.design.YiliTheme.colors().secondaryContainer() : getThemedColor(Theme.key_switchTrack);
+        final int onActive = com.yiligram.bridge.ThemeBridge.isYiliTheme(Theme.getActiveTheme().getKey())
+                ? com.yiligram.design.YiliTheme.colors().get(com.yiligram.design.color.ColorRole.ON_PRIMARY) : 0xFFFFFFFF;
+
+        final float aEnd = x - handleW / 2f - gap, iStart = x + handleW / 2f + gap;
+        if (aEnd > left) {
+            paint.setColor(active);
+            m3Segment(canvas, left, cy - h / 2f, aEnd, cy + h / 2f, h / 2f, 2 * d);
+        }
+        if (iStart < right) {
+            paint.setColor(inactive);
+            m3Segment(canvas, iStart, cy - h / 2f, right, cy + h / 2f, 2 * d, h / 2f);
+        }
+        // Stop indicators at every step, except under the handle.
+        for (int a = 0; a < optionsStr.length; a++) {
+            float sx = first + step * a;
+            if (Math.abs(sx - x) < handleW / 2f + gap + 2 * d) {
+                continue;
+            }
+            paint.setColor(sx < x ? onActive : active);
+            canvas.drawCircle(sx, cy, 2 * d, paint);
+        }
+        paint.setColor(active);
+        m3Rect.set(x - handleW / 2f, cy - handleH / 2f, x + handleW / 2f, cy + handleH / 2f);
+        canvas.drawRoundRect(m3Rect, handleW / 2f, handleW / 2f, paint);
     }
 
     @Override

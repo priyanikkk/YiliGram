@@ -777,6 +777,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
             });
             seekBarView.setProgress(LiteMode.getPowerSaverLevel() / 100F);
             seekBarView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+            seekBarView.setM3Style(true); // YILI: Material 3 slider
             addView(seekBarView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38 + 6, Gravity.TOP, 6, 68, 6, 0));
 
             valuesView = new FrameLayout(context);

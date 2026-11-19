@@ -74,6 +74,7 @@ public class BrightnessControlCell extends FrameLayout {
             }
         });
         seekBarView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        seekBarView.setM3Style(true); // YILI: Material 3 slider
         addView(seekBarView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.TOP | Gravity.LEFT, 54, 5, 54, 0));
 
         rightImageView = new ImageView(context);

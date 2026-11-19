@@ -143,6 +143,7 @@ public class SlideIntChooseView extends FrameLayout implements Theme.Colorable {
                 return buildAccessibilityDescription();
             }
         });
+        seekBarView.setM3Style(true); // YILI: Material 3 slider
         addView(seekBarView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.TOP | Gravity.FILL_HORIZONTAL, 6, 30, 6, 0));
     }
 
