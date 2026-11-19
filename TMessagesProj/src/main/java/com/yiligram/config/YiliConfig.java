@@ -90,6 +90,9 @@ public final class YiliConfig {
     public static final Key<Float> MOTION_BOUNCE = new Key<>("motion.bounce", Float.class, 1f);
 
     // Plugins
+    /** Message context menu items to hide: comma-separated {@link YiliMenus.MessageItem} names. */
+    public static final Key<String> HIDDEN_MESSAGE_ITEMS = new Key<>("menu.message.hidden", String.class, "");
+
     public static final Key<Boolean> PLUGINS_ENABLED = new Key<>("plugins.enabled", Boolean.class, true);
     public static final Key<Boolean> PLUGINS_DEV_MODE = new Key<>("plugins.devMode", Boolean.class, false);
     public static final Key<Boolean> PLUGINS_UNKNOWN_SOURCES = new Key<>("plugins.unknownSources", Boolean.class, false);

@@ -11786,6 +11786,14 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliFontWeight">Font weight</string>
     <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
     <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliMenusHeader">Menus</string>
+    <string name="YiliMenuMessage">Message menu</string>
+    <string name="YiliMenuMessageHeader">Show in the message menu</string>
+    <string name="YiliMenuMessageInfo">Turned-off items disappear from the menu that opens when you tap or hold a message. Delete and the items of sponsored messages are always shown.</string>
+    <string name="YiliMenuAllShown">All items</string>
+    <string name="YiliMenuSave">Save to gallery or downloads</string>
+    <string name="YiliMenuHidden_one">%1$d hidden</string>
+    <string name="YiliMenuHidden_other">%1$d hidden</string>
     <string name="YiliUiScale">Interface scale</string>
     <string name="YiliUiScaleInfo">Makes everything denser or roomier: text, icons and spacing together. Applied after a restart.</string>
     <string name="YiliUiScaleRestart">Restart YiliGram to apply the new scale</string>

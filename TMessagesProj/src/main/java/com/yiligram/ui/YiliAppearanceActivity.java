@@ -58,6 +58,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int REQUEST_IMPORT = 7301;
     private static final int REQUEST_FONT = 7303;
     private static final int ID_FONT = 10;
+    private static final int ID_MESSAGE_MENU = 11;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -191,6 +192,14 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         }
         items.add(UItem.asShadow(getString(R.string.YiliMotionInfo)));
 
+        // ---- Menus
+        items.add(UItem.asHeader(getString(R.string.YiliMenusHeader)));
+        int hiddenCount = com.yiligram.config.YiliMenus.hiddenMessageItems().size();
+        items.add(UItem.asButton(ID_MESSAGE_MENU, R.drawable.msg_list, getString(R.string.YiliMenuMessage),
+                hiddenCount == 0 ? getString(R.string.YiliMenuAllShown)
+                        : org.telegram.messenger.LocaleController.formatPluralString("YiliMenuHidden", hiddenCount)));
+        items.add(UItem.asShadow(null));
+
         // ---- Configuration
         items.add(UItem.asHeader(getString(R.string.YiliConfigHeader)));
         items.add(UItem.asButton(ID_EXPORT, R.drawable.msg_share, getString(R.string.YiliExport)));
@@ -219,6 +228,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_FONT:
                 showFontPicker();
+                break;
+            case ID_MESSAGE_MENU:
+                presentFragment(new YiliMenusActivity());
                 break;
             case ID_SPEC:
                 showSpecPicker();

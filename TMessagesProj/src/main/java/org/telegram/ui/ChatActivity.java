@@ -47127,6 +47127,8 @@ public class ChatActivity extends BaseFragment implements
             options.add(OPTION_WELCOME_REVERT);
             icons.add(R.drawable.outline_revert_24);
         }
+        // YILI: message menu items the user hid in YiliGram settings
+        com.yiligram.config.YiliMenus.filterMessageOptions(items, options, icons);
     }
 
     private boolean showWelcomeMessageRevertOption(MessageObject messageObject) {

@@ -372,6 +372,16 @@
     <string name="YiliFontWeight">Насыщенность</string>
     <string name="YiliFontInfo">Roboto Flex — шрифт Material 3 Expressive. Символы, которых нет в шрифте, рисуются системным шрифтом. Смена шрифта применяется после перезапуска YiliGram.</string>
     <string name="YiliFontRestart">Перезапустите YiliGram, чтобы применить шрифт</string>
+    <string name="YiliMenusHeader">Меню</string>
+    <string name="YiliMenuMessage">Меню сообщения</string>
+    <string name="YiliMenuMessageHeader">Показывать в меню сообщения</string>
+    <string name="YiliMenuMessageInfo">Выключенные пункты пропадут из меню, которое открывается по нажатию на сообщение. «Удалить» и пункты рекламных сообщений показываются всегда.</string>
+    <string name="YiliMenuAllShown">Все пункты</string>
+    <string name="YiliMenuSave">Сохранить в галерею или загрузки</string>
+    <string name="YiliMenuHidden_one">%1$d скрыт</string>
+    <string name="YiliMenuHidden_few">%1$d скрыто</string>
+    <string name="YiliMenuHidden_many">%1$d скрыто</string>
+    <string name="YiliMenuHidden_other">%1$d скрыто</string>
     <string name="YiliUiScale">Масштаб интерфейса</string>
     <string name="YiliUiScaleInfo">Делает интерфейс плотнее или просторнее: текст, значки и отступы вместе. Применяется после перезапуска.</string>
     <string name="YiliUiScaleRestart">Перезапустите YiliGram, чтобы применить масштаб</string>
