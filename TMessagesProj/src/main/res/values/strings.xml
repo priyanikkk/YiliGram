@@ -11769,4 +11769,13 @@
     <string name="YiliRepoInstallConfirm">Install %1$s %2$s from %3$s?
 
 Plugins run with full access to your account. The file is checked against the repository index, but the repository itself is not verified by YiliGram.</string>
+    <string name="YiliPush">Push notifications</string>
+    <string name="YiliPushInfo">UnifiedPush or background connection</string>
+    <string name="YiliPushAbout">YiliGram does not use Google\'s push service. With a UnifiedPush distributor app (for example ntfy) Telegram wakes YiliGram through it; otherwise YiliGram keeps its own background connection, which uses more battery.</string>
+    <string name="YiliPushOff">Off: background connection</string>
+    <string name="YiliPushDistributors">UnifiedPush distributor</string>
+    <string name="YiliPushNone">No UnifiedPush distributor is installed. Install one (ntfy, NextPush, Sunup…) and come back here.</string>
+    <string name="YiliPushStatusRegistered">Registered with Telegram</string>
+    <string name="YiliPushStatusWaiting">Waiting for the distributor…</string>
+    <string name="YiliPushLearnMore">About UnifiedPush</string>
 </resources>

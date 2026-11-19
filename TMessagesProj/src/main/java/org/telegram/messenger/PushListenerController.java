@@ -34,11 +34,13 @@ import java.util.concurrent.CountDownLatch;
 @Keep
 public class PushListenerController {
     public static final int PUSH_TYPE_FIREBASE = 2,
+        PUSH_TYPE_WEBPUSH = 10, // YILI: UnifiedPush endpoints, registered as Web Push
         PUSH_TYPE_HUAWEI = 13;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             PUSH_TYPE_FIREBASE,
+            PUSH_TYPE_WEBPUSH,
             PUSH_TYPE_HUAWEI
     })
     public @interface PushType {}
@@ -66,7 +68,7 @@ public class PushListenerController {
                 if (userConfig.getClientUserId() != 0) {
                     final int currentAccount = a;
                     if (sendStat) {
-                        String tag = pushType == PUSH_TYPE_FIREBASE ? "fcm" : "hcm";
+                        String tag = pushType == PUSH_TYPE_FIREBASE ? "fcm" : pushType == PUSH_TYPE_WEBPUSH ? "webpush" : "hcm";
                         TLRPC.TL_help_saveAppLog req = new TLRPC.TL_help_saveAppLog();
                         TLRPC.TL_inputAppEvent event = new TLRPC.TL_inputAppEvent();
                         event.time = SharedConfig.pushStringGetTimeStart;
@@ -94,7 +96,7 @@ public class PushListenerController {
     }
 
     public static void processRemoteMessage(@PushType int pushType, String data, long time) {
-        String tag = pushType == PUSH_TYPE_FIREBASE ? "FCM" : "HCM";
+        String tag = pushType == PUSH_TYPE_FIREBASE ? "FCM" : pushType == PUSH_TYPE_WEBPUSH ? "WebPush" : "HCM";
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d(tag + " PRE START PROCESSING");
         }

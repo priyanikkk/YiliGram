@@ -84,14 +84,17 @@ python3 -m venv .venv && .venv/bin/pip install -r tools/branding/requirements.tx
 ## Plugins
 
 YiliGram runs exteraGram-compatible Python plugins (`.plugin` / `.py`, Python 3.11 via
-Chaquopy): **Settings → Plugins → Install from file**, or tap a `.plugin` file in a chat.
+Chaquopy): **Settings → Plugins → Install from file**, tap a `.plugin` file in a chat, or
+add a Git repository with an `extera-plugins.json` index in **Plugins → Plugin catalog**
+(files are checked against the index's size and SHA-256 before installing).
 Implemented: metadata, lifecycle, request / response / update / outgoing-message hooks,
 **Xposed-style Java method hooks** (`hook_method`, `hook_all_methods`, `hook_all_constructors`,
 `MethodHook`, `MethodReplacement`; [LSPlant](https://github.com/LSPosed/LSPlant) underneath),
 class proxies (`extera_utils.classes`: Java subclasses implemented in Python, generated with
 DexMaker), menu items, plugin settings, `client_utils`, `android_utils`, `hook_utils`, `file_utils`, `log_utils`,
 `intents`, `ui.settings`, `ui.alert`, `ui.bulletin`, `extera_utils.text_formatting`, the pip
-installer for pure-Python `__requirements__`, the dev server (developer mode) and safe mode.
+installer for pure-Python `__requirements__`, the dev server (developer mode, with VS Code
+debugging through debugpy) and safe mode.
 Examples: [examples/plugins](examples/plugins). Static compatibility check of third-party
 plugins: `python3.11 tools/plugin_compat.py path/to/*.plugin`.
 
@@ -101,9 +104,11 @@ into `local.properties` (or have `python3.11` on PATH). Engine tests:
 
 ## Notifications
 
-YiliGram does not use Firebase Cloud Messaging. Until UnifiedPush support lands,
-notifications are delivered through Telegram's background connection (like on devices
-without Google Play Services).
+YiliGram does not use Firebase Cloud Messaging. Install a [UnifiedPush](https://unifiedpush.org)
+distributor (ntfy, NextPush, Sunup, …) and pick it in **Settings → Push notifications**: the
+endpoint is registered with Telegram as a Web Push subscription (token_type 10, keys and
+RFC 8291 decryption by the UnifiedPush connector). Without a distributor, notifications arrive
+through Telegram's background connection, like on devices without Google Play Services.
 
 ## License
 

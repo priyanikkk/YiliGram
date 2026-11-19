@@ -1,6 +1,7 @@
 package org.telegram.messenger;
 
-import com.yiligram.push.NoPushProvider;
+import com.yiligram.push.PushBridge;
+import com.yiligram.push.UnifiedPushProvider;
 
 import org.telegram.messenger.regular.BuildConfig;
 
@@ -8,6 +9,7 @@ public class ApplicationLoaderImpl extends ApplicationLoader {
     @Override
     public void onCreate() {
         super.onCreate();
+        PushBridge.set(UnifiedPushProvider.INSTANCE);
         // YILI: Python plugin engine (not in the isolated widget process).
         if (!org.telegram.utils.twidget.WidgetEngineService.isEngineProcess()
                 && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.PLUGINS_ENABLED)) {
@@ -23,9 +25,10 @@ public class ApplicationLoaderImpl extends ApplicationLoader {
         return BuildConfig.APPLICATION_ID;
     }
 
-    // YILI: no Firebase project; see NoPushProvider.
+    // YILI: no Firebase project. UnifiedPush when a distributor is chosen, otherwise Telegram's
+    // keep-alive background connection (hasServices() == false).
     @Override
     protected PushListenerController.IPushListenerServiceProvider onCreatePushProvider() {
-        return NoPushProvider.INSTANCE;
+        return UnifiedPushProvider.INSTANCE;
     }
 }

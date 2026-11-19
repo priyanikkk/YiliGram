@@ -296,4 +296,13 @@
     <string name="YiliRepoInstallConfirm">Встановити %1$s %2$s з %3$s?
 
 Плагіни отримують повний доступ до вашого акаунта. Файл звіряється з індексом репозиторію, але сам репозиторій YiliGram не перевіряє.</string>
+    <string name="YiliPush">Push-сповіщення</string>
+    <string name="YiliPushInfo">UnifiedPush або фонове з\'єднання</string>
+    <string name="YiliPushAbout">YiliGram не використовує push-сервіс Google. З застосунком-дистриб\'ютором UnifiedPush (наприклад, ntfy) Telegram будить YiliGram через нього; інакше YiliGram тримає власне фонове з\'єднання, яке витрачає більше батареї.</string>
+    <string name="YiliPushOff">Вимкнено: фонове з\'єднання</string>
+    <string name="YiliPushDistributors">Дистриб\'ютор UnifiedPush</string>
+    <string name="YiliPushNone">Дистриб\'ютор UnifiedPush не встановлено. Встановіть його (ntfy, NextPush, Sunup…) і поверніться сюди.</string>
+    <string name="YiliPushStatusRegistered">Зареєстровано в Telegram</string>
+    <string name="YiliPushStatusWaiting">Очікування дистриб\'ютора…</string>
+    <string name="YiliPushLearnMore">Про UnifiedPush</string>
 </resources>

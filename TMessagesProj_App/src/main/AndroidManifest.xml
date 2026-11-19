@@ -19,5 +19,13 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <!-- YILI: UnifiedPush events (endpoint, messages) from the distributor app -->
+        <service
+            android:name="com.yiligram.push.YiliPushService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.connector.PUSH_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

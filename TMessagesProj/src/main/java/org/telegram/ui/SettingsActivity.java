@@ -798,6 +798,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         // YILI: YiliGram settings (appearance; plugins later)
         items.add(SettingCell.Factory.of(1001, 0xFF8C7A5B, 0xFF4A4030, R.drawable.msg_palette, getString(R.string.YiliSettings), getString(R.string.YiliSettingsInfo)));
         items.add(SettingCell.Factory.of(1002, 0xFF5B7D8C, 0xFF30454A, R.drawable.msg_bots, getString(R.string.YiliPlugins), getString(R.string.YiliPluginsInfo)));
+        items.add(SettingCell.Factory.of(1003, 0xFF8C5B6E, 0xFF4A3039, R.drawable.msg_notifications, getString(R.string.YiliPush), getString(R.string.YiliPushInfo)));
         items.add(UItem.asShadow(null));
         items.add(SettingCell.Factory.of(1, IconBackgroundColors.BLUE.top, IconBackgroundColors.BLUE.bottom, R.drawable.settings_account, getString(R.string.SettingsAccount), getString(R.string.SettingsAccountInfo)));
         items.add(SettingCell.Factory.of(2, IconBackgroundColors.ORANGE.top, IconBackgroundColors.ORANGE.bottom, R.drawable.settings_chat, getString(R.string.SettingsChat), getString(R.string.SettingsChatInfo)));
@@ -926,6 +927,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 break;
             case 1002: // YILI
                 presentSettingFragment(new com.yiligram.ui.PluginsActivity());
+                break;
+            case 1003: // YILI
+                presentSettingFragment(new com.yiligram.ui.PushSettingsActivity());
                 break;
             case 1:
                 presentSettingFragment(new UserInfoActivity());
