@@ -212,6 +212,31 @@ def gradient_xml(variant):
     )
 
 
+def splash_icon_xml():
+    """Android 12+ splash icon (windowSplashScreenAnimatedIcon).
+
+    The system decides the drawable's size (and masks it to its icon shape), so the layers are
+    sized in fractions of the bounds, not in dp: the disc covers the central 2/3 (192 of 288dp)
+    and the adaptive foreground fills the bounds, its 72/108 safe zone landing on the disc.
+    Fixed dp sizes overflowed smaller bounds and showed the mascot zoomed and clipped.
+    """
+    start, end, angle = VARIANTS["default"]
+    return (
+        '<?xml version="1.0" encoding="utf-8"?>\n' + GEN +
+        '<layer-list xmlns:android="http://schemas.android.com/apk/res/android">\n'
+        "    <item>\n"
+        '        <inset android:inset="16.667%">\n'
+        '            <shape android:shape="oval">\n'
+        f'                <gradient android:type="linear" android:angle="{angle}"\n'
+        f'                    android:startColor="{start}" android:endColor="{end}" />\n'
+        "            </shape>\n"
+        "        </inset>\n"
+        "    </item>\n"
+        '    <item android:drawable="@mipmap/icon_foreground" />\n'
+        "</layer-list>\n"
+    )
+
+
 def splash_xml(with_window_bg):
     """Splash icon: mascot on a dark disc.
 
@@ -302,7 +327,7 @@ def main():
           vector_xml(trace(mono, MONO_WIDTH_DP, 108), 108, 108, "#FFFFFFFF"))
     write("drawable/notification.xml",
           vector_xml(trace(mono, NOTIFICATION_WIDTH_DP, 24), 24, 24, "#FFFFFFFF"))
-    write("drawable/yili_splash_icon.xml", splash_xml(False))
+    write("drawable/yili_splash_icon.xml", splash_icon_xml())
     write("drawable/yili_splash_window.xml", splash_xml(True))
 
     if args.preview:
