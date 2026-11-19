@@ -1,0 +1,73 @@
+"""Self-test of class proxies (not shipped)."""
+from base_plugin import BasePlugin
+from extera_utils.classes import (Base, java_subclass, joverload, joverride, jmethod, jfield, jgetmethod,
+                                  jsetmethod, jconstructor, jpreconstructor)
+from java import jclass
+from java.util import ArrayList
+
+__id__ = "proxy_selftest"
+__name__ = "Proxy self-test"
+__description__ = "test"
+__author__ = "YiliGram"
+__version__ = "1.0"
+
+Runnable = jclass("java.lang.Runnable")
+
+
+@java_subclass(ArrayList)
+class CountingList(Base):
+    added_count = jfield("int", default=0)
+    flag = jfield("boolean", default=False, methods=[jgetmethod("isFlag"), jsetmethod("setFlag")])
+
+    def __init__(self, *args):
+        self.inited_with = args
+
+    @joverload("add", ["java.lang.Object"])
+    def add_item(self, value):
+        self.added_count += 1
+        return super().add_item(value)
+
+    @joverride("size")
+    def size_(self):
+        return super().size_() + 100
+
+    @jmethod("debugLabel", "java.lang.String", ["int"])
+    def build_debug_label(self, value):
+        return f"value={value}, added={self.added_count}"
+
+    @jpreconstructor(["int"])
+    def pre(cls, capacity):
+        return [capacity * 2]
+
+    @jconstructor(["int"])
+    def post(self, capacity):
+        self.capacity_seen = capacity
+
+
+@java_subclass(Runnable)
+class Task(Base):
+    @joverride()
+    def run(self):
+        Task.ran = True
+
+
+class SelfTest(BasePlugin):
+    def on_plugin_load(self):
+        log = self.logger.info
+        items = CountingList.new_instance()
+        items.add("Hello")
+        items.add("world")
+        j = items.java
+        log("PROXY count=%s size=%s real=%s label=%s cls=%s", items.added_count, j.size(),
+            j.yili_super_size(), j.debugLabel(7), j.getClass().getName())
+        j.setFlag(True)
+        log("PROXY flag=%s getter=%s isArrayList=%s", items.flag, j.isFlag(), ArrayList.getClass().isInstance(j))
+        sized = CountingList.new_instance(5)
+        log("PROXY ctor capacity_seen=%s init=%s", sized.capacity_seen, sized.inited_with)
+        same = CountingList.from_java(j)
+        log("PROXY from_java same=%s", same is items)
+        t = Task.new_instance()
+        jclass("java.lang.Thread")(t.java).run()
+        log("PROXY runnable ran=%s", getattr(Task, "ran", False))
+        items.jrelease()
+        log("PROXY after release size=%s", j.size())

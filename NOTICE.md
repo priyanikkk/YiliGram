@@ -17,6 +17,7 @@ It includes the following components:
 | parallel-hashmap (used by DexBuilder) | https://github.com/greg7mdp/parallel-hashmap | Apache-2.0 |
 | LSPosed libcxx (LLVM libc++ with std modules, prefab) | https://github.com/LSPosed/libcxx | Apache-2.0 WITH LLVM-exception |
 | Dobby (inline hooks, prefab `io.github.vvb2060.ndk:dobby`) | https://github.com/jmpews/Dobby | Apache-2.0 |
+| DexMaker + dalvik-dx (runtime class generation for plugin class proxies) | https://github.com/linkedin/dexmaker | Apache-2.0 |
 | HiddenApiBypass | https://github.com/LSPosed/AndroidHiddenApiBypass | Apache-2.0 |
 | XZ Embedded (MiniDebugInfo decompression) | https://github.com/tukaani-project/xz-embedded (`yili-hook/src/main/cpp/xz`) | 0BSD (`yili-hook/src/main/cpp/xz/COPYING`) |
 | Bundled Python packages: requests, urllib3, idna, certifi, charset-normalizer, beautifulsoup4, soupsieve, lxml, Pillow, PyYAML, packaging | PyPI | Apache-2.0 / MIT / MPL-2.0 (certifi) / BSD / HPND (Pillow) — see each package |
@@ -27,4 +28,3 @@ The plugin engine implements the publicly documented exteraGram plugin SDK
 LSPlant and DexBuilder are linked statically into `libyilihook.so`; their complete source is
 part of this repository (submodule), which satisfies LGPL-3.0 §4 for a GPL-3.0 application.
 
-Planned for later stages: DexMaker (Apache-2.0) for class proxies.

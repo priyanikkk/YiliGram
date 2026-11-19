@@ -488,6 +488,12 @@ def _drop_registrations(plugin_id: str):
             intents.drop_plugin(plugin_id)
         except Exception:
             pass
+        classes = sys.modules.get("extera_utils.classes")
+        if classes is not None:
+            try:
+                classes.drop_plugin(plugin_id)
+            except Exception:
+                _logger.exception("cannot release class proxies of %s", plugin_id)
 
 
 def hook_summary() -> str:

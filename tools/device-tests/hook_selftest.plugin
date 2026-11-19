@@ -1,0 +1,60 @@
+"""Self-test of Java method hooks (not shipped)."""
+from base_plugin import BasePlugin, MethodHook, MethodReplacement
+from hook_utils import find_class, invoke_original
+from java import jclass
+
+__id__ = "hook_selftest"
+__name__ = "Hook self-test"
+__description__ = "test"
+__author__ = "YiliGram"
+__version__ = "1.0"
+
+
+class Count(MethodHook):
+    def __init__(self):
+        self.before = 0
+        self.after = 0
+        self.this_cls = None
+
+    def before_hooked_method(self, param):
+        self.before += 1
+
+    def after_hooked_method(self, param):
+        self.after += 1
+        self.this_cls = param.thisObject.getClass().getName()
+
+
+class Const(MethodReplacement):
+    def replace_hooked_method(self, param):
+        return 123
+
+
+class Boom(MethodHook):
+    def before_hooked_method(self, param):
+        raise ValueError("expected test error")
+
+
+class SelfTest(BasePlugin):
+    def on_plugin_load(self):
+        log = self.logger.info
+        AB = find_class("org.telegram.ui.ActionBar.ActionBar")
+        ABj = jclass("org.telegram.ui.ActionBar.ActionBar")
+        m = AB.getDeclaredMethod("getCurrentActionBarHeight")
+        before = ABj.getCurrentActionBarHeight()
+        h = self.hook_method(m, Const())
+        log("SELFTEST hook handle: %s", h)
+        log("SELFTEST replaced: %s (was %s)", ABj.getCurrentActionBarHeight(), before)
+        log("SELFTEST original: %s", invoke_original(m, None))
+        self.unhook_method(h)
+        log("SELFTEST after unhook: %s", ABj.getCurrentActionBarHeight())
+        h2 = self.hook_method(m, Boom())
+        log("SELFTEST with throwing hook: %s", ABj.getCurrentActionBarHeight())
+        self.unhook_method(h2)
+
+        cls = find_class("org.telegram.tgnet.TLRPC$TL_inputPeerEmpty")
+        c = Count()
+        hc = self.hook_all_constructors(cls, c)
+        jclass("org.telegram.tgnet.TLRPC$TL_inputPeerEmpty")()
+        log("SELFTEST ctor: handles=%d before=%d after=%d this=%s", len(hc), c.before, c.after, c.this_cls)
+        for x in hc:
+            self.unhook_method(x)

@@ -85,3 +85,11 @@
 # Use -keep to explicitly keep any other classes shrinking would remove
 #-dontoptimize
 #-dontobfuscate
+# YILI: plugins (Python, exteraGram-compatible) find Telegram classes, fields and methods by name
+# (hook_utils.find_class, reflection, Java method hooks, class proxies). Release builds must keep
+# those names and members, or every plugin that touches the UI breaks.
+-dontobfuscate
+-keep class org.telegram.** { *; }
+-keep class com.yiligram.** { *; }
+-keepattributes Signature,InnerClasses,EnclosingMethod,*Annotation*
+-dontwarn com.android.dx.**

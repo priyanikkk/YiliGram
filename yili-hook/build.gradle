@@ -56,4 +56,6 @@ dependencies {
     implementation 'io.github.vvb2060.ndk:dobby:1.2'
     // LSPlant itself and plugins reflect into hidden framework APIs (Android 9+ blocks them).
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
+    // Runtime class generation for plugins' class proxies (extera_utils.classes).
+    implementation 'com.linkedin.dexmaker:dexmaker:2.28.6'
 }

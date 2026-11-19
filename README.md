@@ -88,7 +88,8 @@ Chaquopy): **Settings → Plugins → Install from file**, or tap a `.plugin` fi
 Implemented: metadata, lifecycle, request / response / update / outgoing-message hooks,
 **Xposed-style Java method hooks** (`hook_method`, `hook_all_methods`, `hook_all_constructors`,
 `MethodHook`, `MethodReplacement`; [LSPlant](https://github.com/LSPosed/LSPlant) underneath),
-plugin settings, `client_utils`, `android_utils`, `hook_utils`, `file_utils`, `log_utils`,
+class proxies (`extera_utils.classes`: Java subclasses implemented in Python, generated with
+DexMaker), menu items, plugin settings, `client_utils`, `android_utils`, `hook_utils`, `file_utils`, `log_utils`,
 `intents`, `ui.settings`, `ui.alert`, `ui.bulletin`, `extera_utils.text_formatting`, the pip
 installer for pure-Python `__requirements__`, the dev server (developer mode) and safe mode.
 Examples: [examples/plugins](examples/plugins). Static compatibility check of third-party
