@@ -304,6 +304,7 @@ public class ApplicationLoader extends Application {
         // YILI: settings and design tokens must be ready before Theme's static initializer runs.
         // (After the isolated widget process returns: it has no SharedPreferences.)
         com.yiligram.config.YiliConfig.init(this);
+        com.yiligram.config.YiliFonts.apply(); // YILI: UI font (needs a restart to change)
         com.yiligram.config.YiliAppearance.applyTokens();
         com.yiligram.bridge.YiliThemeApplier.install(this);
 

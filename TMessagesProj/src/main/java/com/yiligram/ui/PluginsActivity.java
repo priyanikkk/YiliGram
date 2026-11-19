@@ -92,14 +92,14 @@ public class PluginsActivity extends UniversalFragment {
         }
         for (int i = 0; i < plugins.size(); i++) {
             PluginEngine.PluginInfo p = plugins.get(i);
-            String sub;
+            CharSequence sub;
             if (!TextUtils.isEmpty(p.error)) {
                 sub = "⚠ " + p.error;
             } else if (!TextUtils.isEmpty(p.warning)) {
                 sub = "v" + p.version + "\nⓘ " + p.warning;
             } else {
-                sub = "v" + p.version + (TextUtils.isEmpty(p.author) ? "" : " · " + formatString(R.string.YiliPluginBy, p.author))
-                        + (TextUtils.isEmpty(p.description) ? "" : "\n" + p.description);
+                sub = YiliMarkdown.render("v" + p.version + (TextUtils.isEmpty(p.author) ? "" : " · " + formatString(R.string.YiliPluginBy, p.author))
+                        + (TextUtils.isEmpty(p.description) ? "" : "\n" + p.description));
             }
             items.add(UItem.asButtonCheck(ID_PLUGIN_BASE + i, p.name, sub).setChecked(p.enabled));
         }

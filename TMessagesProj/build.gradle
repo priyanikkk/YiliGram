@@ -42,6 +42,8 @@ configurations.all {
 }
 
 dependencies {
+    // YiliFonts swaps the platform default typeface (hidden Typeface fields).
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
     api project(':yili-design')
     implementation 'androidx.core:core:1.16.0'
     implementation 'androidx.palette:palette:1.0.0'

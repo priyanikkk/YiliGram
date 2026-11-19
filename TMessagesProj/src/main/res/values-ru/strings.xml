@@ -364,4 +364,13 @@
     <string name="YiliPushStatusRegistered">Зарегистрировано в Telegram</string>
     <string name="YiliPushStatusWaiting">Ожидание дистрибьютора…</string>
     <string name="YiliPushLearnMore">Об UnifiedPush</string>
+    <string name="YiliFontHeader">Шрифт</string>
+    <string name="YiliFont">Гарнитура</string>
+    <string name="YiliFontSystem">Системный</string>
+    <string name="YiliFontGoogleSansFlex">Google Sans Flex (только латиница)</string>
+    <string name="YiliFontCustom">Из файла…</string>
+    <string name="YiliFontWeight">Насыщенность</string>
+    <string name="YiliFontInfo">Roboto Flex — шрифт Material 3 Expressive. Символы, которых нет в шрифте, рисуются системным шрифтом. Смена шрифта применяется после перезапуска YiliGram.</string>
+    <string name="YiliFontRestart">Перезапустите YiliGram, чтобы применить шрифт</string>
+    <string name="YiliFontInvalid">Этот файл не является шрифтом, который понимает Android</string>
 </resources>

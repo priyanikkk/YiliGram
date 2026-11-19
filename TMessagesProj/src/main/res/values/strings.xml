@@ -11778,4 +11778,13 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliPushStatusRegistered">Registered with Telegram</string>
     <string name="YiliPushStatusWaiting">Waiting for the distributor…</string>
     <string name="YiliPushLearnMore">About UnifiedPush</string>
+    <string name="YiliFontHeader">Font</string>
+    <string name="YiliFont">Typeface</string>
+    <string name="YiliFontSystem">System</string>
+    <string name="YiliFontGoogleSansFlex">Google Sans Flex (Latin only)</string>
+    <string name="YiliFontCustom">From file…</string>
+    <string name="YiliFontWeight">Font weight</string>
+    <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
+    <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliFontInvalid">This file is not a font Android can use</string>
 </resources>

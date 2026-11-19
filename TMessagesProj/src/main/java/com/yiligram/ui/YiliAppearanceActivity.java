@@ -11,7 +11,9 @@ import android.view.View;
 
 import androidx.core.content.FileProvider;
 
+import com.yiligram.config.FontFamily;
 import com.yiligram.config.YiliConfig;
+import com.yiligram.config.YiliFonts;
 import com.yiligram.design.color.ColorSpecVersion;
 import com.yiligram.design.color.ContrastLevel;
 import com.yiligram.design.color.DynamicColorSource;
@@ -53,6 +55,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_RESET = 9;
 
     private static final int REQUEST_IMPORT = 7301;
+    private static final int REQUEST_FONT = 7303;
+    private static final int ID_FONT = 10;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -136,6 +140,19 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 val -> val + "%", val -> YiliConfig.set(YiliConfig.SHAPE_ROUNDNESS, val / 100f)));
         items.add(UItem.asShadow(null));
 
+        // ---- Font
+        items.add(UItem.asHeader(getString(R.string.YiliFontHeader)));
+        items.add(UItem.asButton(ID_FONT, getString(R.string.YiliFont), fontName(YiliConfig.get(YiliConfig.FONT_FAMILY))));
+        if (YiliConfig.get(YiliConfig.FONT_FAMILY) != FontFamily.SYSTEM) {
+            items.add(UItem.asHeader(getString(R.string.YiliFontWeight)));
+            items.add(UItem.asIntSlideView(1, -200, YiliConfig.get(YiliConfig.FONT_WEIGHT_DELTA), 200,
+                    val -> (val > 0 ? "+" : "") + val, val -> {
+                        YiliConfig.set(YiliConfig.FONT_WEIGHT_DELTA, Math.round(val / 50f) * 50);
+                        restartHint();
+                    }));
+        }
+        items.add(UItem.asShadow(getString(R.string.YiliFontInfo)));
+
         // ---- Motion
         items.add(UItem.asHeader(getString(R.string.YiliMotionHeader)));
         boolean animations = YiliConfig.get(YiliConfig.ANIMATIONS);
@@ -179,6 +196,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_VARIANT:
                 showVariantPicker();
+                break;
+            case ID_FONT:
+                showFontPicker();
                 break;
             case ID_SPEC:
                 showSpecPicker();
@@ -259,8 +279,77 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         }
     }
 
+    private void showFontPicker() {
+        FontFamily[] values = FontFamily.values();
+        CharSequence[] names = new CharSequence[values.length];
+        for (int i = 0; i < values.length; i++) {
+            names[i] = fontName(values[i]);
+        }
+        new AlertDialog.Builder(getContext(), getResourceProvider())
+                .setTitle(getString(R.string.YiliFont))
+                .setItems(names, (d, which) -> {
+                    if (values[which] == FontFamily.CUSTOM) {
+                        Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                        pick.addCategory(Intent.CATEGORY_OPENABLE);
+                        pick.setType("*/*");
+                        startActivityForResult(pick, REQUEST_FONT);
+                    } else {
+                        YiliConfig.set(YiliConfig.FONT_FAMILY, values[which]);
+                        restartHint();
+                    }
+                })
+                .show();
+    }
+
+    private void restartHint() {
+        BulletinFactory.of(this).createSimpleBulletin(R.raw.info, getString(R.string.YiliFontRestart)).show();
+    }
+
+    private void importFont(Uri uri) {
+        File target = YiliFonts.customFile();
+        File tmp = new File(target.getPath() + ".tmp");
+        try (InputStream in = getParentActivity().getContentResolver().openInputStream(uri);
+             FileOutputStream out = new FileOutputStream(tmp)) {
+            byte[] buf = new byte[16384];
+            int total = 0, n;
+            while (in != null && (n = in.read(buf)) > 0) {
+                total += n;
+                if (total > 32 * 1024 * 1024) {
+                    throw new IllegalArgumentException("font file is too large");
+                }
+                out.write(buf, 0, n);
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.error, getString(R.string.YiliFontInvalid)).show();
+            return;
+        }
+        // Reject files Android cannot read as a font before they replace the working one.
+        if (android.os.Build.VERSION.SDK_INT >= 26 && new android.graphics.Typeface.Builder(tmp).build() == null) {
+            tmp.delete();
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.error, getString(R.string.YiliFontInvalid)).show();
+            return;
+        }
+        tmp.renameTo(target);
+        YiliConfig.set(YiliConfig.FONT_FAMILY, FontFamily.CUSTOM);
+        restartHint();
+    }
+
+    static String fontName(FontFamily f) {
+        switch (f) {
+            case ROBOTO_FLEX: return "Roboto Flex";
+            case GOOGLE_SANS_FLEX: return getString(R.string.YiliFontGoogleSansFlex);
+            case CUSTOM: return getString(R.string.YiliFontCustom);
+            default: return getString(R.string.YiliFontSystem);
+        }
+    }
+
     @Override
     public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_FONT && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            importFont(data.getData());
+            return;
+        }
         if (requestCode != REQUEST_IMPORT || resultCode != Activity.RESULT_OK || data == null || data.getData() == null) {
             return;
         }

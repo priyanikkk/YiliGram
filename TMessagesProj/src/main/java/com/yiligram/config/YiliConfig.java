@@ -78,6 +78,8 @@ public final class YiliConfig {
     // Type
     public static final Key<Float> FONT_SCALE = new Key<>("type.scale", Float.class, 1f);
     public static final Key<Integer> FONT_WEIGHT_DELTA = new Key<>("type.weightDelta", Integer.class, 0);
+    /** UI font; applied at startup (YiliFonts). */
+    public static final Key<FontFamily> FONT_FAMILY = new Key<>("type.family", FontFamily.class, FontFamily.SYSTEM);
 
     // Motion
     public static final Key<Boolean> ANIMATIONS = new Key<>("motion.enabled", Boolean.class, true);
