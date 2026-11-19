@@ -203,6 +203,9 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                     }
                     if (view instanceof ActionBar && view.getVisibility() == VISIBLE) {
                         final ActionBar actionBar = (ActionBar) view;
+                        if (com.yiligram.ui.YiliTopBar.update(actionBar, child)) {
+                            break; // YILI: M3 top app bar - no shadow, color follows scrolling
+                        }
                         if (actionBar.getCastShadows() && actionBar.getShadowAlpha() > 0) {
                             actionBarHeight = view.getMeasuredHeight();
                             actionBarY = (int) view.getY();
