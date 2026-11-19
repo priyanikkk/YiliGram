@@ -103,6 +103,8 @@ public final class YiliConfig {
 
     /** Call button in a private chat's header; when off, Call moves to the ⋮ menu (Telegram's own fallback). */
     public static final Key<Boolean> HEADER_CALL_BUTTON = new Key<>("header.call", Boolean.class, true);
+    /** Active icon pack id (folder in files/iconpacks), "" for Telegram's icons. Restart to apply. */
+    public static final Key<String> ICON_PACK = new Key<>("icons.pack", String.class, "");
     public static final Key<Boolean> HIDE_GIFT_BUTTON = new Key<>("input.hideGift", Boolean.class, false);
     /** Built-in typing animation in the message field. */
     public static final Key<Boolean> TEXT_ANIMATION = new Key<>("input.textAnimation", Boolean.class, true);
@@ -134,6 +136,10 @@ public final class YiliConfig {
         if (prefs == null) {
             prefs = context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         }
+    }
+
+    public static synchronized boolean isInitialized() {
+        return prefs != null;
     }
 
     @NonNull

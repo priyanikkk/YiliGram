@@ -11786,6 +11786,17 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliFontWeight">Font weight</string>
     <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
     <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliIconsHeader">Icons</string>
+    <string name="YiliIconPack">Icon pack</string>
+    <string name="YiliIconDefault">Telegram (default)</string>
+    <string name="YiliIconImport">Import icon pack (.zip)</string>
+    <string name="YiliIconDelete">Delete this icon pack</string>
+    <string name="YiliIconDeleteConfirm">Delete the icon pack «%1$s»?</string>
+    <string name="YiliIconCount">%1$d icons</string>
+    <string name="YiliIconInstalled">Icon pack «%1$s» installed: %2$d icons. Restart YiliGram to apply.</string>
+    <string name="YiliIconFailed">Cannot install the icon pack: %1$s</string>
+    <string name="YiliIconRestart">Restart YiliGram to apply the icons</string>
+    <string name="YiliIconInfo">A pack is a ZIP of PNG or WebP images named like Telegram\'s icons (msg_delete.png, msg_settings.png…), optionally with pack.json with a name and an author. White icons on a transparent background look best: the app tints them.</string>
     <string name="YiliTextAnimation">Text animation</string>
     <string name="YiliTextAnimationInfo">Typed letters fade in and rise into place</string>
     <string name="YiliPluginsShareLogs">Share plugin logs</string>

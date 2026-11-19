@@ -70,6 +70,10 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_UPDATE_AUTO = 20;
     private static final int ID_UPDATE_CHECK = 21;
     private static final int ID_TEXT_ANIMATION = 22;
+    private static final int ID_ICON_PACK = 23;
+    private static final int ID_ICON_IMPORT = 24;
+    private static final int ID_ICON_DELETE = 25;
+    private static final int REQUEST_ICON_PACK = 7304;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -179,6 +183,15 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         }
         items.add(UItem.asShadow(getString(R.string.YiliFontInfo)));
 
+        // ---- Icons
+        items.add(UItem.asHeader(getString(R.string.YiliIconsHeader)));
+        items.add(UItem.asButton(ID_ICON_PACK, getString(R.string.YiliIconPack), iconPackName()));
+        items.add(UItem.asButton(ID_ICON_IMPORT, R.drawable.msg_download, getString(R.string.YiliIconImport)));
+        if (!YiliConfig.get(YiliConfig.ICON_PACK).isEmpty()) {
+            items.add(UItem.asButton(ID_ICON_DELETE, R.drawable.msg_delete, getString(R.string.YiliIconDelete)).red());
+        }
+        items.add(UItem.asShadow(getString(R.string.YiliIconInfo)));
+
         // ---- Interface scale (density)
         items.add(UItem.asHeader(getString(R.string.YiliUiScale)));
         items.add(UItem.asIntSlideView(1, Math.round(com.yiligram.config.YiliDensity.MIN * 100),
@@ -278,6 +291,29 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
                 break;
+            case ID_ICON_PACK:
+                showIconPackPicker();
+                break;
+            case ID_ICON_IMPORT: {
+                Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                pick.addCategory(Intent.CATEGORY_OPENABLE);
+                pick.setType("*/*");
+                startActivityForResult(pick, REQUEST_ICON_PACK);
+                break;
+            }
+            case ID_ICON_DELETE: {
+                String id = YiliConfig.get(YiliConfig.ICON_PACK);
+                new AlertDialog.Builder(getContext(), getResourceProvider())
+                        .setMessage(formatString(R.string.YiliIconDeleteConfirm, iconPackName()))
+                        .setPositiveButton(getString(R.string.Delete), (d, w) -> {
+                            com.yiligram.icons.IconPacks.delete(id);
+                            restartHint(R.string.YiliIconRestart);
+                        })
+                        .setNegativeButton(getString(R.string.Cancel), null)
+                        .makeRed(AlertDialog.BUTTON_POSITIVE)
+                        .show();
+                break;
+            }
             case ID_TEXT_ANIMATION:
                 YiliConfig.set(YiliConfig.TEXT_ANIMATION, !YiliConfig.get(YiliConfig.TEXT_ANIMATION));
                 break;
@@ -409,6 +445,60 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 .show();
     }
 
+    private String iconPackName() {
+        String id = YiliConfig.get(YiliConfig.ICON_PACK);
+        if (id.isEmpty()) {
+            return getString(R.string.YiliIconDefault);
+        }
+        for (com.yiligram.icons.IconPacks.Pack p : com.yiligram.icons.IconPacks.list()) {
+            if (p.id.equals(id)) {
+                return p.name;
+            }
+        }
+        return id;
+    }
+
+    private void showIconPackPicker() {
+        java.util.List<com.yiligram.icons.IconPacks.Pack> packs = com.yiligram.icons.IconPacks.list();
+        CharSequence[] names = new CharSequence[packs.size() + 1];
+        names[0] = getString(R.string.YiliIconDefault);
+        for (int i = 0; i < packs.size(); i++) {
+            com.yiligram.icons.IconPacks.Pack p = packs.get(i);
+            names[i + 1] = p.name + " · " + formatString(R.string.YiliIconCount, p.count)
+                    + (p.author.isEmpty() ? "" : " · " + p.author);
+        }
+        new AlertDialog.Builder(getContext(), getResourceProvider())
+                .setTitle(getString(R.string.YiliIconPack))
+                .setItems(names, (d, which) -> {
+                    String id = which == 0 ? "" : packs.get(which - 1).id;
+                    if (!id.equals(YiliConfig.get(YiliConfig.ICON_PACK))) {
+                        YiliConfig.set(YiliConfig.ICON_PACK, id);
+                        restartHint(R.string.YiliIconRestart);
+                    }
+                })
+                .show();
+    }
+
+    private void importIconPack(Uri uri) {
+        String name = null;
+        try (android.database.Cursor c = getParentActivity().getContentResolver().query(uri, new String[]{android.provider.OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+            if (c != null && c.moveToFirst()) {
+                name = c.getString(0);
+            }
+        } catch (Exception ignored) {
+        }
+        try (InputStream in = getParentActivity().getContentResolver().openInputStream(uri)) {
+            com.yiligram.icons.IconPacks.Pack p = com.yiligram.icons.IconPacks.install(in, name);
+            YiliConfig.set(YiliConfig.ICON_PACK, p.id);
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.contact_check,
+                    formatString(R.string.YiliIconInstalled, p.name, p.count)).show();
+        } catch (Exception e) {
+            FileLog.e(e);
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.error,
+                    formatString(R.string.YiliIconFailed, e.getMessage() == null ? e.toString() : e.getMessage())).show();
+        }
+    }
+
     private void checkForUpdates() {
         org.telegram.messenger.ApplicationLoader loader = org.telegram.messenger.ApplicationLoader.applicationLoaderInstance;
         BulletinFactory.of(this).createSimpleBulletin(R.raw.info, getString(R.string.YiliUpdateChecking)).show();
@@ -476,6 +566,10 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
 
     @Override
     public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ICON_PACK && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            importIconPack(data.getData());
+            return;
+        }
         if (requestCode == REQUEST_FONT && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             importFont(data.getData());
             return;

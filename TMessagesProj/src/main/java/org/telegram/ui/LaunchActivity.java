@@ -401,6 +401,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     private FrameMetricsOverlayView frameMetricsOverlayView;
     // private RefreshRateController refreshRateController;
 
+    // YILI: icon packs (see ApplicationLoader.getResources)
+    @Override
+    public android.content.res.Resources getResources() {
+        return com.yiligram.icons.IconPacks.wrap(super.getResources());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         isActive = true;

@@ -78,6 +78,12 @@ public class ApplicationLoader extends Application {
     private static IMapsProvider mapsProvider;
     private static ILocationServiceProvider locationServiceProvider;
 
+    // YILI: icon packs replace drawables for every lookup through the app's Resources
+    @Override
+    public android.content.res.Resources getResources() {
+        return com.yiligram.icons.IconPacks.wrap(super.getResources());
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

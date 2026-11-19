@@ -372,6 +372,17 @@
     <string name="YiliFontWeight">Насыщенность</string>
     <string name="YiliFontInfo">Roboto Flex — шрифт Material 3 Expressive. Символы, которых нет в шрифте, рисуются системным шрифтом. Смена шрифта применяется после перезапуска YiliGram.</string>
     <string name="YiliFontRestart">Перезапустите YiliGram, чтобы применить шрифт</string>
+    <string name="YiliIconsHeader">Иконки</string>
+    <string name="YiliIconPack">Набор иконок</string>
+    <string name="YiliIconDefault">Telegram (стандартные)</string>
+    <string name="YiliIconImport">Импортировать набор (.zip)</string>
+    <string name="YiliIconDelete">Удалить этот набор</string>
+    <string name="YiliIconDeleteConfirm">Удалить набор иконок «%1$s»?</string>
+    <string name="YiliIconCount">иконок: %1$d</string>
+    <string name="YiliIconInstalled">Набор «%1$s» установлен, иконок: %2$d. Перезапустите YiliGram, чтобы применить.</string>
+    <string name="YiliIconFailed">Не удалось установить набор: %1$s</string>
+    <string name="YiliIconRestart">Перезапустите YiliGram, чтобы применить иконки</string>
+    <string name="YiliIconInfo">Набор — это ZIP с PNG или WebP, названными как иконки Telegram (msg_delete.png, msg_settings.png…), можно добавить pack.json с названием и автором. Лучше всего белые иконки на прозрачном фоне: приложение само их перекрашивает.</string>
     <string name="YiliTextAnimation">Анимация текста</string>
     <string name="YiliTextAnimationInfo">Набранные буквы плавно появляются и встают на место</string>
     <string name="YiliPluginsShareLogs">Отправить логи плагинов</string>
