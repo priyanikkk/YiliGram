@@ -2656,20 +2656,20 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
 
     public void updateThemeColors() {
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
-        String dayThemeName = preferences.getString("lastDayTheme", "Blue");
+        String dayThemeName = preferences.getString("lastDayTheme", com.yiligram.bridge.ThemeBridge.THEME_LIGHT);
         if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark()) {
-            dayThemeName = "Blue";
+            dayThemeName = com.yiligram.bridge.ThemeBridge.THEME_LIGHT;
         }
-        String nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue");
+        String nightThemeName = preferences.getString("lastDarkTheme", com.yiligram.bridge.ThemeBridge.THEME_DARK);
         if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark()) {
-            nightThemeName = "Dark Blue";
+            nightThemeName = com.yiligram.bridge.ThemeBridge.THEME_DARK;
         }
         Theme.ThemeInfo themeInfo = Theme.getActiveTheme();
         if (dayThemeName.equals(nightThemeName)) {
-            if (themeInfo.isDark() || dayThemeName.equals("Dark Blue") || dayThemeName.equals("Night")) {
-                dayThemeName = "Blue";
+            if (themeInfo.isDark() || dayThemeName.equals(com.yiligram.bridge.ThemeBridge.THEME_DARK) || dayThemeName.equals("Night")) {
+                dayThemeName = com.yiligram.bridge.ThemeBridge.THEME_LIGHT;
             } else {
-                nightThemeName = "Dark Blue";
+                nightThemeName = com.yiligram.bridge.ThemeBridge.THEME_DARK;
             }
         }
 

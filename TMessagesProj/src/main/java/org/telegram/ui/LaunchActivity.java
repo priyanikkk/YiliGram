@@ -7080,13 +7080,13 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             return;
         }
         final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
-        String dayThemeName = preferences.getString("lastDayTheme", "Blue");
+        String dayThemeName = preferences.getString("lastDayTheme", com.yiligram.bridge.ThemeBridge.THEME_LIGHT);
         if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark()) {
-            dayThemeName = "Blue";
+            dayThemeName = com.yiligram.bridge.ThemeBridge.THEME_LIGHT;
         }
-        String nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue");
+        String nightThemeName = preferences.getString("lastDarkTheme", com.yiligram.bridge.ThemeBridge.THEME_DARK);
         if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark()) {
-            nightThemeName = "Dark Blue";
+            nightThemeName = com.yiligram.bridge.ThemeBridge.THEME_DARK;
         }
         final boolean toDark = "night".equals(mode) || !"day".equals(mode) && !Theme.getActiveTheme().isDark();
         final Theme.ThemeInfo themeInfo = Theme.getTheme(toDark ? nightThemeName : dayThemeName);
