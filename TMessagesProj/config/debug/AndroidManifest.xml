@@ -66,6 +66,15 @@
             android:enabled="false"
             android:exported="false" />
 
+        <!-- YILI: debug only - lets tools/release/publish.sh post an update APK to Saved Messages via adb -->
+        <receiver
+            android:name="com.yiligram.update.PublishReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="com.yiligram.update.PUBLISH" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
