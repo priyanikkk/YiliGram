@@ -221,7 +221,7 @@ def scan():
 
 
 def _static_warning(path: str) -> Optional[str]:
-    """Features this build cannot provide yet, found with ast (the plugin still loads)."""
+    """Features this device cannot provide, found with ast (the plugin still loads)."""
     try:
         with open(path, encoding="utf-8") as f:
             tree = ast.parse(f.read())
@@ -229,7 +229,11 @@ def _static_warning(path: str) -> Optional[str]:
         return None
     for node in ast.walk(tree):
         if isinstance(node, ast.Attribute) and node.attr in ("hook_method", "hook_all_methods", "hook_all_constructors"):
-            return "Uses Java method hooks, which this YiliGram build does not support yet: some features may not work"
+            import hook_utils
+            reason = hook_utils.unavailable_reason()
+            if reason:
+                return f"Uses Java method hooks, which are unavailable on this device ({reason}): some features may not work"
+            return None
     return None
 
 

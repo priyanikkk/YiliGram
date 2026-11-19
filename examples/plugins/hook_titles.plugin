@@ -1,0 +1,51 @@
+"""Example of Java method hooks: decorates screen titles.
+
+Hooks ``setTitle(CharSequence)`` of both Telegram action bars (``ActionBar`` and the newer
+``SimpleActionBar``) with an Xposed-style ``MethodHook``: the before-callback rewrites the argument
+before the original method runs. Titles of screens opened after the plugin loads are decorated.
+"""
+from base_plugin import BasePlugin, MethodHook
+from hook_utils import find_class
+from ui.settings import Header, Input, Switch
+
+__id__ = "hook_titles"
+__name__ = "Title decorator"
+__description__ = "Adds a mark to every screen title. Shows how **Java method hooks** work."
+__author__ = "YiliGram"
+__version__ = "1.0"
+__min_version__ = "12.0.0"
+
+
+class TitleHook(MethodHook):
+    def __init__(self, plugin):
+        self.plugin = plugin
+
+    def before_hooked_method(self, param):
+        title = param.args[0]
+        if title is None or not self.plugin.get_setting("enabled", True):
+            return
+        mark = self.plugin.get_setting("mark", "✦")
+        text = str(title)
+        if not text.endswith(mark):
+            param.args[0] = f"{text} {mark}"
+
+
+class TitleDecorator(BasePlugin):
+    def on_plugin_load(self):
+        CharSequence = find_class("java.lang.CharSequence")
+        hook = TitleHook(self)
+        for name in ("ActionBar", "SimpleActionBar"):
+            cls = find_class("org.telegram.ui.ActionBar." + name)
+            if cls is None:
+                continue
+            # find_class returns a jclass; .getClass() is its java.lang.Class.
+            method = cls.getClass().getDeclaredMethod("setTitle", CharSequence)
+            if self.hook_method(method, hook) is None:
+                self.logger.error("could not hook %s.setTitle", name)
+
+    def create_settings(self):
+        return [
+            Header(text="Title decorator"),
+            Switch(key="enabled", text="Decorate titles", default=True),
+            Input(key="mark", text="Mark", default="✦"),
+        ]

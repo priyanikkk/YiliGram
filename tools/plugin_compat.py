@@ -6,8 +6,8 @@ Reads plugins and the SDK with ``ast`` only — no plugin code is executed.
     python3 tools/plugin_compat.py path/to/plugins/*.plugin
 
 Per plugin: metadata validity, app/SDK version requirements, SDK modules and names it imports
-that YiliGram does not provide, BasePlugin methods it calls that do not exist, and whether it
-needs Java method hooks (not supported yet).
+that YiliGram does not provide, BasePlugin methods it calls that do not exist, and Telegram
+classes it names (for hooks and reflection) that do not exist in this source tree.
 """
 import ast
 import os
@@ -17,6 +17,9 @@ from typing import Dict, Set
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SDK = os.path.join(ROOT, "TMessagesProj_App", "src", "main", "python")
+JAVA_ROOTS = [os.path.join(ROOT, "TMessagesProj", "src", "main", "java"),
+              os.path.join(ROOT, "TMessagesProj_App", "src", "main", "java")]
+CLASS_NAME = re.compile(r"^org\.telegram\.[a-z0-9_.]*[A-Z][A-Za-z0-9_$]*$")
 sys.path.insert(0, SDK)
 
 SDK_MODULES = {"base_plugin", "client_utils", "android_utils", "hook_utils", "file_utils", "log_utils",
@@ -49,11 +52,31 @@ def sdk_exports() -> Dict[str, Set[str]]:
     return exports
 
 
+def class_exists(name: str) -> bool:
+    """True if the (possibly nested, ``Outer$Inner``) class is declared in the Java sources."""
+    outer, _, inner = name.partition("$")
+    if outer.rsplit(".", 1)[-1] in ("R", "BuildConfig"):
+        return True  # generated at build time
+    rel = outer.replace(".", os.sep) + ".java"
+    for root in JAVA_ROOTS:
+        path = os.path.join(root, rel)
+        if os.path.isfile(path):
+            if not inner:
+                return True
+            src = open(path, encoding="utf-8", errors="replace").read()
+            return all(re.search(r"\b(class|interface|enum|record)\s+" + re.escape(part) + r"\b", src)
+                       for part in inner.split("$") if not part.isdigit())
+    # Top-level classes in another file of the same package are not found this way; treat
+    # unknown files as missing only when the package directory exists.
+    pkg = os.path.dirname(rel)
+    return not any(os.path.isdir(os.path.join(root, pkg)) for root in JAVA_ROOTS)
+
+
 def analyze(path: str, exports: Dict[str, Set[str]]) -> Dict:
     import yili_engine
     src = open(path, encoding="utf-8", errors="replace").read()
     report = {"file": os.path.basename(path), "missing_modules": set(), "missing_names": set(),
-              "missing_methods": set(), "java_hooks": False, "notes": []}
+              "missing_methods": set(), "java_hooks": False, "missing_classes": set(), "notes": []}
     try:
         tree = ast.parse(src)
     except SyntaxError as e:
@@ -82,6 +105,9 @@ def analyze(path: str, exports: Dict[str, Set[str]]) -> Dict:
             for a in node.names:
                 if a.name in SDK_MODULES and a.name not in exports:
                     report["missing_modules"].add(a.name)
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and CLASS_NAME.match(node.value):
+            if not class_exists(node.value):
+                report["missing_classes"].add(node.value)
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
             if isinstance(node.func.value, ast.Name) and node.func.value.id == "self":
                 if node.func.attr in HOOK_CALLS:
@@ -124,12 +150,16 @@ def main():
             problems.append("names: " + ", ".join(sorted(r["missing_names"])))
         if r["missing_methods"]:
             problems.append("BasePlugin methods: " + ", ".join(sorted(r["missing_methods"])))
-        if r["java_hooks"]:
-            problems.append("needs Java method hooks (not yet supported)")
+        if r["missing_classes"]:
+            problems.append("Telegram classes not in YiliGram: " + ", ".join(sorted(r["missing_classes"])))
         problems += r["notes"]
         status = "OK " if not problems else "GAP"
+        if r["java_hooks"]:
+            problems_note = "uses Java method hooks"
+        else:
+            problems_note = None
         ok += not problems
-        print(f"[{status}] {r.get('id') or r['file']}")
+        print(f"[{status}] {r.get('id') or r['file']}" + (f"  ({problems_note})" if problems_note else ""))
         for p in problems:
             print(f"       - {p}")
         if r.get("requirements"):

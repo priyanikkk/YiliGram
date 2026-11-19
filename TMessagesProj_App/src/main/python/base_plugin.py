@@ -267,11 +267,15 @@ class BasePlugin:
             handler = BaseHook(before, after, before_filters, after_filters)
         return _engine.hook_method(self, method, handler, priority)
 
-    def hook_all_methods(self, cls, method_name: str, handler) -> list:
-        return [self.hook_method(m, handler) for m in cls.getDeclaredMethods() if m.getName() == method_name]
+    def hook_all_methods(self, cls, method_name: str, handler, priority: int = 50) -> list:
+        import hook_utils
+        return [self.hook_method(m, handler, priority=priority)
+                for m in hook_utils.as_java_class(cls).getDeclaredMethods() if m.getName() == method_name]
 
-    def hook_all_constructors(self, cls, handler) -> list:
-        return [self.hook_method(c, handler) for c in cls.getDeclaredConstructors()]
+    def hook_all_constructors(self, cls, handler, priority: int = 50) -> list:
+        import hook_utils
+        return [self.hook_method(c, handler, priority=priority)
+                for c in hook_utils.as_java_class(cls).getDeclaredConstructors()]
 
     def unhook_method(self, unhook_obj):
         _engine.unhook_method(unhook_obj)

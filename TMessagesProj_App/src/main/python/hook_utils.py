@@ -8,15 +8,24 @@ _handles: Dict[str, List[Any]] = {}
 
 
 def find_class(class_name: str):
-    """Java Class by name from the app's class loader, or None."""
-    loader = jclass("org.telegram.messenger.ApplicationLoader").applicationContext.getClassLoader()
+    """The Java class as a Chaquopy ``jclass`` (static fields and methods are attributes),
+    or None if it does not exist. ``find_class(name).getClass()`` is the ``java.lang.Class``.
+    Same contract as exteraGram's ``hook_utils.find_class``."""
     try:
-        return _Class.forName(class_name, False, loader)
+        return jclass(class_name)
     except Exception:
         return None
 
 
+def as_java_class(cls):
+    """``java.lang.Class`` for a jclass proxy (``find_class`` result) or a Class itself."""
+    if isinstance(cls, type):
+        return cls.getClass()
+    return cls
+
+
 def _find_field(cls, name):
+    cls = as_java_class(cls)
     while cls is not None:
         try:
             f = cls.getDeclaredField(name)
@@ -54,19 +63,83 @@ def set_static_private_field(clazz, field_name: str, new_value) -> bool:
 
 
 # ---------------------------------------------------------------- method hooks
-# Native ART hooking (LSPlant) is a later stage of the YiliGram plugin engine. Until it lands,
-# hook_method() logs a warning and returns None, which plugins already treat as "hook failed".
+# Xposed-style hooks run on com.yiligram.hook.YiliHook (LSPlant). Each plugin handler is wrapped
+# in a Java YiliHook.Callback proxy; its errors go through the engine like any other plugin hook,
+# so a plugin whose hook keeps failing is disabled (and its hooks removed).
+
+_Bridge = None
+
+
+def _bridge_class():
+    global _Bridge
+    if _Bridge is None:
+        from java import dynamic_proxy
+        import yili_engine
+
+        class Bridge(dynamic_proxy(jclass("com.yiligram.hook.YiliHook$Callback"))):
+            def __init__(self, plugin_id, handler):
+                super().__init__()
+                self.plugin_id = plugin_id
+                self.handler = handler
+
+            def before(self, param):
+                fn = getattr(self.handler, "before_hooked_method", None)
+                if fn is not None:
+                    yili_engine._call(self.plugin_id, fn, param)
+
+            def after(self, param):
+                fn = getattr(self.handler, "after_hooked_method", None)
+                if fn is not None:
+                    yili_engine._call(self.plugin_id, fn, param)
+
+        _Bridge = Bridge
+    return _Bridge
+
+
+def unavailable_reason():
+    """None when Java method hooks work on this device, otherwise why not."""
+    try:
+        hook = jclass("com.yiligram.hook.YiliHook")
+        return None if hook.isAvailable() else (hook.getError() or "unknown error")
+    except Exception as e:
+        return f"{type(e).__name__}: {e}"
+
 
 def _hook(plugin, method, handler, priority):
     import log_utils
-    log_utils.Logger("plugin." + getattr(plugin, "id", "?")).warning(
-        "Java method hooks are not supported by this YiliGram build yet: %s", method)
-    return None
+    plugin_id = getattr(plugin, "id", "?")
+    try:
+        bridge = _bridge_class()(plugin_id, handler)
+        handle = jclass("com.yiligram.hook.YiliHook").hook(method, bridge, int(priority))
+    except Exception as e:
+        log_utils.Logger("plugin." + plugin_id).error("cannot hook %s: %s", method, e)
+        return None
+    _handles.setdefault(plugin_id, []).append(handle)
+    return handle
 
 
 def _unhook(handle):
-    if handle is not None and hasattr(handle, "unhook"):
+    if handle is None:
+        return
+    for handles in _handles.values():
+        if handle in handles:
+            handles.remove(handle)
+            break
+    if hasattr(handle, "unhook"):
         handle.unhook()
+
+
+def deoptimize(method) -> bool:
+    """Stops ART from inlining ``method`` so hooks on what it calls are not skipped."""
+    try:
+        return bool(jclass("com.yiligram.hook.YiliHook").deoptimize(method))
+    except Exception:
+        return False
+
+
+def invoke_original(method, this_object, *args):
+    """Calls the original implementation of a (possibly hooked) method."""
+    return jclass("com.yiligram.hook.YiliHook").invokeOriginal(method, this_object, list(args))
 
 
 def _unhook_plugin(plugin_id: str):
