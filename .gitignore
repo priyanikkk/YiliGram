@@ -22,3 +22,7 @@ keystore.properties
 google-services.json
 agconnect-services.json
 .venv/
+
+# Python bytecode
+__pycache__/
+*.pyc
