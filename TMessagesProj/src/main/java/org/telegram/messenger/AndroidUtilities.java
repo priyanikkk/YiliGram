@@ -2856,6 +2856,7 @@ public class AndroidUtilities {
     public static void checkDisplaySize(Context context, Configuration newConfiguration) {
         try {
             float oldDensity = density;
+            com.yiligram.config.YiliDensity.apply(context.getResources()); // YILI: interface scale
             density = context.getResources().getDisplayMetrics().density;
             float newDensity = density;
             if (firstConfigurationWas && Math.abs(oldDensity - newDensity) > 0.001) {

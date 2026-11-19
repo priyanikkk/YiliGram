@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider;
 import com.yiligram.config.FontFamily;
 import com.yiligram.config.YiliConfig;
 import com.yiligram.config.YiliFonts;
+import com.yiligram.config.YiliPresets;
 import com.yiligram.design.color.ColorSpecVersion;
 import com.yiligram.design.color.ContrastLevel;
 import com.yiligram.design.color.DynamicColorSource;
@@ -61,6 +62,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
 
     private AppearancePreviewView preview;
     private SeedColorPickerView seedPicker;
+    private PresetPickerView presetPicker;
 
     @Override
     public boolean onFragmentCreate() {
@@ -79,6 +81,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         preview = new AppearancePreviewView(context);
         seedPicker = new SeedColorPickerView(context);
         seedPicker.setOnSelect(seed -> YiliConfig.set(YiliConfig.SEED_COLOR, seed));
+        presetPicker = new PresetPickerView(context);
+        presetPicker.setOnSelect(YiliPresets::apply);
         return super.createView(context);
     }
 
@@ -100,6 +104,12 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asCustom(preview));
+
+        // ---- Presets
+        items.add(UItem.asHeader(getString(R.string.YiliPresetsHeader)));
+        presetPicker.refresh();
+        items.add(UItem.asCustom(presetPicker));
+        items.add(UItem.asShadow(getString(R.string.YiliPresetsInfo)));
 
         // ---- Color
         items.add(UItem.asHeader(getString(R.string.YiliColorHeader)));
@@ -152,6 +162,16 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                     }));
         }
         items.add(UItem.asShadow(getString(R.string.YiliFontInfo)));
+
+        // ---- Interface scale (density)
+        items.add(UItem.asHeader(getString(R.string.YiliUiScale)));
+        items.add(UItem.asIntSlideView(1, Math.round(com.yiligram.config.YiliDensity.MIN * 100),
+                Math.round(YiliConfig.get(YiliConfig.UI_SCALE) * 100), Math.round(com.yiligram.config.YiliDensity.MAX * 100),
+                val -> val + "%", val -> {
+                    YiliConfig.set(YiliConfig.UI_SCALE, Math.round(val / 5f) * 5 / 100f);
+                    restartHint(R.string.YiliUiScaleRestart);
+                }));
+        items.add(UItem.asShadow(getString(R.string.YiliUiScaleInfo)));
 
         // ---- Motion
         items.add(UItem.asHeader(getString(R.string.YiliMotionHeader)));
@@ -302,7 +322,13 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     }
 
     private void restartHint() {
-        BulletinFactory.of(this).createSimpleBulletin(R.raw.info, getString(R.string.YiliFontRestart)).show();
+        restartHint(R.string.YiliFontRestart);
+    }
+
+    private void restartHint(int text) {
+        if (org.telegram.ui.Components.Bulletin.getVisibleBulletin() == null) {
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.info, getString(text)).show();
+        }
     }
 
     private void importFont(Uri uri) {

@@ -372,5 +372,17 @@
     <string name="YiliFontWeight">Насыщенность</string>
     <string name="YiliFontInfo">Roboto Flex — шрифт Material 3 Expressive. Символы, которых нет в шрифте, рисуются системным шрифтом. Смена шрифта применяется после перезапуска YiliGram.</string>
     <string name="YiliFontRestart">Перезапустите YiliGram, чтобы применить шрифт</string>
+    <string name="YiliUiScale">Масштаб интерфейса</string>
+    <string name="YiliUiScaleInfo">Делает интерфейс плотнее или просторнее: текст, значки и отступы вместе. Применяется после перезапуска.</string>
+    <string name="YiliUiScaleRestart">Перезапустите YiliGram, чтобы применить масштаб</string>
+    <string name="YiliPresetsHeader">Пресеты</string>
+    <string name="YiliPresetsInfo">Пресет задаёт цвета, формы и анимации разом. Шрифт не меняется.</string>
+    <string name="YiliPresetDefault">YiliGram</string>
+    <string name="YiliPresetClassic">Классика</string>
+    <string name="YiliPresetExpressive">Экспрессия</string>
+    <string name="YiliPresetCalm">Спокойный</string>
+    <string name="YiliPresetVivid">Яркий</string>
+    <string name="YiliPresetAmoled">AMOLED</string>
+    <string name="YiliPresetContrast">Контраст</string>
     <string name="YiliFontInvalid">Этот файл не является шрифтом, который понимает Android</string>
 </resources>

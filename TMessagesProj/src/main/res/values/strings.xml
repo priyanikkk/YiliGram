@@ -11786,5 +11786,17 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliFontWeight">Font weight</string>
     <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
     <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliUiScale">Interface scale</string>
+    <string name="YiliUiScaleInfo">Makes everything denser or roomier: text, icons and spacing together. Applied after a restart.</string>
+    <string name="YiliUiScaleRestart">Restart YiliGram to apply the new scale</string>
+    <string name="YiliPresetsHeader">Presets</string>
+    <string name="YiliPresetsInfo">A preset sets colors, shapes and motion at once. Fonts are kept.</string>
+    <string name="YiliPresetDefault">YiliGram</string>
+    <string name="YiliPresetClassic">Classic</string>
+    <string name="YiliPresetExpressive">Expressive</string>
+    <string name="YiliPresetCalm">Calm</string>
+    <string name="YiliPresetVivid">Vivid</string>
+    <string name="YiliPresetAmoled">AMOLED</string>
+    <string name="YiliPresetContrast">Contrast</string>
     <string name="YiliFontInvalid">This file is not a font Android can use</string>
 </resources>
