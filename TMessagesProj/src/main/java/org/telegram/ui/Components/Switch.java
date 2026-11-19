@@ -241,6 +241,11 @@ public class Switch extends View implements Theme.Colorable {
     private void animateToCheckedState(boolean newCheckedState) {
         checkAnimator = ObjectAnimator.ofFloat(this, "progress", newCheckedState ? 1 : 0);
         checkAnimator.setDuration(200);
+        if (drawM3()) {
+            // YILI: M3 switch motion - the thumb glides and settles
+            checkAnimator.setDuration(300);
+            checkAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
+        }
         checkAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -283,6 +288,11 @@ public class Switch extends View implements Theme.Colorable {
     }
 
     public void setChecked(boolean checked, int iconType, boolean animated) {
+        // YILI: settings screens rebind visible rows with animated=false, so switches jumped; a switch
+        // that is on screen and actually changes state always animates (recycled rows are detached).
+        if (!animated && checked != isChecked && attachedToWindow && isShown() && drawM3()) {
+            animated = true;
+        }
         if (checked != isChecked) {
             isChecked = checked;
             if (attachedToWindow && animated) {

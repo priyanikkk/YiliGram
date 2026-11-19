@@ -298,6 +298,20 @@ public final class PythonPluginEngine implements PluginEngine {
         return e == null ? "[]" : e.callAttr("repos_catalog", refresh, force).toString();
     }
 
+    @NonNull
+    @Override
+    public String diagnostics() {
+        PyObject e = engine;
+        if (e == null) {
+            return "plugin engine is not running";
+        }
+        try {
+            return e.callAttr("diagnostics_text").toString();
+        } catch (Throwable t) {
+            return "diagnostics failed: " + t;
+        }
+    }
+
     @Nullable
     @Override
     public String reposAdd(@NonNull String url) {

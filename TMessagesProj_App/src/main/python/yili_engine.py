@@ -799,3 +799,33 @@ def settings_action(plugin_id: str, index: int, action: str, value_json: str = "
         cb = getattr(item, "on_click", None)
         if cb:
             _call(plugin_id, cb, None)
+
+
+def diagnostics_text() -> str:
+    """Plain-text report for "Share plugin logs": plugins, their state and errors, hook status, recent logs."""
+    import platform
+    import time as _time
+    import log_utils
+    lines = ["== Python", f"{platform.python_version()} on {platform.machine()}"]
+    try:
+        import hook_utils
+        reason = hook_utils.unavailable_reason()
+        lines.append("Java hooks: " + ("available" if not reason else f"UNAVAILABLE: {reason}"))
+    except Exception as e:
+        lines.append(f"Java hooks: status unknown ({type(e).__name__}: {e})")
+    lines.append("")
+    lines.append("== Plugins")
+    try:
+        for info in json.loads(list_plugins()):
+            lines.append(f"- {info.get('id')} v{info.get('version')} enabled={info.get('enabled')}"
+                         + (f" ERROR: {info.get('error')}" if info.get('error') else "")
+                         + (f" warning: {info.get('warning')}" if info.get('warning') else ""))
+    except Exception as e:
+        lines.append(f"(cannot list plugins: {type(e).__name__}: {e})")
+    lines.append(f"state: {json.dumps(_state)}")
+    lines.append("")
+    lines.append("== Plugin logs (newest last)")
+    for r in log_utils.recent(800):
+        stamp = _time.strftime("%H:%M:%S", _time.localtime(r.created))
+        lines.append(f"{stamp} {getattr(r.level, 'name', r.level)} {r.tag} {r.location or ''}: {r.text}")
+    return "\n".join(lines)

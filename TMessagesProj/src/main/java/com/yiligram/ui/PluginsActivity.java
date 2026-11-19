@@ -37,6 +37,7 @@ public class PluginsActivity extends UniversalFragment {
     private static final int ID_DEV_MODE = 2;
     private static final int ID_INSTALL = 3;
     private static final int ID_CATALOG = 4;
+    private static final int ID_SHARE_LOGS = 5;
     private static final int ID_PLUGIN_BASE = 1000;
     private static final int REQUEST_INSTALL = 7302;
 
@@ -71,6 +72,7 @@ public class PluginsActivity extends UniversalFragment {
                 .setChecked(YiliConfig.get(YiliConfig.PLUGINS_ENABLED)));
         items.add(UItem.asButtonCheck(ID_DEV_MODE, getString(R.string.YiliPluginsDevMode), getString(R.string.YiliPluginsDevModeInfo))
                 .setChecked(YiliConfig.get(YiliConfig.PLUGINS_DEV_MODE)));
+        items.add(UItem.asButton(ID_SHARE_LOGS, R.drawable.msg_share, getString(R.string.YiliPluginsShareLogs)));
         items.add(UItem.asShadow(getString(R.string.YiliPluginsWarning)));
 
         if (engine == null) {
@@ -116,6 +118,12 @@ public class PluginsActivity extends UniversalFragment {
         if (item.id == ID_DEV_MODE) {
             YiliConfig.set(YiliConfig.PLUGINS_DEV_MODE, !YiliConfig.get(YiliConfig.PLUGINS_DEV_MODE));
             listView.adapter.update(true);
+            return;
+        }
+        if (item.id == ID_SHARE_LOGS) {
+            if (getParentActivity() != null) {
+                com.yiligram.plugins.PluginDiagnostics.share(getParentActivity());
+            }
             return;
         }
         if (item.id == ID_CATALOG) {

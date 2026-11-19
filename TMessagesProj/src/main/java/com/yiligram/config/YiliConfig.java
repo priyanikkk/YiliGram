@@ -104,6 +104,8 @@ public final class YiliConfig {
     /** Call button in a private chat's header; when off, Call moves to the ⋮ menu (Telegram's own fallback). */
     public static final Key<Boolean> HEADER_CALL_BUTTON = new Key<>("header.call", Boolean.class, true);
     public static final Key<Boolean> HIDE_GIFT_BUTTON = new Key<>("input.hideGift", Boolean.class, false);
+    /** Built-in typing animation in the message field. */
+    public static final Key<Boolean> TEXT_ANIMATION = new Key<>("input.textAnimation", Boolean.class, true);
     public static final Key<Boolean> VOICE_ONLY = new Key<>("input.voiceOnly", Boolean.class, false);
 
     /** Check GitHub Releases on start and offer in-app updates. */

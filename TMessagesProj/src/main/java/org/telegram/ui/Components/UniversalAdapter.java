@@ -759,12 +759,19 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
             case VIEW_TYPE_TEXT_CHECK:
                 NotificationsCheckCell checkCell1 = (NotificationsCheckCell) holder.itemView;
                 final boolean multiline = item.subtext != null && item.subtext.toString().contains("\n");
-                checkCell1.setTextAndValueAndCheck(item.text, item.subtext, item.checked, 0, multiline, divider);
+                // YILI: animate the switch when the same row is rebound (it used to jump)
+                final boolean sameRow1 = Integer.valueOf(item.id).equals(checkCell1.getTag(R.id.yili_item_id));
+                checkCell1.setTextAndValueAndIconAndCheck(item.text, item.subtext, 0, item.checked, 0, multiline, divider, sameRow1);
+                checkCell1.setTag(R.id.yili_item_id, item.id);
                 break;
-            case VIEW_TYPE_ICON_TEXT_CHECK:
+            case VIEW_TYPE_ICON_TEXT_CHECK: {
                 // TODO: image
-                ((NotificationsCheckCell) holder.itemView).setTextAndValueAndCheck(item.text, item.subtext, item.checked, divider);
+                NotificationsCheckCell checkCell2 = (NotificationsCheckCell) holder.itemView;
+                final boolean sameRow2 = Integer.valueOf(item.id).equals(checkCell2.getTag(R.id.yili_item_id));
+                checkCell2.setTextAndValueAndIconAndCheck(item.text, item.subtext, 0, item.checked, 0, false, divider, sameRow2);
+                checkCell2.setTag(R.id.yili_item_id, item.id);
                 break;
+            }
             case VIEW_TYPE_SHADOW_COLLAPSE_BUTTON:
             case VIEW_TYPE_SHADOW:
             case VIEW_TYPE_LARGE_SHADOW:

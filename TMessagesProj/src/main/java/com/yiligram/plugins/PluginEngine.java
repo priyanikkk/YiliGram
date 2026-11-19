@@ -107,6 +107,12 @@ public interface PluginEngine {
     /** Calls the item's {@code on_click(context)}. */
     void clickMenuItem(@NonNull String itemId, @NonNull java.util.Map<String, Object> context);
 
+    /** Plain-text diagnostics (plugins, errors, hook status, recent plugin logs) for bug reports. */
+    @NonNull
+    default String diagnostics() {
+        return "";
+    }
+
     // -- plugin repositories (JSON in/out, see yili_repos.py); may block on network: not on the UI thread
 
     /** Catalog: [{url, name, description, error, plugins: [{id, name, version, installed, update, …}]}]. */

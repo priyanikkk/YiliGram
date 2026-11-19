@@ -156,7 +156,7 @@ public class NotificationsCheckCell extends FrameLayout {
             imageView.setImageResource(iconResId);
             ThemeBind.colorFilter(imageView, Theme.key_dialogIcon, PorterDuff.Mode.MULTIPLY);
         }
-        checkBox.setChecked(checked, iconType, animationsEnabled);
+        checkBox.setChecked(checked, iconType, animated || animationsEnabled); // YILI: animate on rebinds
         setMultiline(multiline);
         if (isMultiline) {
             multilineValueTextView.setText(value);

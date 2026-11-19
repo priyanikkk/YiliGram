@@ -69,6 +69,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_M3_CONTROLS = 19;
     private static final int ID_UPDATE_AUTO = 20;
     private static final int ID_UPDATE_CHECK = 21;
+    private static final int ID_TEXT_ANIMATION = 22;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -221,6 +222,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
 
         // ---- Input panel
         items.add(UItem.asHeader(getString(R.string.YiliInputHeader)));
+        items.add(UItem.asButtonCheck(ID_TEXT_ANIMATION, getString(R.string.YiliTextAnimation), getString(R.string.YiliTextAnimationInfo))
+                .setChecked(YiliConfig.get(YiliConfig.TEXT_ANIMATION)));
         items.add(UItem.asCheck(ID_GIFT_BUTTON, getString(R.string.YiliInputGift)).setChecked(!YiliConfig.get(YiliConfig.HIDE_GIFT_BUTTON)));
         items.add(UItem.asButtonCheck(ID_VOICE_ONLY, getString(R.string.YiliInputVoiceOnly), getString(R.string.YiliInputVoiceOnlyInfo))
                 .setChecked(YiliConfig.get(YiliConfig.VOICE_ONLY)));
@@ -274,6 +277,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
+                break;
+            case ID_TEXT_ANIMATION:
+                YiliConfig.set(YiliConfig.TEXT_ANIMATION, !YiliConfig.get(YiliConfig.TEXT_ANIMATION));
                 break;
             case ID_UPDATE_AUTO:
                 YiliConfig.set(YiliConfig.AUTO_UPDATE_CHECK, !YiliConfig.get(YiliConfig.AUTO_UPDATE_CHECK));
