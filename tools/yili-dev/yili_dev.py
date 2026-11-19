@@ -6,6 +6,7 @@
     python3 tools/yili-dev/yili_dev.py push my_plugin.plugin
     python3 tools/yili-dev/yili_dev.py watch my_plugin.plugin
     python3 tools/yili-dev/yili_dev.py list
+    python3 tools/yili-dev/yili_dev.py debug          # VS Code: attach to 127.0.0.1:5678
 
 Talks the exteraGram dev-server protocol (JSON objects over TCP 127.0.0.1:42690), so it also
 works with exteraGram. Developer mode must be on in Settings → Plugins.
@@ -65,10 +66,12 @@ def push(client, path):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["ping", "list", "push", "watch", "enable", "disable", "reload", "remove"])
+    ap.add_argument("command", choices=["ping", "list", "push", "watch", "enable", "disable", "reload",
+                                        "remove", "debug"])
     ap.add_argument("target", nargs="?", help="plugin file (push/watch) or plugin id")
     ap.add_argument("--port", type=int, default=42690)
     ap.add_argument("--no-adb", action="store_true", help="don't run adb forward")
+    ap.add_argument("--debug-port", type=int, default=5678, help="debugpy port (debug command)")
     args = ap.parse_args()
     if not args.no_adb:
         ensure_forward(args.port)
@@ -79,6 +82,14 @@ def main():
         for p in c.call("get_plugins").get("plugins", []):
             state = "on " if p["enabled"] else "off"
             print(f"[{state}] {p['id']:<24} {p['version']:<8} {p.get('error') or p['name']}")
+    elif args.command == "debug":
+        if not args.no_adb:
+            ensure_forward(args.debug_port)
+        res = c.call("start_debugger", host="127.0.0.1", port=args.debug_port, platform="vscode")
+        if not res.get("success"):
+            sys.exit(f"✘ {res.get('error')}")
+        print(f"debugpy is listening; attach VS Code to 127.0.0.1:{res['port']} "
+              f"(remoteRoot: /data/user/0/<package>/files/plugins)")
     elif args.command == "push":
         sys.exit(0 if push(c, args.target).get("success") else 1)
     elif args.command == "watch":

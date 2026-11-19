@@ -81,6 +81,34 @@ def _serve(conn):
                     return
 
 
+_debugger = None
+
+
+def _start_debugger(msg) -> dict:
+    """VS Code (debugpy) remote debugging. The adapter runs inside the app process because
+    Chaquopy has no Python executable to spawn it from; it listens on loopback only."""
+    global _debugger
+    platform = msg.get("platform", "vscode")
+    if platform != "vscode":
+        return {"success": False, "error": f"Unsupported debugger platform {platform!r}: only vscode (debugpy) works"}
+    host = msg.get("host") or "127.0.0.1"
+    if host not in ("127.0.0.1", "localhost"):
+        return {"success": False, "error": "The debugger only listens on 127.0.0.1; use adb forward"}
+    port = int(msg.get("port") or 5678)
+    if _debugger is not None:
+        return {"success": True, "host": _debugger[0], "port": _debugger[1], "already_running": True}
+    import yili_pip
+    yili_pip.install(["debugpy>=1.8.1"], "__debugger__", _logger)
+    # pydevd's Cython speedups are not available here.
+    os.environ.setdefault("PYDEVD_USE_CYTHON", "NO")
+    os.environ.setdefault("PYDEVD_USE_FRAME_EVAL", "NO")
+    import debugpy
+    debugpy.listen(("127.0.0.1", port), in_process_debug_adapter=True)
+    _debugger = ("127.0.0.1", port)
+    _logger.info("debugpy listening on 127.0.0.1:%d", port)
+    return {"success": True, "host": "127.0.0.1", "port": port}
+
+
 def handle(msg: dict) -> dict:
     rid = msg.get("#")
     try:
@@ -130,6 +158,10 @@ def _dispatch(cmd, msg) -> dict:
     if cmd == "remove_plugin":
         engine.delete(pid)
         return {"success": True}
-    if cmd in ("start_debugger", "stop_debugger"):
-        return {"success": False, "error": "debugpy is not bundled with this YiliGram build yet"}
+    if cmd == "start_debugger":
+        return _start_debugger(msg)
+    if cmd == "stop_debugger":
+        if _debugger is None:
+            return {"success": True}
+        return {"success": False, "error": "debugpy cannot stop listening; restart the app to stop the debugger"}
     return {"success": False, "error": f"Unknown command: {cmd}"}
