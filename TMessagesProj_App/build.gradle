@@ -18,6 +18,8 @@ configurations.all {
 
 dependencies {
     implementation project(':TMessagesProj')
+    // Java method hooks for plugins (LSPlant); used from Python through hook_utils.
+    implementation project(':yili-hook')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
 }

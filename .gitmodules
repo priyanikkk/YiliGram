@@ -61,3 +61,6 @@
 [submodule "TMessagesProj/jni/twidget/widget-sandbox"]
 	path = TMessagesProj/jni/twidget/widget-sandbox
 	url = https://github.com/TelegramMessenger/widget-sandbox.git
+[submodule "yili-hook/lsplant"]
+	path = yili-hook/lsplant
+	url = https://github.com/LSPosed/LSPlant.git

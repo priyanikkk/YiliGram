@@ -12,10 +12,19 @@ It includes the following components:
 | androidx.graphics:graphics-shapes | https://developer.android.com/jetpack/androidx/releases/graphics | Apache-2.0 |
 | Chaquopy (Python on Android) | https://github.com/chaquo/chaquopy | MIT |
 | CPython 3.11 | https://www.python.org | PSF License |
+| LSPlant (ART method hooking) | https://github.com/LSPosed/LSPlant (git submodule `yili-hook/lsplant`) | LGPL-3.0 |
+| DexBuilder, slicer (used by LSPlant) | https://github.com/LSPosed/DexBuilder | LGPL-3.0; slicer: Apache-2.0 |
+| parallel-hashmap (used by DexBuilder) | https://github.com/greg7mdp/parallel-hashmap | Apache-2.0 |
+| LSPosed libcxx (LLVM libc++ with std modules, prefab) | https://github.com/LSPosed/libcxx | Apache-2.0 WITH LLVM-exception |
+| Dobby (inline hooks, prefab `io.github.vvb2060.ndk:dobby`) | https://github.com/jmpews/Dobby | Apache-2.0 |
+| HiddenApiBypass | https://github.com/LSPosed/AndroidHiddenApiBypass | Apache-2.0 |
+| XZ Embedded (MiniDebugInfo decompression) | https://github.com/tukaani-project/xz-embedded (`yili-hook/src/main/cpp/xz`) | 0BSD (`yili-hook/src/main/cpp/xz/COPYING`) |
 | Bundled Python packages: requests, urllib3, idna, certifi, charset-normalizer, beautifulsoup4, soupsieve, lxml, Pillow, PyYAML, packaging | PyPI | Apache-2.0 / MIT / MPL-2.0 (certifi) / BSD / HPND (Pillow) — see each package |
 
 The plugin engine implements the publicly documented exteraGram plugin SDK
 (https://plugins.exteragram.app/docs); no exteraGram code is included.
 
-Planned for later stages: LSPlant (LGPL-3.0) and Dobby (Apache-2.0) for Java method hooks,
-DexMaker (Apache-2.0) for class proxies.
+LSPlant and DexBuilder are linked statically into `libyilihook.so`; their complete source is
+part of this repository (submodule), which satisfies LGPL-3.0 §4 for a GPL-3.0 application.
+
+Planned for later stages: DexMaker (Apache-2.0) for class proxies.

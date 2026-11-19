@@ -1,6 +1,7 @@
 include ':TMessagesProj'
 include ':TMessagesProj_App'
 include ':yili-design'
+include ':yili-hook'
 // YILI: Huawei / HockeyApp / Standalone / Tests app modules are upstream-only and not built.
 include ':jlatexmath'
 project(':jlatexmath').projectDir = file('TMessagesProj/lib/jlatexmath/jlatexmath')

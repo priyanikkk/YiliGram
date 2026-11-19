@@ -23,6 +23,9 @@ concurrency:
 env:
   NDK_VERSION: 27.2.12479018
   CMAKE_VERSION: 3.22.1
+  # yili-hook builds LSPlant from source (C++23 modules): newer NDK and CMake.
+  HOOK_NDK_VERSION: 30.0.16248370
+  HOOK_CMAKE_VERSION: 3.31.6
 
 jobs:
   build:
@@ -31,8 +34,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 1
+
+      - name: Check out submodules
+        # LSPlant lists its test-only submodules with SSH URLs; fetch everything over HTTPS.
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule update --init --recursive --depth 1
 
       - uses: actions/setup-java@v4
         with:
@@ -43,7 +51,8 @@ jobs:
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
-            "ndk;${NDK_VERSION}" "cmake;${CMAKE_VERSION}" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+            "ndk;${NDK_VERSION}" "cmake;${CMAKE_VERSION}" "ndk;${HOOK_NDK_VERSION}" "cmake;${HOOK_CMAKE_VERSION}" \
+            "platforms;android-36" "build-tools;36.0.0" > /dev/null
 
       - uses: actions/setup-python@v5
         with:
