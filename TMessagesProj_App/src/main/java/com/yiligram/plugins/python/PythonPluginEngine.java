@@ -290,4 +290,48 @@ public final class PythonPluginEngine implements PluginEngine {
             e.callAttr("click_menu_item_java", itemId, context);
         }
     }
+
+    @NonNull
+    @Override
+    public String reposCatalog(boolean refresh, boolean force) {
+        PyObject e = engine;
+        return e == null ? "[]" : e.callAttr("repos_catalog", refresh, force).toString();
+    }
+
+    @Nullable
+    @Override
+    public String reposAdd(@NonNull String url) {
+        PyObject e = engine;
+        if (e == null) {
+            return "plugin engine is not running";
+        }
+        try {
+            JSONObject o = new JSONObject(e.callAttr("repos_add", url).toString());
+            return o.isNull("error") ? null : o.getString("error");
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    @Override
+    public void reposRemove(@NonNull String url) {
+        PyObject e = engine;
+        if (e != null) {
+            e.callAttr("repos_remove", url);
+        }
+    }
+
+    @NonNull
+    @Override
+    public String reposInstall(@NonNull String url, @NonNull String pluginId) throws Exception {
+        PyObject e = engine;
+        if (e == null) {
+            throw new IllegalStateException("plugin engine is not running");
+        }
+        JSONObject o = new JSONObject(e.callAttr("repos_install", url, pluginId).toString());
+        if (!o.isNull("error")) {
+            throw new IllegalArgumentException(o.getString("error"));
+        }
+        return o.getString("id");
+    }
 }

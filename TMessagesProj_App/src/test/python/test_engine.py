@@ -289,3 +289,83 @@ class IntentsTest(unittest.TestCase):
         self.intents.dispatch_intent(True, _FakeIntent(None, flags=0))
         self.assertEqual(hits, [1])
         self.assertEqual(self.IM.parse("tg://chat?id=123"), {"scheme": "tg", "host": "chat", "query": "id=123"})
+
+
+class ReposTest(unittest.TestCase):
+    def setUp(self):
+        import yili_repos
+        self.repos = yili_repos
+        self.dir = tempfile.mkdtemp()
+        yili_repos.init(self.dir)
+        with open(os.path.join(EXAMPLES, "hello_command.plugin"), "rb") as f:
+            self.plugin = f.read()
+        import hashlib
+        meta = engine.parse_metadata(self.plugin.decode())
+        self.index = {"schema": 1, "name": "Test repo", "plugins": [{
+            "id": meta["id"], "name": "Hello", "version": meta["version"], "file": "plugins/hello.plugin",
+            "sha256": hashlib.sha256(self.plugin).hexdigest(), "size": len(self.plugin)}]}
+        self.requests = []
+
+        def fake_get(url, headers=None, limit=0):
+            self.requests.append((url, dict(headers or {})))
+            resp = types.SimpleNamespace(headers={"ETag": '"v1"'})
+            if url.endswith("extera-plugins.json"):
+                if (headers or {}).get("If-None-Match") == '"v1"':
+                    return resp, None
+                return resp, json.dumps(self.index).encode()
+            if url.endswith("plugins/hello.plugin"):
+                return resp, self.plugin
+            raise self.repos.RepoError("404")
+        self._orig = yili_repos._http_get
+        yili_repos._http_get = fake_get
+
+    def tearDown(self):
+        self.repos._http_get = self._orig
+        shutil.rmtree(self.dir)
+
+    def test_urls_and_versions(self):
+        r = self.repos
+        self.assertEqual(r.index_url("https://github.com/you/my-plugins"),
+                         "https://raw.githubusercontent.com/you/my-plugins/HEAD/extera-plugins.json")
+        self.assertEqual(r.index_url("https://github.com/you/p/tree/v2/sub/dir"),
+                         "https://raw.githubusercontent.com/you/p/v2/sub/dir/extera-plugins.json")
+        self.assertEqual(r.index_url("https://example.org/x/extera-plugins.json"), "https://example.org/x/extera-plugins.json")
+        with self.assertRaises(r.RepoError):
+            r.index_url("http://github.com/you/p")
+        self.assertEqual(r.parse_share_link(r.share_link("https://github.com/a/b")), "https://github.com/a/b")
+        self.assertTrue(r.is_newer("1.10.0", "1.9.2"))
+        self.assertFalse(r.is_newer("1.2.0-beta", "1.2"))
+        self.assertTrue(r.is_newer("2", "1.9.9"))
+
+    def test_add_catalog_download_and_conditional_refresh(self):
+        r = self.repos
+        r.add_repo("https://github.com/you/repo")
+        cat = r.catalog({})
+        self.assertEqual(cat[0]["name"], "Test repo")
+        self.assertIsNone(cat[0]["plugins"][0]["installed"])
+        self.assertTrue(r.catalog({"hello_command": "0.1"})[0]["plugins"][0]["update"])
+        path = r.download("https://github.com/you/repo", "hello_command")
+        with open(path, "rb") as f:
+            self.assertEqual(f.read(), self.plugin)
+        os.remove(path)
+        self.assertTrue(self.requests[-1][0].endswith("/HEAD/plugins/hello.plugin"))
+        r.refresh(force=True)
+        self.assertEqual(self.requests[-1][1].get("If-None-Match"), '"v1"')
+        self.assertEqual(r.catalog({})[0]["name"], "Test repo")  # 304 keeps the index
+        # Persisted and reloaded.
+        r.init(self.dir)
+        self.assertEqual(len(r.catalog({})), 1)
+
+    def test_rejects_tampered_file(self):
+        r = self.repos
+        r.add_repo("https://github.com/you/repo")
+        self.plugin = self.plugin + b"\n# changed"
+        with self.assertRaises(r.RepoError) as ctx:
+            r.download("https://github.com/you/repo", "hello_command")
+        self.assertIn("mismatch", str(ctx.exception))
+
+    def test_rejects_newer_schema(self):
+        self.index["schema"] = 2
+        with self.assertRaises(self.repos.RepoError) as ctx:
+            self.repos.add_repo("https://github.com/you/repo")
+        self.assertIn("newer version", str(ctx.exception))

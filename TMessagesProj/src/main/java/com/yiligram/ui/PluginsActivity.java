@@ -36,6 +36,7 @@ public class PluginsActivity extends UniversalFragment {
     private static final int ID_ENGINE = 1;
     private static final int ID_DEV_MODE = 2;
     private static final int ID_INSTALL = 3;
+    private static final int ID_CATALOG = 4;
     private static final int ID_PLUGIN_BASE = 1000;
     private static final int REQUEST_INSTALL = 7302;
 
@@ -76,6 +77,7 @@ public class PluginsActivity extends UniversalFragment {
             return;
         }
         items.add(UItem.asButton(ID_INSTALL, R.drawable.msg_addbot, getString(R.string.YiliPluginsInstall)).accent());
+        items.add(UItem.asButton(ID_CATALOG, R.drawable.msg_bots, getString(R.string.YiliPluginsCatalog), getString(R.string.YiliPluginsCatalogInfo)));
         items.add(UItem.asShadow(null));
 
         if (!engine.isStarted()) {
@@ -114,6 +116,10 @@ public class PluginsActivity extends UniversalFragment {
         if (item.id == ID_DEV_MODE) {
             YiliConfig.set(YiliConfig.PLUGINS_DEV_MODE, !YiliConfig.get(YiliConfig.PLUGINS_DEV_MODE));
             listView.adapter.update(true);
+            return;
+        }
+        if (item.id == ID_CATALOG) {
+            presentFragment(new PluginCatalogActivity());
             return;
         }
         if (item.id == ID_INSTALL) {

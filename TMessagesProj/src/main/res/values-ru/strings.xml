@@ -339,4 +339,20 @@
     <string name="YiliPluginInstall">Установить</string>
     <string name="YiliPluginUpdate">Обновить</string>
     <string name="YiliPluginUpdateFrom">Обновление с версии %1$s</string>
+    <string name="YiliPluginsCatalog">Каталог плагинов</string>
+    <string name="YiliPluginsCatalogInfo">Плагины из Git-репозиториев</string>
+    <string name="YiliReposAdd">Добавить репозиторий</string>
+    <string name="YiliReposAddHint">Ссылка на GitHub или https-ссылка на extera-plugins.json</string>
+    <string name="YiliReposAdded">Репозиторий добавлен</string>
+    <string name="YiliReposRefresh">Обновить</string>
+    <string name="YiliReposEmpty">Репозиториев пока нет. Добавьте Git-репозиторий с индексом extera-plugins.json.</string>
+    <string name="YiliReposRemove">Удалить репозиторий</string>
+    <string name="YiliReposRemoveConfirm">Убрать %1$s из каталога? Установленные плагины останутся.</string>
+    <string name="YiliReposError">Не удалось загрузить: %1$s</string>
+    <string name="YiliRepoInstall">Установить</string>
+    <string name="YiliRepoUpdate">Обновить до %1$s</string>
+    <string name="YiliRepoInstalled">Установлен</string>
+    <string name="YiliRepoInstallConfirm">Установить %1$s %2$s из %3$s?
+
+Плагины получают полный доступ к вашему аккаунту. Файл сверяется с индексом репозитория, но сам репозиторий YiliGram не проверяет.</string>
 </resources>

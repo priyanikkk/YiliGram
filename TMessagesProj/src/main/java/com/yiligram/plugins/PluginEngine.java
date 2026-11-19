@@ -107,6 +107,22 @@ public interface PluginEngine {
     /** Calls the item's {@code on_click(context)}. */
     void clickMenuItem(@NonNull String itemId, @NonNull java.util.Map<String, Object> context);
 
+    // -- plugin repositories (JSON in/out, see yili_repos.py); may block on network: not on the UI thread
+
+    /** Catalog: [{url, name, description, error, plugins: [{id, name, version, installed, update, …}]}]. */
+    @NonNull
+    String reposCatalog(boolean refresh, boolean force);
+
+    /** Adds a repository; returns null or an error message. */
+    @Nullable
+    String reposAdd(@NonNull String url);
+
+    void reposRemove(@NonNull String url);
+
+    /** Installs or updates a plugin from a repository; returns the plugin id. */
+    @NonNull
+    String reposInstall(@NonNull String url, @NonNull String pluginId) throws Exception;
+
     final class MenuItem {
         @NonNull
         public final String id;

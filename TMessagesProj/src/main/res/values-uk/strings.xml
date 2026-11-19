@@ -280,4 +280,20 @@
     <string name="TelegramVersion">YiliGram для Android %1$s</string>
     <string name="YiliThemeLight">Material You</string>
     <string name="YiliThemeDark">Material You, темна</string>
+    <string name="YiliPluginsCatalog">Каталог плагінів</string>
+    <string name="YiliPluginsCatalogInfo">Плагіни з Git-репозиторіїв</string>
+    <string name="YiliReposAdd">Додати репозиторій</string>
+    <string name="YiliReposAddHint">Посилання на GitHub або https-посилання на extera-plugins.json</string>
+    <string name="YiliReposAdded">Репозиторій додано</string>
+    <string name="YiliReposRefresh">Оновити</string>
+    <string name="YiliReposEmpty">Репозиторіїв поки немає. Додайте Git-репозиторій з індексом extera-plugins.json.</string>
+    <string name="YiliReposRemove">Видалити репозиторій</string>
+    <string name="YiliReposRemoveConfirm">Прибрати %1$s з каталогу? Встановлені плагіни залишаться.</string>
+    <string name="YiliReposError">Не вдалося завантажити: %1$s</string>
+    <string name="YiliRepoInstall">Встановити</string>
+    <string name="YiliRepoUpdate">Оновити до %1$s</string>
+    <string name="YiliRepoInstalled">Встановлено</string>
+    <string name="YiliRepoInstallConfirm">Встановити %1$s %2$s з %3$s?
+
+Плагіни отримують повний доступ до вашого акаунта. Файл звіряється з індексом репозиторію, але сам репозиторій YiliGram не перевіряє.</string>
 </resources>

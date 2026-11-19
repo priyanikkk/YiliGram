@@ -11753,4 +11753,20 @@
     <string name="YiliPluginInstall">Install</string>
     <string name="YiliPluginUpdate">Update</string>
     <string name="YiliPluginUpdateFrom">Update from version %1$s</string>
+    <string name="YiliPluginsCatalog">Plugin catalog</string>
+    <string name="YiliPluginsCatalogInfo">Plugins from Git repositories</string>
+    <string name="YiliReposAdd">Add repository</string>
+    <string name="YiliReposAddHint">GitHub URL or https link to extera-plugins.json</string>
+    <string name="YiliReposAdded">Repository added</string>
+    <string name="YiliReposRefresh">Refresh</string>
+    <string name="YiliReposEmpty">No repositories yet. Add a Git repository with an extera-plugins.json index.</string>
+    <string name="YiliReposRemove">Remove repository</string>
+    <string name="YiliReposRemoveConfirm">Remove %1$s from the catalog? Installed plugins stay.</string>
+    <string name="YiliReposError">Could not load: %1$s</string>
+    <string name="YiliRepoInstall">Install</string>
+    <string name="YiliRepoUpdate">Update to %1$s</string>
+    <string name="YiliRepoInstalled">Installed</string>
+    <string name="YiliRepoInstallConfirm">Install %1$s %2$s from %3$s?
+
+Plugins run with full access to your account. The file is checked against the repository index, but the repository itself is not verified by YiliGram.</string>
 </resources>

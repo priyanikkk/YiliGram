@@ -154,6 +154,8 @@ def init(plugins_dir: str, bridge=None, developer_mode: bool = False) -> str:
     os.makedirs(os.path.join(_dir, "settings"), exist_ok=True)
     import yili_pip
     yili_pip.init(os.path.join(_dir, "libs"))
+    import yili_repos
+    yili_repos.init(_dir)
     import yili_extera_compat
     yili_extera_compat.install()
     try:
@@ -381,6 +383,46 @@ def install(path: str) -> str:
         load(pid)
     _notify("onPluginsChanged")
     return json.dumps({"id": pid, "error": None, "updated": updated})
+
+
+# ---------------------------------------------------------------- plugin repositories (catalog)
+
+def _installed_versions() -> Dict[str, str]:
+    return {pid: str(rec["meta"].get("version")) for pid, rec in _plugins.items()}
+
+
+def repos_catalog(refresh: bool = False, force: bool = False) -> str:
+    import yili_repos
+    if refresh:
+        yili_repos.refresh(force)
+    return json.dumps(yili_repos.catalog(_installed_versions()))
+
+
+def repos_add(url: str) -> str:
+    import yili_repos
+    try:
+        rec = yili_repos.add_repo(url)
+        return json.dumps({"error": None, "url": rec["url"]})
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+
+def repos_remove(url: str):
+    import yili_repos
+    yili_repos.remove_repo(url)
+
+
+def repos_install(url: str, plugin_id: str) -> str:
+    """Downloads, verifies and installs (or updates) a plugin from a repository."""
+    import yili_repos
+    try:
+        path = yili_repos.download(url, plugin_id)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+    try:
+        return install(path)
+    finally:
+        os.remove(path)
 
 
 def delete(plugin_id: str):
