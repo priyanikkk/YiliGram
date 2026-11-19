@@ -67,6 +67,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_HEADER_CALL = 17;
     private static final int ID_BUBBLE_TAILS = 18;
     private static final int ID_M3_CONTROLS = 19;
+    private static final int ID_UPDATE_AUTO = 20;
+    private static final int ID_UPDATE_CHECK = 21;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
     private AppearancePreviewView preview;
@@ -232,6 +234,12 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                         : org.telegram.messenger.LocaleController.formatPluralString("YiliMenuHidden", hiddenCount)));
         items.add(UItem.asShadow(null));
 
+        // ---- Updates (GitHub Releases)
+        items.add(UItem.asHeader(getString(R.string.YiliUpdatesHeader)));
+        items.add(UItem.asCheck(ID_UPDATE_AUTO, getString(R.string.YiliUpdateAuto)).setChecked(YiliConfig.get(YiliConfig.AUTO_UPDATE_CHECK)));
+        items.add(UItem.asButton(ID_UPDATE_CHECK, R.drawable.msg_retry, getString(R.string.YiliUpdateCheck)));
+        items.add(UItem.asShadow(formatString(R.string.YiliUpdateInfo, org.telegram.messenger.BuildConfig.YILI_RELEASES_URL)));
+
         // ---- Configuration
         items.add(UItem.asHeader(getString(R.string.YiliConfigHeader)));
         items.add(UItem.asButton(ID_EXPORT, R.drawable.msg_share, getString(R.string.YiliExport)));
@@ -266,6 +274,12 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
+                break;
+            case ID_UPDATE_AUTO:
+                YiliConfig.set(YiliConfig.AUTO_UPDATE_CHECK, !YiliConfig.get(YiliConfig.AUTO_UPDATE_CHECK));
+                break;
+            case ID_UPDATE_CHECK:
+                checkForUpdates();
                 break;
             case ID_M3_CONTROLS:
                 YiliConfig.set(YiliConfig.M3_CONTROLS, !YiliConfig.get(YiliConfig.M3_CONTROLS));
@@ -387,6 +401,22 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                     }
                 })
                 .show();
+    }
+
+    private void checkForUpdates() {
+        org.telegram.messenger.ApplicationLoader loader = org.telegram.messenger.ApplicationLoader.applicationLoaderInstance;
+        BulletinFactory.of(this).createSimpleBulletin(R.raw.info, getString(R.string.YiliUpdateChecking)).show();
+        loader.checkUpdate(true, () -> {
+            org.telegram.messenger.BetaUpdate update = loader.getUpdate();
+            if (getParentActivity() == null) {
+                return;
+            }
+            if (update != null) {
+                loader.showCustomUpdateAppPopup(getParentActivity(), update, currentAccount);
+            } else {
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.YourVersionIsLatest)).show();
+            }
+        });
     }
 
     private void restartHint() {

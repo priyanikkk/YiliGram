@@ -11786,6 +11786,13 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliFontWeight">Font weight</string>
     <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
     <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliUpdateTitle">YiliGram update</string>
+    <string name="YiliUpdateVersion">Version %1$s</string>
+    <string name="YiliUpdatesHeader">Updates</string>
+    <string name="YiliUpdateAuto">Check for updates on start</string>
+    <string name="YiliUpdateCheck">Check for updates</string>
+    <string name="YiliUpdateChecking">Checking for updates…</string>
+    <string name="YiliUpdateInfo">New versions come from %1$s. The update is downloaded and installed from inside the app.</string>
     <string name="YiliM3Controls">Material 3 controls</string>
     <string name="YiliM3ControlsInfo">Material 3 switches and sliders</string>
     <string name="YiliBubbleTails">Bubble tails</string>
