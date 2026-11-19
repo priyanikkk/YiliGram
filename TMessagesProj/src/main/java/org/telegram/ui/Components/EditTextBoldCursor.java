@@ -342,12 +342,37 @@ public class EditTextBoldCursor extends EditTextEffects {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             cursorDrawable = new ShapeDrawable() {
 
+                // YILI: smooth cursor - glides to its new place instead of jumping (with the text animation)
+                private float shownLeft = Float.NaN, shownTop;
+                private long lastFrame;
+
                 @Override
                 public void draw(Canvas canvas) {
                     if (drawInMaim) {
                         cursorDrawn = true;
-                    } else {
+                    } else if (!com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TEXT_ANIMATION)
+                            || !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.ANIMATIONS)) {
                         super.draw(canvas);
+                    } else {
+                        Rect b = getBounds();
+                        long now = android.os.SystemClock.uptimeMillis();
+                        if (Float.isNaN(shownLeft) || shownTop != b.top || Math.abs(b.left - shownLeft) > dp(120)) {
+                            shownLeft = b.left; // new line or a long jump: no glide
+                        } else {
+                            float dt = Math.min(48, Math.max(1, now - lastFrame));
+                            float k = 1f - (float) Math.exp(-dt / 45f);
+                            shownLeft += (b.left - shownLeft) * k;
+                            if (Math.abs(b.left - shownLeft) < 0.5f) shownLeft = b.left;
+                        }
+                        shownTop = b.top;
+                        lastFrame = now;
+                        canvas.save();
+                        canvas.translate(shownLeft - b.left, 0);
+                        super.draw(canvas);
+                        canvas.restore();
+                        if (shownLeft != b.left) {
+                            EditTextBoldCursor.this.postInvalidateOnAnimation();
+                        }
                     }
                 }
 

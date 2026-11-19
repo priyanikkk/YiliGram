@@ -53,6 +53,7 @@ public final class YiliTextAnimation implements TextWatcher {
     private final WeakReference<EditText> view;
     private final Particles particles;
     private String replaced = "";
+    private long[] carried;
 
     private YiliTextAnimation(EditText view) {
         this.view = new WeakReference<>(view);
@@ -72,6 +73,18 @@ public final class YiliTextAnimation implements TextWatcher {
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         replaced = count > 0 && count <= 64 ? s.subSequence(start, start + count).toString() : "";
+        carried = null;
+        if (count > 0 && count <= 64 && s instanceof Spanned) {
+            Spanned sp = (Spanned) s;
+            TypingSpan[] running = sp.getSpans(start, start + count, TypingSpan.class);
+            if (running.length > 0) {
+                carried = new long[count];
+                for (TypingSpan r : running) {
+                    int i = sp.getSpanStart(r) - start;
+                    if (i >= 0 && i < count) carried[i] = r.startTime;
+                }
+            }
+        }
         if (!enabled() || count <= 0 || count > MAX_DELETE) {
             return;
         }
@@ -94,6 +107,17 @@ public final class YiliTextAnimation implements TextWatcher {
         if (!enabled() || !(s instanceof Spannable) || count <= 0) {
             return;
         }
+        // The keyboard rewrote "hel" as "hell": the kept prefix continues its running animations.
+        if (carried != null && before > 0 && before <= count && s.length() >= start + before
+                && s.subSequence(start, start + before).toString().equals(replaced)) {
+            Spannable keep = (Spannable) s;
+            for (int i = 0; i < before && i < carried.length; i++) {
+                if (carried[i] != 0) {
+                    keep.setSpan(new TypingSpan(carried[i]), start + i, start + i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        }
+        carried = null;
         int from = start, to = start + count;
         if (before > 0) {
             if (before >= count || !s.subSequence(start, start + before).toString().equals(replaced)) {
@@ -121,7 +145,10 @@ public final class YiliTextAnimation implements TextWatcher {
         }
         for (int i = from; i < to; i++) {
             if (s.charAt(i) == ' ') continue;
-            sp.setSpan(new TypingSpan(view, now + STAGGER * n++), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            sp.setSpan(new TypingSpan(now + STAGGER * n++), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            EditText ev = view.get();
+            if (ev != null) particles.setBounds(0, 0, ev.getWidth(), ev.getHeight());
+            particles.invalidateSelf();
         }
     }
 
@@ -129,84 +156,18 @@ public final class YiliTextAnimation implements TextWatcher {
     public void afterTextChanged(Editable s) {
     }
 
-    /** One character's entrance: blur 6dp -> 0, rise 10dp, scale 0.35 -> 1 with overshoot. */
-    static final class TypingSpan extends ReplacementSpan {
-        private final long startTime;
-        private final WeakReference<EditText> view;
-        private boolean removing;
+    /** Hides a character while its entrance is drawn by the overlay; set once, removed once. */
+    static final class TypingSpan extends android.text.style.CharacterStyle implements android.text.style.UpdateAppearance {
+        final long startTime;
+        boolean removing;
 
-        TypingSpan(WeakReference<EditText> view, long startTime) {
-            this.view = view;
+        TypingSpan(long startTime) {
             this.startTime = startTime;
         }
 
         @Override
-        public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
-            if (fm != null) {
-                paint.getFontMetricsInt(fm);
-            }
-            return Math.round(paint.measureText(text, start, end));
-        }
-
-        @Override
-        public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
-            float t = Math.max(0f, Math.min(1f, (SystemClock.uptimeMillis() - startTime) / (float) APPEAR));
-            EditText v = view.get();
-            if (t >= 1f) {
-                canvas.drawText(text, start, end, x, y, paint);
-                if (v != null && !removing) {
-                    removing = true;
-                    v.post(() -> {
-                        if (v.getText() instanceof Spannable) {
-                            ((Spannable) v.getText()).removeSpan(this);
-                        }
-                    });
-                }
-                return;
-            }
-            float pos = CubicBezierInterpolator.EASE_OUT_QUINT.getInterpolation(t);
-            float scale = 0.35f + 0.65f * overshoot(t);
-            float alpha = Math.min(1f, t * 2.2f);
-            float blur = AndroidUtilities.dp(6) * (1f - CubicBezierInterpolator.EASE_OUT.getInterpolation(t));
-            float w = paint.measureText(text, start, end);
-            int a = paint.getAlpha();
-            android.graphics.MaskFilter mf = paint.getMaskFilter();
-            canvas.save();
-            canvas.translate(0, AndroidUtilities.dp(10) * (1f - pos));
-            canvas.scale(scale, scale, x + w / 2f, y - paint.getTextSize() * 0.35f);
-            paint.setAlpha((int) (a * alpha));
-            if (blur > 0.5f) {
-                paint.setMaskFilter(new BlurMaskFilter(blur, BlurMaskFilter.Blur.NORMAL));
-            }
-            canvas.drawText(text, start, end, x, y, paint);
-            paint.setMaskFilter(mf);
-            paint.setAlpha(a);
-            canvas.restore();
-            if (v != null && !frameScheduled) {
-                // TextView caches drawn text per block (hardware display lists) and redraws a block only
-                // when its text or spans change, so a plain invalidate() froze the animation on real
-                // devices. Re-setting this span marks its block dirty for the next frame.
-                frameScheduled = true;
-                v.postOnAnimation(() -> {
-                    frameScheduled = false;
-                    if (v.getText() instanceof Spannable) {
-                        Spannable sp = (Spannable) v.getText();
-                        int s0 = sp.getSpanStart(this), s1 = sp.getSpanEnd(this);
-                        if (s0 >= 0 && s1 > s0) {
-                            sp.setSpan(this, s0, s1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                    }
-                });
-            }
-        }
-
-        private boolean frameScheduled;
-
-        /** 0..1 with a ~8% overshoot near the end (back-out). */
-        private static float overshoot(float t) {
-            float s = 1.9f;
-            float u = t - 1f;
-            return u * u * ((s + 1f) * u + s) + 1f;
+        public void updateDrawState(TextPaint tp) {
+            tp.setAlpha(0);
         }
     }
 
@@ -269,12 +230,71 @@ public final class YiliTextAnimation implements TextWatcher {
             invalidateSelf();
         }
 
+        private final TextPaint enterPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+
+        /** Entering characters: drawn here every frame, so the text layout is never touched. */
+        private boolean drawEntering(Canvas canvas, EditText v) {
+            if (!(v.getText() instanceof Spannable) || v.getLayout() == null) return false;
+            Spannable sp = (Spannable) v.getText();
+            TypingSpan[] spans = sp.getSpans(0, sp.length(), TypingSpan.class);
+            if (spans.length == 0) return false;
+            Layout layout = v.getLayout();
+            long now = SystemClock.uptimeMillis();
+            int offX = v.getTotalPaddingLeft() - v.getScrollX();
+            int offY = v.getTotalPaddingTop() - v.getScrollY();
+            enterPaint.set(v.getPaint());
+            int color = v.getCurrentTextColor();
+            int baseAlpha = android.graphics.Color.alpha(color);
+            enterPaint.setColor(color);
+            boolean active = false;
+            for (TypingSpan span : spans) {
+                int i = sp.getSpanStart(span);
+                if (i < 0 || i >= sp.length()) continue;
+                float t = Math.max(0f, Math.min(1f, (now - span.startTime) / (float) APPEAR));
+                if (t >= 1f && !span.removing) {
+                    span.removing = true;
+                    v.post(() -> sp.removeSpan(span)); // the character is drawn by the text again
+                }
+                active = true; // also draws the finished glyph until the span is removed (no blink)
+                String ch = String.valueOf(sp.charAt(i));
+                int line = layout.getLineForOffset(i);
+                float x = offX + layout.getPrimaryHorizontal(i);
+                float y = offY + layout.getLineBaseline(line);
+                float pos = CubicBezierInterpolator.EASE_OUT_QUINT.getInterpolation(t);
+                float scale = 0.35f + 0.65f * overshoot(t);
+                float alpha = Math.min(1f, t * 2.2f);
+                float blur = AndroidUtilities.dp(6) * (1f - CubicBezierInterpolator.EASE_OUT.getInterpolation(t));
+                float w = enterPaint.measureText(ch);
+                canvas.save();
+                canvas.translate(0, AndroidUtilities.dp(10) * (1f - pos));
+                canvas.scale(scale, scale, x + w / 2f, y - enterPaint.getTextSize() * 0.35f);
+                enterPaint.setAlpha((int) (baseAlpha * alpha));
+                enterPaint.setMaskFilter(blur > 0.5f ? new BlurMaskFilter(blur, BlurMaskFilter.Blur.NORMAL) : null);
+                canvas.drawText(ch, x, y, enterPaint);
+                canvas.restore();
+            }
+            enterPaint.setMaskFilter(null);
+            return active;
+        }
+
+        /** 0..1 with a slight overshoot near the end (back-out). */
+        private static float overshoot(float t) {
+            float s = 1.9f;
+            float u = t - 1f;
+            return u * u * ((s + 1f) * u + s) + 1f;
+        }
+
         @Override
         public void draw(@NonNull Canvas canvas) {
             EditText v = view.get();
-            if (v == null || ghosts.isEmpty()) return;
+            if (v == null) return;
             if (getBounds().width() != v.getWidth() || getBounds().height() != v.getHeight()) {
                 setBounds(0, 0, v.getWidth(), v.getHeight());
+            }
+            boolean entering = drawEntering(canvas, v);
+            if (ghosts.isEmpty()) {
+                if (entering) invalidateSelf();
+                return;
             }
             long now = SystemClock.uptimeMillis();
             int color = v.getCurrentTextColor();
@@ -311,7 +331,7 @@ public final class YiliTextAnimation implements TextWatcher {
                     canvas.drawCircle(g.px[k] + dx, g.py[k] + dy, g.size[k] * (1f - 0.5f * t), dot);
                 }
             }
-            if (!ghosts.isEmpty()) {
+            if (!ghosts.isEmpty() || entering) {
                 invalidateSelf();
             }
         }
