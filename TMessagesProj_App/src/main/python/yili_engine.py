@@ -157,6 +157,11 @@ def init(plugins_dir: str, bridge=None, developer_mode: bool = False) -> str:
     import yili_extera_compat
     yili_extera_compat.install()
     try:
+        import yili_java_ext
+        yili_java_ext.install()  # exteraGram's Chaquopy-fork conveniences (getters, JA, JS, …)
+    except Exception:
+        _logger.exception("cannot install Java object conveniences")
+    try:
         with open(_state_path(), encoding="utf-8") as f:
             _state.update(json.load(f))
     except FileNotFoundError:

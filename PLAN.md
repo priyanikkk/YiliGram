@@ -181,13 +181,27 @@ YiliGram/
 | 2c. Компоненты | Кнопки, FAB, 20 expressive-форм, loading indicator с морфингом, debug-галерея | Button group, split button, FAB menu, chips, navigation rail, snackbar-стиль |
 | 2d. Экраны | M3 FAB во всех фрагментах, служебные плашки чата | Формы пузырей, панель ввода, настройки, профили, predictive back |
 | 3. Кастомизация | YiliConfig, экран «Оформление YiliGram» с превью, экспорт/импорт/сброс | Шрифты, плотность, навигация, иконки, пресеты |
-| 4. Плагины | Chaquopy/Python 3.11, движок, хуки запросов/апдейтов/сообщений, SDK-модули, pip, safe mode, менеджер, установка из чата, dev-сервер, совместимость с менеджером exteraGram, 5 примеров, 16 тестов | **Java-хуки (LSPlant)**, `intents`, class proxy, debugpy, репозитории |
+| 4. Плагины | Chaquopy/Python 3.11, движок, хуки запросов/апдейтов/сообщений, SDK-модули, pip, safe mode, менеджер, установка из чата, dev-сервер, совместимость с менеджером exteraGram; **Java-хуки** (`yili-hook`: LSPlant из исходников + Dobby + свой резолвер libart), **`intents`**, **class proxy** (`extera_utils.classes`, DexMaker), **пункты меню** в 4 меню Telegram; 7 примеров, 19 тестов + on-device самотесты | debugpy, репозитории плагинов, MVEL (`jMVELmethod`, `HookFilter.Condition`, `condition` у пунктов меню), статические модификаторы на классах (`SomeClass.JA`), markdown в описаниях |
 
 ### Совместимость с публичными плагинами (статически, `tools/plugin_compat.py`)
-1/8 полностью (Auto Forwarder). Остальным 7 нужны Java-хуки методов — главный следующий шаг.
+5/8 полностью. Остальные три используют внутренние классы самого exteraGram (бейджи,
+реклама в ленте, `com.exteragram.messenger.*`) — к YiliGram не относятся.
 
-### Java-хуки: план
-LSPlant 6.4 на Maven устарел (апрель 2024, без Android 16); актуальный LSPlant требует CMake ≥ 3.28,
-C++23-модули и prefab libcxx. План: отдельный модуль `yili-hook` с LSPlant из исходников
-(сабмодуль) + Dobby, собственный ELF-резолвер символов libart с поддержкой `.gnu_debugdata`
-(MiniDebugInfo, xz), Java-слой `MethodHookParam` / `HookBridge`, совместимый с Xposed API.
+### Java-хуки: как устроено
+- `yili-hook/lsplant` — сабмодуль LSPlant (C++23-модули), собирается NDK 30 + CMake 3.31.6
+  вместе с prefab libcxx от LSPosed; Maven-релиз 6.4 не работает на текущей ART
+  (`JitCodeCache::GarbageCollectCache` → `DoCollection`).
+- Dobby (prefab) — inline-хуки; символы libart — свой резолвер (`.dynsym`, `.symtab`,
+  MiniDebugInfo через XZ Embedded), с поиском по префиксу.
+- `YiliHook` / `MethodHookParam` — семантика Xposed; HiddenApiBypass включается при первом хуке.
+- Проверено на эмуляторе API 35 x86_64 (`tools/device-tests/hook_selftest.plugin`).
+  На реальных arm64-устройствах и Android 16 ещё не проверялось.
+
+### Совместимость: что ещё отличается от exteraGram
+- Форк Chaquopy у exteraGram по умолчанию отдаёт `obj.title` через `getTitle()` и даёт
+  модификаторы `JA`/`JGS`/`JIR`/`JS`. У нас обычный Chaquopy 17.2, а `yili_java_ext`
+  повторяет это для объектов (getter/setter-фолбэк, `JA`/`JNA`, `JGS`/`JNGS`, `JIR`/`JNIR`,
+  `JS`/`JNS`, `java.JNone`). Отличия: getter используется, только если нет публичного поля
+  с таким именем; статические варианты на классах (`SomeClass.JA`) недоступны.
+- Release-сборка теперь не обфусцирует Telegram (`-dontobfuscate`, keep `org.telegram.**`):
+  иначе плагины не нашли бы классы по именам.
