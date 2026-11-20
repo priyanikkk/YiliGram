@@ -27,6 +27,8 @@ import org.telegram.messenger.AndroidUtilities;
  * <ul>
  * <li>{@link YiliBadges.Type#ADMIN} - team: a 12-point soft burst with a primary -> tertiary
  * gradient and a four-point sparkle in the middle;</li>
+ * <li>{@link YiliBadges.Type#OFFICIAL} - official channel or group: an 8-point sun, secondary ->
+ * primary, with a check mark;</li>
  * <li>{@link YiliBadges.Type#BETA} - beta tester: a 4-lobe cookie in tertiary container with a bold
  * "β".</li>
  * </ul>
@@ -39,11 +41,16 @@ public class YiliBadgeDrawable extends Drawable {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint glyph = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path sparkle = new Path();
+    private final Paint check = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public YiliBadgeDrawable(YiliBadges.Type type, int sizeDp) {
         this.type = type;
         this.size = AndroidUtilities.dp(sizeDp);
-        ExpressiveShapes.Shape s = type == YiliBadges.Type.ADMIN ? ExpressiveShapes.Shape.SOFT_BURST : ExpressiveShapes.Shape.COOKIE_4;
+        ExpressiveShapes.Shape s = type == YiliBadges.Type.ADMIN ? ExpressiveShapes.Shape.SOFT_BURST
+                : type == YiliBadges.Type.OFFICIAL ? ExpressiveShapes.Shape.SUNNY : ExpressiveShapes.Shape.COOKIE_4;
+        check.setStyle(Paint.Style.STROKE);
+        check.setStrokeCap(Paint.Cap.ROUND);
+        check.setStrokeJoin(Paint.Join.ROUND);
         shape = new ShapeMorphDrawable(ExpressiveShapes.get(s), 0);
         glyph.setTypeface(Typeface.create(AndroidUtilities.bold(), Typeface.BOLD));
         glyph.setTextAlign(Paint.Align.CENTER);
@@ -78,6 +85,21 @@ public class YiliBadgeDrawable extends Drawable {
             sparkle.close();
             paint.setColor(c.get(ColorRole.ON_PRIMARY));
             canvas.drawPath(sparkle, paint);
+        } else if (type == YiliBadges.Type.OFFICIAL) {
+            // 8-point sun, secondary -> primary, with a check mark: an official YiliGram channel or group.
+            shape.setColor(c.primary());
+            shape.setBounds(b);
+            shape.getPaint().setShader(new LinearGradient(b.left, b.bottom, b.right, b.top,
+                    c.get(ColorRole.SECONDARY), c.primary(), Shader.TileMode.CLAMP));
+            shape.draw(canvas);
+            shape.getPaint().setShader(null);
+            check.setColor(c.get(ColorRole.ON_PRIMARY));
+            check.setStrokeWidth(r * 0.2f);
+            sparkle.rewind();
+            sparkle.moveTo(cx - r * 0.38f, cy + r * 0.02f);
+            sparkle.lineTo(cx - r * 0.1f, cy + r * 0.3f);
+            sparkle.lineTo(cx + r * 0.4f, cy - r * 0.26f);
+            canvas.drawPath(sparkle, check);
         } else {
             shape.setColor(c.get(ColorRole.TERTIARY_CONTAINER));
             shape.setBounds(b);
@@ -103,6 +125,7 @@ public class YiliBadgeDrawable extends Drawable {
     public void setAlpha(int alpha) {
         paint.setAlpha(alpha);
         glyph.setAlpha(alpha);
+        check.setAlpha(alpha);
         shape.setAlpha(alpha);
     }
 

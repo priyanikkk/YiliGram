@@ -22,6 +22,16 @@ public final class BadgeInfo {
     private BadgeInfo() {
     }
 
+    /** Name of a badge type; null means "no badge". */
+    public static int title(YiliBadges.Type type) {
+        if (type == null) return R.string.YiliBadgeNone;
+        switch (type) {
+            case ADMIN: return R.string.YiliBadgeAdmin;
+            case OFFICIAL: return R.string.YiliBadgeOfficial;
+            default: return R.string.YiliBadgeBeta;
+        }
+    }
+
     public static void show(BaseFragment fragment, YiliBadges.Type type) {
         Context ctx = fragment.getParentActivity();
         if (ctx == null || type == null) return;
@@ -35,7 +45,7 @@ public final class BadgeInfo {
         box.addView(badge, LayoutHelper.createLinear(72, 72, Gravity.CENTER_HORIZONTAL, 0, 24, 0, 16));
 
         TextView title = new TextView(ctx);
-        title.setText(getString(type == YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdmin : R.string.YiliBadgeBeta));
+        title.setText(getString(title(type)));
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
         title.setTypeface(AndroidUtilities.bold());
         title.setGravity(Gravity.CENTER);
@@ -43,7 +53,8 @@ public final class BadgeInfo {
         box.addView(title, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 24, 0, 24, 8));
 
         TextView text = new TextView(ctx);
-        text.setText(getString(type == YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdminInfo : R.string.YiliBadgeBetaInfo));
+        text.setText(getString(type == YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdminInfo
+                : type == YiliBadges.Type.OFFICIAL ? R.string.YiliBadgeOfficialInfo : R.string.YiliBadgeBetaInfo));
         text.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         text.setGravity(Gravity.CENTER);
         text.setLineSpacing(AndroidUtilities.dp(2), 1f);

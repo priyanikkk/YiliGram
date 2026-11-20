@@ -2562,7 +2562,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     return;
                 }
                 if (id == yili_badge) {
-                    com.yiligram.badges.BadgeGrant.show(ProfileActivity.this, userId, () -> updateProfileData(true));
+                    com.yiligram.badges.BadgeGrant.show(ProfileActivity.this, userId != 0 ? userId : -chatId, () -> updateProfileData(true));
                     return;
                 }
                 if (com.yiligram.plugins.PluginMenus.isPluginId(id)) {
@@ -11798,7 +11798,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     com.yiligram.badges.YiliBadges.Type badge = com.yiligram.badges.YiliBadges.get(user.id);
                     nameTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(user.id, 20));
                     nameTextView.setRightDrawable2OnClick(v -> com.yiligram.badges.BadgeInfo.show(ProfileActivity.this, badge));
-                    nameTextViewRightDrawable2ContentDescription = LocaleController.getString(badge == com.yiligram.badges.YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdmin : R.string.YiliBadgeBeta);
+                    nameTextViewRightDrawable2ContentDescription = LocaleController.getString(com.yiligram.badges.BadgeInfo.title(badge));
                 } else {
                     nameTextView.setRightDrawable2(null);
                     nameTextViewRightDrawable2ContentDescription = null;
@@ -12067,9 +12067,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 } else if (chat.verified) {
                     nameTextView.setRightDrawable2(getVerifiedCrossfadeDrawable());
                     nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrVerified);
+                } else if (com.yiligram.badges.YiliBadges.get(-chat.id) != null) {
+                    // YILI: official YiliGram channel / group badge
+                    com.yiligram.badges.YiliBadges.Type chatBadge = com.yiligram.badges.YiliBadges.get(-chat.id);
+                    nameTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(-chat.id, 20));
+                    nameTextView.setRightDrawable2OnClick(v -> com.yiligram.badges.BadgeInfo.show(ProfileActivity.this, chatBadge));
+                    nameTextViewRightDrawableContentDescription = LocaleController.getString(com.yiligram.badges.BadgeInfo.title(chatBadge));
                 } else {
                     nameTextView.setRightDrawable2(null);
                     nameTextViewRightDrawableContentDescription = null;
+                }
+                if (!(nameTextView.getRightDrawable2() instanceof com.yiligram.badges.YiliBadgeDrawable)) {
+                    nameTextView.setRightDrawable2OnClick(null);
                 }
                 if (DialogObject.getEmojiStatusDocumentId(chat.emoji_status) != 0) {
                     nameTextView.setRightDrawable(getEmojiStatusDrawable(chat.emoji_status, true, false));
@@ -12601,7 +12610,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         }
 
         // YILI: menu items added by plugins (MenuItemType.PROFILE_ACTION_MENU)
-        if (userId != 0 && otherItem != null) {
+        if ((userId != 0 || chatId != 0) && otherItem != null) {
             otherItem.lazilyAddSubItem(yili_badge, R.drawable.msg_premium_liststar, LocaleController.getString(R.string.YiliBadgeMenu)); // YILI
         }
         com.yiligram.plugins.PluginMenus.addSubItems(com.yiligram.plugins.PluginMenus.PROFILE_ACTION_MENU, otherItem);

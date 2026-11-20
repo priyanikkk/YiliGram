@@ -24,14 +24,16 @@ import java.util.Map;
 
 /**
  * YiliGram badges next to user names: the team ({@link Type#ADMIN}) and beta testers
- * ({@link Type#BETA}). The list is a JSON message tagged {@code #yiligram_badges}
- * ({"admin":[ids],"beta":[ids]}) read from the account's Saved Messages, where granting from a
+ * ({@link Type#BETA}), and official YiliGram channels and groups ({@link Type#OFFICIAL}). Keys are
+ * dialog ids (users positive, chats negative). The list is a JSON message tagged {@code #yiligram_badges}
+ * ({"admin":[ids],"beta":[ids],"official":[ids]}) read from the account's Saved Messages, where granting from a
  * profile posts the updated list. A public channel can later carry the same message so everyone's
  * app shows the badges.
  */
 public final class YiliBadges {
 
-    public enum Type { ADMIN, BETA }
+    /** ADMIN and BETA are for people; OFFICIAL is for channels and groups. */
+    public enum Type { ADMIN, BETA, OFFICIAL }
 
     public static final String TAG = "#yiligram_badges";
 

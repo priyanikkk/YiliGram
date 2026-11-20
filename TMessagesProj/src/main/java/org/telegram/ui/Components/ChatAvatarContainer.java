@@ -940,6 +940,13 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
         setTitle(value, false, false, false, false, null, false);
     }
 
+    private long yiliBadgeDialogId() {
+        if (parentFragment == null) return 0;
+        if (parentFragment.getCurrentUser() != null) return parentFragment.getCurrentUser().id;
+        if (parentFragment.getCurrentChat() != null) return -parentFragment.getCurrentChat().id;
+        return 0;
+    }
+
     public void setTitle(CharSequence value, boolean scam, boolean fake, boolean verified, boolean premium, TLRPC.EmojiStatus emojiStatus, boolean animated) {
         if (value != null) {
             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
@@ -965,15 +972,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             titleTextView.setRightDrawable2(verifiedDrawable);
             rightDrawableIsScamOrVerified = true;
             rightDrawable2ContentDescription = getString(R.string.AccDescrVerified);
-        } else if (parentFragment != null && parentFragment.getCurrentUser() != null
-                && com.yiligram.badges.YiliBadges.get(parentFragment.getCurrentUser().id) != null) {
-            // YILI: team / beta tester badge in the chat header
-            titleTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(parentFragment.getCurrentUser().id, 18));
-            final com.yiligram.badges.YiliBadges.Type yiliBadge = com.yiligram.badges.YiliBadges.get(parentFragment.getCurrentUser().id);
+        } else if (yiliBadgeDialogId() != 0 && com.yiligram.badges.YiliBadges.get(yiliBadgeDialogId()) != null) {
+            // YILI: team / beta tester / official resource badge in the chat header
+            final long badgeDialog = yiliBadgeDialogId();
+            final com.yiligram.badges.YiliBadges.Type yiliBadge = com.yiligram.badges.YiliBadges.get(badgeDialog);
+            titleTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(badgeDialog, 18));
             titleTextView.setRightDrawable2OnClick(v -> com.yiligram.badges.BadgeInfo.show(parentFragment, yiliBadge));
             rightDrawableIsScamOrVerified = true;
-            rightDrawable2ContentDescription = getString(com.yiligram.badges.YiliBadges.get(parentFragment.getCurrentUser().id)
-                    == com.yiligram.badges.YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdmin : R.string.YiliBadgeBeta);
+            rightDrawable2ContentDescription = getString(com.yiligram.badges.BadgeInfo.title(yiliBadge));
         } else if (titleTextView.getRightDrawable() instanceof ScamDrawable || titleTextView.getRightDrawable2() instanceof com.yiligram.badges.YiliBadgeDrawable) {
             titleTextView.setRightDrawable2OnClick(null);
             titleTextView.setRightDrawable2(null);
