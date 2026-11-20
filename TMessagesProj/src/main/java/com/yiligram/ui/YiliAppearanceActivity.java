@@ -73,6 +73,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_ICON_PACK = 23;
     private static final int ID_ICON_IMPORT = 24;
     private static final int ID_ICON_DELETE = 25;
+    private static final int ID_AVATAR_FRAME = 26;
     private static final int REQUEST_ICON_PACK = 7304;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
@@ -164,6 +165,8 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asHeader(getString(R.string.YiliShapeHeader)));
         items.add(UItem.asIntSlideView(1, 0, Math.round(YiliConfig.get(YiliConfig.SHAPE_ROUNDNESS) * 100), 200,
                 val -> val + "%", val -> YiliConfig.set(YiliConfig.SHAPE_ROUNDNESS, val / 100f)));
+        items.add(UItem.asButton(ID_AVATAR_FRAME, getString(R.string.AvatarFrame),
+                getString(com.yiligram.avatars.AvatarFrames.current().title)));
         items.add(UItem.asButtonCheck(ID_BUBBLE_TAILS, getString(R.string.YiliBubbleTails), getString(R.string.YiliBubbleTailsInfo))
                 .setChecked(YiliConfig.get(YiliConfig.BUBBLE_TAILS)));
         items.add(UItem.asButtonCheck(ID_M3_CONTROLS, getString(R.string.YiliM3Controls), getString(R.string.YiliM3ControlsInfo))
@@ -291,6 +294,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
             case ID_HIDE_PROFILE:
                 YiliConfig.set(YiliConfig.HIDE_PROFILE_TAB, !YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB));
                 break;
+            case ID_AVATAR_FRAME:
+                showAvatarFramePicker();
+                break;
             case ID_ICON_PACK:
                 showIconPackPicker();
                 break;
@@ -381,6 +387,21 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         new AlertDialog.Builder(getContext(), getResourceProvider())
                 .setTitle(getString(R.string.YiliSchemeStyle))
                 .setItems(names, (d, which) -> YiliConfig.set(YiliConfig.SCHEME_VARIANT, values[which]))
+                .show();
+    }
+
+    private void showAvatarFramePicker() {
+        com.yiligram.avatars.AvatarFrames.Frame[] values = com.yiligram.avatars.AvatarFrames.Frame.values();
+        CharSequence[] names = new CharSequence[values.length];
+        for (int i = 0; i < values.length; i++) {
+            names[i] = getString(values[i].title);
+        }
+        new AlertDialog.Builder(getContext(), getResourceProvider())
+                .setTitle(getString(R.string.AvatarFrame))
+                .setItems(names, (d, which) -> {
+                    YiliConfig.set(YiliConfig.AVATAR_FRAME, values[which]);
+                    listView.adapter.update(true);
+                })
                 .show();
     }
 

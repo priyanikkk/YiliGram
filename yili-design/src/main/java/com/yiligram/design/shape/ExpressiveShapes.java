@@ -1,6 +1,7 @@
 package com.yiligram.design.shape;
 
 import android.graphics.Matrix;
+import android.graphics.Path;
 
 import androidx.annotation.NonNull;
 import androidx.graphics.shapes.CornerRounding;
@@ -105,5 +106,19 @@ public final class ExpressiveShapes {
             default:
                 return star(12, 0.85f, r(0.3f), r(0.05f));
         }
+    }
+
+    private static final EnumMap<Shape, Path> unitPaths = new EnumMap<>(Shape.class);
+
+    /** Outline of a shape in the unit square (0..1, centered on 0.5). Do not modify the returned path. */
+    @NonNull
+    public static synchronized Path unitPath(@NonNull Shape shape) {
+        Path p = unitPaths.get(shape);
+        if (p == null) {
+            p = new Path();
+            Shapes_androidKt.toPath(get(shape), p);
+            unitPaths.put(shape, p);
+        }
+        return p;
     }
 }

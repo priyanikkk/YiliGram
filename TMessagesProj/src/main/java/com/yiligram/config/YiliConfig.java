@@ -76,6 +76,9 @@ public final class YiliConfig {
     /** Telegram's bubble tails; off = every corner rounded, as in Google Messages. */
     /** Material 3 selection controls (switches) instead of Telegram's. */
     public static final Key<Boolean> M3_CONTROLS = new Key<>("shape.m3Controls", Boolean.class, true);
+    /** Avatar outline: a circle or an M3 Expressive shape. */
+    public static final Key<com.yiligram.avatars.AvatarFrames.Frame> AVATAR_FRAME =
+            new Key<>("avatar.frame", com.yiligram.avatars.AvatarFrames.Frame.class, com.yiligram.avatars.AvatarFrames.Frame.CIRCLE);
     public static final Key<Boolean> BUBBLE_TAILS = new Key<>("shape.bubbleTails", Boolean.class, true);
     public static final Key<Float> SHAPE_ROUNDNESS = new Key<>("shape.roundness", Float.class, 1f);
 

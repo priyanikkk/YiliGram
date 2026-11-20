@@ -11855,4 +11855,15 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliPresetAmoled">AMOLED</string>
     <string name="YiliPresetContrast">Contrast</string>
     <string name="YiliFontInvalid">This file is not a font Android can use</string>
+    <string name="AvatarFrame">Avatar shape</string>
+    <string name="AvatarFrameCircle">Circle</string>
+    <string name="AvatarFrameCookie">Cookie</string>
+    <string name="AvatarFrameScallop">Scallop</string>
+    <string name="AvatarFrameClover">Clover</string>
+    <string name="AvatarFrameSun">Sun</string>
+    <string name="AvatarFrameBurst">Burst</string>
+    <string name="AvatarFrameFlower">Flower</string>
+    <string name="AvatarFramePentagon">Pentagon</string>
+    <string name="AvatarFrameGem">Gem</string>
+    <string name="AvatarFrameSquare">Rounded square</string>
 </resources>

@@ -384,4 +384,15 @@
     <string name="YiliPresetAmoled">AMOLED</string>
     <string name="YiliPresetContrast">Контраст</string>
     <string name="YiliFontInvalid">Цей файл не є шрифтом, який розуміє Android</string>
+    <string name="AvatarFrame">Форма аватарок</string>
+    <string name="AvatarFrameCircle">Коло</string>
+    <string name="AvatarFrameCookie">Печиво</string>
+    <string name="AvatarFrameScallop">Фестон</string>
+    <string name="AvatarFrameClover">Конюшина</string>
+    <string name="AvatarFrameSun">Сонце</string>
+    <string name="AvatarFrameBurst">Спалах</string>
+    <string name="AvatarFrameFlower">Квітка</string>
+    <string name="AvatarFramePentagon">Пʼятикутник</string>
+    <string name="AvatarFrameGem">Кристал</string>
+    <string name="AvatarFrameSquare">Заокруглений квадрат</string>
 </resources>

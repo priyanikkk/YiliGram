@@ -425,6 +425,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
     }
 
     public void setForUserOrChat(TLObject object, Drawable avatarDrawable, Object parentObject, boolean animationEnabled, int vectorType, boolean big) {
+        yiliAvatar = true; // YILI: avatar frames
         if (parentObject == null) {
             parentObject = object;
         }
@@ -1879,7 +1880,27 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         return draw(canvas, null);
     }
 
+    // YILI: avatars set through setForUserOrChat can be cut to an M3 shape (AvatarFrames)
+    public boolean yiliAvatar;
+
+    private boolean isRoundAvatar() {
+        int r = roundRadius[0];
+        return r > 0 && roundRadius[1] == r && roundRadius[2] == r && roundRadius[3] == r
+                && r * 2 >= Math.min(imageW, imageH) - 2;
+    }
+
     public boolean draw(Canvas canvas, BackgroundThreadDrawHolder backgroundThreadDrawHolder) {
+        if (yiliAvatar && backgroundThreadDrawHolder == null && canvas != null && !com.yiligram.avatars.AvatarFrames.drawingFramed
+                && isRoundAvatar() && com.yiligram.avatars.AvatarFrames.begin(canvas, imageX, imageY, imageW, imageH)) {
+            boolean wasRound = useRoundRadius;
+            useRoundRadius = false;
+            try {
+                return draw(canvas, null);
+            } finally {
+                useRoundRadius = wasRound;
+                com.yiligram.avatars.AvatarFrames.end(canvas);
+            }
+        }
         boolean result = false;
         if (gradientBitmap != null && currentImageKey != null) {
             canvas.save();
