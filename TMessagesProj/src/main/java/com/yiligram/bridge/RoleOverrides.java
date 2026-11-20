@@ -240,6 +240,17 @@ final class RoleOverrides {
         r("chat_inBubble", SURFACE_CONTAINER_HIGH);
         r("chat_inBubbleSelected", SURFACE_CONTAINER_HIGHEST);
         r("chat_outBubble", PRIMARY_CONTAINER);
+        // Reactions under messages: chosen = primary pill with onPrimary count, otherwise a light
+        // primary tint (Telegram uses 15.6% of the background) with a primary count. The tonal transfer
+        // left the chosen count white on a light pill.
+        r("chat_inReactionButtonBackground", PRIMARY);
+        r("chat_inReactionButtonTextSelected", ON_PRIMARY);
+        r("chat_inReactionButtonText", PRIMARY);
+        r("chat_outReactionButtonBackground", PRIMARY);
+        r("chat_outReactionButtonTextSelected", ON_PRIMARY);
+        r("chat_outReactionButtonText", ON_PRIMARY_CONTAINER);
+        r("chat_reactionServiceButtonBackgroundSelected", PRIMARY_CONTAINER);
+        r("chat_reactionServiceButtonTextSelected", ON_PRIMARY_CONTAINER);
         r("chat_outBubbleGradient", PRIMARY_CONTAINER);
         r("chat_messageTextIn", ON_SURFACE);
         r("chat_messageTextOut", ON_PRIMARY_CONTAINER);

@@ -342,37 +342,12 @@ public class EditTextBoldCursor extends EditTextEffects {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             cursorDrawable = new ShapeDrawable() {
 
-                // YILI: smooth cursor - glides to its new place instead of jumping (with the text animation)
-                private float shownLeft = Float.NaN, shownTop;
-                private long lastFrame;
-
                 @Override
                 public void draw(Canvas canvas) {
                     if (drawInMaim) {
                         cursorDrawn = true;
-                    } else if (!com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TEXT_ANIMATION)
-                            || !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.ANIMATIONS)) {
-                        super.draw(canvas);
                     } else {
-                        Rect b = getBounds();
-                        long now = android.os.SystemClock.uptimeMillis();
-                        if (Float.isNaN(shownLeft) || shownTop != b.top || Math.abs(b.left - shownLeft) > dp(120)) {
-                            shownLeft = b.left; // new line or a long jump: no glide
-                        } else {
-                            float dt = Math.min(48, Math.max(1, now - lastFrame));
-                            float k = 1f - (float) Math.exp(-dt / 45f);
-                            shownLeft += (b.left - shownLeft) * k;
-                            if (Math.abs(b.left - shownLeft) < 0.5f) shownLeft = b.left;
-                        }
-                        shownTop = b.top;
-                        lastFrame = now;
-                        canvas.save();
-                        canvas.translate(shownLeft - b.left, 0);
                         super.draw(canvas);
-                        canvas.restore();
-                        if (shownLeft != b.left) {
-                            EditTextBoldCursor.this.postInvalidateOnAnimation();
-                        }
                     }
                 }
 
@@ -1133,8 +1108,38 @@ public class EditTextBoldCursor extends EditTextEffects {
         }*/
     }
 
+    // YILI: smooth cursor - it glides to its new place instead of jumping (with the text animation on)
+    private float yiliCursorLeft = Float.NaN;
+    private int yiliCursorTop;
+    private long yiliCursorFrame;
+
     protected void drawCursor(Canvas canvas, GradientDrawable drawable) {
+        if (!com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TEXT_ANIMATION)
+                || !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.ANIMATIONS)) {
+            drawable.draw(canvas);
+            return;
+        }
+        Rect b = drawable.getBounds();
+        long now = SystemClock.uptimeMillis();
+        if (Float.isNaN(yiliCursorLeft) || yiliCursorTop != b.top || Math.abs(b.left - yiliCursorLeft) > dp(160)
+                || now - yiliCursorFrame > 600) {
+            yiliCursorLeft = b.left; // new line, long jump or first draw after a pause: no glide
+        } else {
+            float dt = Math.min(40, Math.max(1, now - yiliCursorFrame));
+            yiliCursorLeft += (b.left - yiliCursorLeft) * (1f - (float) Math.exp(-dt / 70f));
+            if (Math.abs(b.left - yiliCursorLeft) < 0.5f) {
+                yiliCursorLeft = b.left;
+            }
+        }
+        yiliCursorTop = b.top;
+        yiliCursorFrame = now;
+        canvas.save();
+        canvas.translate(yiliCursorLeft - b.left, 0);
         drawable.draw(canvas);
+        canvas.restore();
+        if (yiliCursorLeft != b.left) {
+            postInvalidateOnAnimation();
+        }
     }
 
     public void setWindowView(View view) {
