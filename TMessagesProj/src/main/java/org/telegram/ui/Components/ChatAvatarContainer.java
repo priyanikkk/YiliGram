@@ -965,7 +965,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
             titleTextView.setRightDrawable2(verifiedDrawable);
             rightDrawableIsScamOrVerified = true;
             rightDrawable2ContentDescription = getString(R.string.AccDescrVerified);
-        } else if (titleTextView.getRightDrawable() instanceof ScamDrawable) {
+        } else if (parentFragment != null && parentFragment.getCurrentUser() != null
+                && com.yiligram.badges.YiliBadges.get(parentFragment.getCurrentUser().id) != null) {
+            // YILI: team / beta tester badge in the chat header
+            titleTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(parentFragment.getCurrentUser().id, 18));
+            rightDrawableIsScamOrVerified = true;
+            rightDrawable2ContentDescription = getString(com.yiligram.badges.YiliBadges.get(parentFragment.getCurrentUser().id)
+                    == com.yiligram.badges.YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdmin : R.string.YiliBadgeBeta);
+        } else if (titleTextView.getRightDrawable() instanceof ScamDrawable || titleTextView.getRightDrawable2() instanceof com.yiligram.badges.YiliBadgeDrawable) {
             titleTextView.setRightDrawable2(null);
             rightDrawableIsScamOrVerified = false;
             rightDrawable2ContentDescription = null;

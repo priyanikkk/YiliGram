@@ -100,6 +100,16 @@ public class DesignGalleryActivity extends Activity {
             loaders.addView(spinner, new LinearLayout.LayoutParams(org.telegram.messenger.AndroidUtilities.dp(64), org.telegram.messenger.AndroidUtilities.dp(64)));
         }
 
+        section(root, "Badges (team, beta tester)");
+        LinearLayout badges = row(root);
+        for (com.yiligram.badges.YiliBadges.Type t : com.yiligram.badges.YiliBadges.Type.values()) {
+            for (int sz : new int[]{18, 28, 48}) {
+                android.widget.ImageView iv = new android.widget.ImageView(this);
+                iv.setImageDrawable(new com.yiligram.badges.YiliBadgeDrawable(t, sz));
+                badges.addView(iv, new LinearLayout.LayoutParams(org.telegram.messenger.AndroidUtilities.dp(56), org.telegram.messenger.AndroidUtilities.dp(56)));
+            }
+        }
+
         section(root, "Expressive shapes");
         GridLayout shapes = new GridLayout(this);
         shapes.setColumnCount(5);

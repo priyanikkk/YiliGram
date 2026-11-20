@@ -11786,6 +11786,12 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliFontWeight">Font weight</string>
     <string name="YiliFontInfo">Roboto Flex is the Material 3 Expressive typeface. Letters a font lacks are drawn with the system font. Font changes apply after restarting YiliGram.</string>
     <string name="YiliFontRestart">Restart YiliGram to apply the font</string>
+    <string name="YiliBadgeMenu">YiliGram badge</string>
+    <string name="YiliBadgeNone">No badge</string>
+    <string name="YiliBadgeAdmin">YiliGram team</string>
+    <string name="YiliBadgeBeta">YiliGram beta tester</string>
+    <string name="YiliBadgeGranted">Badge granted. The list was posted to Saved Messages.</string>
+    <string name="YiliBadgeRemoved">Badge removed. The list was posted to Saved Messages.</string>
     <string name="YiliIconsHeader">Icons</string>
     <string name="YiliIconPack">Icon pack</string>
     <string name="YiliIconDefault">Telegram (default)</string>

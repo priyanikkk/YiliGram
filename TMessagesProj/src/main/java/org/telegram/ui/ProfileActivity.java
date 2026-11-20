@@ -614,6 +614,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private final static int enable_no_forwards = 46;
     private final static int disable_no_forwards = 47;
     private final static int send_money = 48;
+    private final static int yili_badge = 0x5A0FF; // YILI: grant a YiliGram badge
 
     private Rect rect = new Rect();
 
@@ -2558,6 +2559,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             @Override
             public void onItemClick(final int id) {
                 if (getParentActivity() == null) {
+                    return;
+                }
+                if (id == yili_badge) {
+                    com.yiligram.badges.BadgeGrant.show(ProfileActivity.this, userId, () -> updateProfileData(true));
                     return;
                 }
                 if (com.yiligram.plugins.PluginMenus.isPluginId(id)) {
@@ -11788,6 +11793,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 } else if (user.verified) {
                     nameTextView.setRightDrawable2(getVerifiedCrossfadeDrawable());
                     nameTextViewRightDrawable2ContentDescription = LocaleController.getString(R.string.AccDescrVerified);
+                } else if (com.yiligram.badges.YiliBadges.get(user.id) != null) {
+                    // YILI: team / beta tester badge
+                    com.yiligram.badges.YiliBadges.Type badge = com.yiligram.badges.YiliBadges.get(user.id);
+                    nameTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(user.id, 20));
+                    nameTextViewRightDrawable2ContentDescription = LocaleController.getString(badge == com.yiligram.badges.YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdmin : R.string.YiliBadgeBeta);
                 } else {
                     nameTextView.setRightDrawable2(null);
                     nameTextViewRightDrawable2ContentDescription = null;
@@ -12587,6 +12597,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         }
 
         // YILI: menu items added by plugins (MenuItemType.PROFILE_ACTION_MENU)
+        if (userId != 0 && otherItem != null) {
+            otherItem.lazilyAddSubItem(yili_badge, R.drawable.msg_premium_liststar, LocaleController.getString(R.string.YiliBadgeMenu)); // YILI
+        }
         com.yiligram.plugins.PluginMenus.addSubItems(com.yiligram.plugins.PluginMenus.PROFILE_ACTION_MENU, otherItem);
 
         isCallAvailable = callItemVisible;

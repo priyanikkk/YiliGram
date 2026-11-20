@@ -23,6 +23,12 @@ import androidx.graphics.shapes.Shapes_androidKt;
 public class ShapeMorphDrawable extends Drawable {
 
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    /** The fill paint (e.g. to set a gradient shader). */
+    @NonNull
+    public Paint getPaint() {
+        return paint;
+    }
     private final Path unitPath = new Path();
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
