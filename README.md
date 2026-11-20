@@ -12,7 +12,15 @@ Goals:
 
 See [PLAN.md](PLAN.md) for the roadmap and architecture.
 
-> Status: early development (stage 1: fork, rebranding, build). Not ready for daily use.
+## Download
+
+The latest APK for phones (arm64-v8a, armeabi-v7a) is on the
+[Releases page](https://github.com/priyanikkk/YiliGram/releases/latest).
+Installed builds offer new versions themselves (Settings → YiliGram appearance → Updates).
+
+> Status: test builds. Material 3 Expressive themes and controls, customization (presets, fonts,
+> interface scale, icon packs, menus, tabs), typing animation, YiliGram badges and exteraGram-compatible
+> Python plugins with Java hooks work; see PLAN.md for what is still missing.
 
 ## Building
 
