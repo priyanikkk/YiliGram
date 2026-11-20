@@ -136,7 +136,7 @@ public final class YiliUpdater {
 
     public BetaUpdate getUpdate() {
         if (useTelegram()) {
-            return new BetaUpdate(telegram.versionName + " (" + (telegram.versionCode / 10) + ")", telegram.versionCode, telegram.notes);
+            return new BetaUpdate(telegram.versionName, telegram.versionCode, telegram.notes);
         }
         if (version == null) {
             return null;

@@ -826,8 +826,9 @@ public class SharedConfig {
         String[] partsA = a.split("\\.");
         String[] partsB = b.split("\\.");
         for (int i = 0; i < Math.min(partsA.length, partsB.length); ++i) {
-            int numA = Integer.parseInt(partsA[i]);
-            int numB = Integer.parseInt(partsB[i]);
+            // YILI: tolerate suffixes such as "0 (10)" or "1-beta": compare the leading digits only
+            int numA = leadingInt(partsA[i]);
+            int numB = leadingInt(partsB[i]);
             if (numA < numB) {
                 return false;
             } else if (numA > numB) {
@@ -835,6 +836,15 @@ public class SharedConfig {
             }
         }
         return true;
+    }
+
+    private static int leadingInt(String s) {
+        int n = 0, i = 0;
+        s = s.trim();
+        while (i < s.length() && Character.isDigit(s.charAt(i)) && i < 9) {
+            n = n * 10 + (s.charAt(i++) - '0');
+        }
+        return n;
     }
 
     public static boolean checkPasscode(String passcode) {

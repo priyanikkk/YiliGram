@@ -1,0 +1,31 @@
+{
+  "name": "yiligram-promo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "YiliGram promo video made with Remotion, in Material 3 Expressive style",
+  "scripts": {
+    "preview": "remotion studio",
+    "render": "npm run render:vertical && npm run render:horizontal && npm run render:teaser && npm run render:gif",
+    "render:vertical": "remotion render YiliGramVertical out/yiligram-1080x1920.mp4 --codec h264",
+    "render:horizontal": "remotion render YiliGramHorizontal out/yiligram-1920x1080.mp4 --codec h264",
+    "render:teaser": "remotion render YiliGramTeaser out/yiligram-teaser.mp4 --codec h264",
+    "render:gif": "remotion render YiliGramTeaser out/yiligram-teaser.gif --codec gif --scale 0.4 --every-nth-frame 2",
+    "stills": "node scripts/stills.mjs",
+    "typecheck": "tsc --noEmit",
+    "voiceover": ".venv/bin/python scripts/voiceover.py",
+    "sfx": "python3 scripts/sfx.py"
+  },
+  "dependencies": {
+    "@material/material-color-utilities": "0.4.0",
+    "@remotion/cli": "4.0.545",
+    "qrcode": "1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.545"
+  },
+  "devDependencies": {
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  }
+}

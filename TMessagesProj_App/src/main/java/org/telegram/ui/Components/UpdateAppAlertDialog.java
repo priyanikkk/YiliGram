@@ -269,7 +269,9 @@ public class UpdateAppAlertDialog extends BottomSheet {
         messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         messageTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
         messageTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
-        messageTextView.setText(LocaleController.formatString(R.string.YiliUpdateVersion, appUpdate.version));
+        // YILI: Telegram-channel updates carry a real version code (build * 10 + ABI): show the build number
+        messageTextView.setText(LocaleController.formatString(R.string.YiliUpdateVersion,
+                appUpdate.versionCode >= 10 ? appUpdate.version + " (" + (appUpdate.versionCode / 10) + ")" : appUpdate.version));
         messageTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
         linearLayout.addView(messageTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 23, 0, 23, 5));
 
