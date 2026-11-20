@@ -93,6 +93,12 @@ public class DesignGalleryActivity extends Activity {
         YiliLoadingIndicator contained = new YiliLoadingIndicator(this);
         contained.setContained(true);
         loaders.addView(contained, wrap());
+        // Telegram's own spinner, drawn as the M3 indicator on YiliGram themes (YiliLoadingShape)
+        for (int sz : new int[]{18, 32, 48}) {
+            org.telegram.ui.Components.RadialProgressView spinner = new org.telegram.ui.Components.RadialProgressView(this);
+            spinner.setSize(org.telegram.messenger.AndroidUtilities.dp(sz));
+            loaders.addView(spinner, new LinearLayout.LayoutParams(org.telegram.messenger.AndroidUtilities.dp(64), org.telegram.messenger.AndroidUtilities.dp(64)));
+        }
 
         section(root, "Expressive shapes");
         GridLayout shapes = new GridLayout(this);

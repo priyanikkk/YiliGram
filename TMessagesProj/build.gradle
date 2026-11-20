@@ -181,8 +181,10 @@ android {
             ndk.debugSymbolLevel = 'FULL'
             buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
             buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_PRIVATE_URL") + "\""
-            buildConfigField "boolean", "DEBUG_VERSION", "true"
-            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
+            // YILI: -PyiliFast (tools/release/publish.sh) = a debug-signed build that runs like a release:
+            // no verbose MTProto logging and no DEBUG_PRIVATE checks, which made phones stutter.
+            buildConfigField "boolean", "DEBUG_VERSION", project.hasProperty('yiliFast') ? "false" : "true"
+            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", project.hasProperty('yiliFast') ? "false" : "true"
             buildConfigField "boolean", "BUNDLE", "false"
             buildConfigField "int", "VERSION_NUM", "0"
         }

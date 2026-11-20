@@ -87,10 +87,12 @@ android {
 
     buildTypes {
         debug {
-            debuggable true
-            jniDebuggable true
+            // YILI: -PyiliFast builds the same package and signature, optimized (R8) and not debuggable,
+            // for phones (tools/release/publish.sh); plain debug builds stay debuggable for development.
+            debuggable !project.hasProperty('yiliFast')
+            jniDebuggable !project.hasProperty('yiliFast')
             applicationIdSuffix ".beta"
-            minifyEnabled false
+            minifyEnabled project.hasProperty('yiliFast')
             shrinkResources false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'

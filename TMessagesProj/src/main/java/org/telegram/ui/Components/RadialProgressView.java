@@ -265,8 +265,27 @@ public class RadialProgressView extends View implements Theme.Colorable {
         }
     }
 
+    // YILI: indeterminate spinners become the M3 Expressive loading indicator (morphing shape)
+    private com.yiligram.ui.YiliLoadingShape yiliShape;
+
+    private boolean drawYili(Canvas canvas, float cx, float cy) {
+        if (!noProgress || toCircleProgress != 0f || !com.yiligram.ui.YiliLoadingShape.enabled()) {
+            return false;
+        }
+        if (yiliShape == null) {
+            yiliShape = new com.yiligram.ui.YiliLoadingShape();
+        }
+        // A filled shape looks heavier than the arc: keep it slightly smaller than the arc was.
+        yiliShape.draw(canvas, cx, cy, size * 0.95f, progressPaint.getColor());
+        updateAnimation();
+        return true;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
+        if (drawYili(canvas, getMeasuredWidth() / 2f, getMeasuredHeight() / 2f)) {
+            return;
+        }
         int x = (getMeasuredWidth() - size) / 2;
         int y = (getMeasuredHeight() - size) / 2;
         cicleRect.set(x, y, x + size, y + size);
@@ -275,6 +294,9 @@ public class RadialProgressView extends View implements Theme.Colorable {
     }
 
     public void draw(Canvas canvas, float cx, float cy) {
+        if (drawYili(canvas, cx, cy)) {
+            return;
+        }
         cicleRect.set(cx - size / 2f, cy - size / 2f, cx + size / 2f, cy +  size / 2f);
         canvas.drawArc(cicleRect, radOffset, drawingCircleLenght = currentCircleLength, false, progressPaint);
         updateAnimation();

@@ -2,7 +2,8 @@
 # Publish a YiliGram test update through Telegram.
 #
 #  1. bumps YILI_VERSION_CODE in gradle.properties (the installed app compares version codes),
-#  2. builds the debug APK for phones (arm64-v8a + armeabi-v7a),
+#  2. builds the phone APK (arm64-v8a + armeabi-v7a), optimized with -PyiliFast (R8, not debuggable,
+#     no verbose logging) but debug-signed with the same package, so it installs over the beta,
 #  3. hands it to YiliGram on the running emulator, which sends it to the account's Saved Messages
 #     with "#yiligram_update vc=<code> v=<name>" and the commit list as release notes.
 #
@@ -22,7 +23,7 @@ code=$((code + 1))
 sed -i "s/^YILI_VERSION_CODE=.*/YILI_VERSION_CODE=$code/" "$PROPS"
 
 echo "== building $name (code $code)"
-./gradlew -q :TMessagesProj_App:assembleAfatDebug -PyiliAbis=arm64-v8a,armeabi-v7a
+./gradlew -q :TMessagesProj_App:assembleAfatDebug -PyiliAbis=arm64-v8a,armeabi-v7a -PyiliFast
 APK=TMessagesProj_App/build/outputs/apk/afat/debug/YiliGram-$name-debug.apk
 vc=$(( code * 10 + 9 ))   # versionCodeOverride for the afat flavor (abiVersionCode 9)
 
