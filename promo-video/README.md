@@ -21,6 +21,7 @@ npm run render:vertical  # one at a time: render:vertical, render:horizontal, re
 npm run stills           # a still of every scene (both formats) into out/stills, for checking layout
 npm run voiceover        # rebuild public/voiceover.wav from voiceover.md (Piper, see below)
 npm run sfx              # rebuild the UI sounds in public/sfx
+npm run music            # rebuild the background track public/music.m4a
 ```
 
 The first render downloads a headless Chrome for Remotion.
@@ -47,22 +48,18 @@ The phone screens in scenes 2 and 4 are real YiliGram screenshots taken on the e
 
 ## Audio
 
-- **Voice-over**: `public/voiceover.wav`, generated offline with [Piper](https://github.com/rhasspy/piper)
-  and the Russian voice `ru_RU-dmitri-medium`:
-  ```bash
-  python3 -m venv .venv && .venv/bin/pip install piper-tts
-  mkdir -p voices && cd voices
-  curl -LO https://huggingface.co/rhasspy/piper-voices/resolve/main/ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx
-  curl -LO https://huggingface.co/rhasspy/piper-voices/resolve/main/ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx.json
-  cd .. && npm run voiceover
-  ```
-  To use your own recording, replace `public/voiceover.wav` (78 s, lines starting at the seconds listed
-  in `voiceover.md`, counted from each scene's start in `src/config.ts`). Set `hasVoiceover: false`
-  for subtitles only.
-- **Music**: none is shipped. Put a track at `public/music.mp3`, set `hasMusic: true` and its `bpm` in
-  `src/config.ts`.
+No voice: the story is told by the on-screen titles and subtitles. Sound = music + UI effects.
+
+- **Music**: `public/music.m4a`, a light track synthesized by `scripts/music.py` (D major, I-V-vi-IV,
+  pad + plucked arpeggio + soft kick and hats) at `CONFIG.bpm`. `npm run music` rebuilds it. To use your
+  own, put the file in `public/` and set `musicFile` (and `musicVolume`) in `src/config.ts`.
 - **UI sounds**: clicks, ticks, the "poof" of a morph and a notification ding, synthesized by
   `scripts/sfx.py` into `public/sfx` (cues in `src/Root.tsx`).
+- **Voice-over (off)**: `voiceover.md` holds a narration text; `npm run voiceover` makes
+  `public/voiceover.wav` with Piper (`ru_RU-dmitri-medium`, see the script), and `hasVoiceover: true`
+  turns it on.
+
+Title and subtitle sizes: `titleScale` and `captionScale` in `src/config.ts`.
 
 ## Fonts
 

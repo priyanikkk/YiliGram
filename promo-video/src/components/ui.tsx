@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import QRCode from 'qrcode';
 import {FONT, mix, Roles, sp, SPRING} from '../theme';
+import {CONFIG} from '../config';
 import {LOADING_SEQUENCE, morphPath, ShapeName, shapePath} from '../shapes';
 
 /** Layout helper: vertical (1080×1920) or horizontal (1920×1080); `u` scales 1080-based sizes. */
@@ -74,7 +75,8 @@ export const LoadingIndicator: React.FC<{size: number; color: string; container?
 export const Headline: React.FC<{
   text: string; color: string; size: number; delay?: number; align?: 'left' | 'center'; weight?: number; width?: number;
   exitAt?: number; style?: React.CSSProperties;
-}> = ({text, color, size, delay = 0, align = 'center', weight = 760, width = 100, exitAt, style}) => {
+}> = ({text, color, size: rawSize, delay = 0, align = 'center', weight = 760, width = 100, exitAt, style}) => {
+  const size = rawSize * CONFIG.titleScale;
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const lines = text.split('\n');

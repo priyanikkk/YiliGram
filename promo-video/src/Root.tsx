@@ -51,7 +51,7 @@ const Track: React.FC<{withAudio?: boolean}> = ({withAudio = true}) => (
       );
     })}
     {withAudio && CONFIG.hasVoiceover ? <Audio src={staticFile('voiceover.wav')} /> : null}
-    {withAudio && CONFIG.hasMusic ? <Audio src={staticFile('music.mp3')} volume={CONFIG.musicVolume} /> : null}
+    {withAudio && CONFIG.hasMusic ? <Audio src={staticFile(CONFIG.musicFile)} volume={CONFIG.musicVolume} /> : null}
     {withAudio && CONFIG.hasSfx ? SFX.map(([k, s, name], i) => (
       <Sequence key={i} from={sceneStart(k) + Math.round(s * CONFIG.fps)} durationInFrames={CONFIG.fps}>
         <Audio src={staticFile(`sfx/${name}.wav`)} volume={0.5} />
@@ -78,6 +78,10 @@ const Teaser: React.FC = () => {
         at += len;
         return el;
       })}
+      {CONFIG.hasMusic ? (
+        <Audio src={staticFile(CONFIG.musicFile)} startFrom={Math.round(7 * CONFIG.fps)}
+          volume={(f) => CONFIG.musicVolume * Math.min(1, f / 10, (Math.round(12 * CONFIG.fps) - f) / 30)} />
+      ) : null}
     </AbsoluteFill>
   );
 };

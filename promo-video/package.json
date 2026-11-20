@@ -13,7 +13,8 @@
     "stills": "node scripts/stills.mjs",
     "typecheck": "tsc --noEmit",
     "voiceover": ".venv/bin/python scripts/voiceover.py",
-    "sfx": "python3 scripts/sfx.py"
+    "sfx": "python3 scripts/sfx.py",
+    "music": "python3 scripts/music.py"
   },
   "dependencies": {
     "@material/material-color-utilities": "0.4.0",

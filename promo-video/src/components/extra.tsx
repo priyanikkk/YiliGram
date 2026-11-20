@@ -3,6 +3,7 @@ import {useCurrentFrame, useVideoConfig} from 'remotion';
 import {FONT, mix, Roles, sp, SPRING} from '../theme';
 import {morphPath, ShapeName} from '../shapes';
 import {useLayout} from './ui';
+import {CONFIG} from '../config';
 
 /** Animated subtitles for one scene: each voice-over line springs in and fades out at the next one. */
 export const Subtitles: React.FC<{lines: {at: number; text: string}[]; r: Roles; sceneSeconds: number}> = ({lines, r, sceneSeconds}) => {
@@ -26,7 +27,7 @@ export const Subtitles: React.FC<{lines: {at: number; text: string}[]; r: Roles;
           }}>
             <div style={{
               background: r.inverseSurface, color: r.inverseOnSurface, borderRadius: 28 * u, padding: `${18 * u}px ${30 * u}px`,
-              fontFamily: FONT, fontSize: (vertical ? 40 : 38) * u, lineHeight: 1.3, textAlign: 'center', maxWidth: vertical ? 940 * u : W * 0.7,
+              fontFamily: FONT, fontSize: (vertical ? 40 : 38) * u * CONFIG.captionScale, lineHeight: 1.3, textAlign: 'center', maxWidth: vertical ? 940 * u : W * 0.7,
               fontVariationSettings: `'wght' 500`,
             }}>
               {words.map((w, wi) => {
