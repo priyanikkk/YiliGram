@@ -11797,10 +11797,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     // YILI: team / beta tester badge
                     com.yiligram.badges.YiliBadges.Type badge = com.yiligram.badges.YiliBadges.get(user.id);
                     nameTextView.setRightDrawable2(com.yiligram.badges.YiliBadges.drawable(user.id, 20));
+                    nameTextView.setRightDrawable2OnClick(v -> com.yiligram.badges.BadgeInfo.show(ProfileActivity.this, badge));
                     nameTextViewRightDrawable2ContentDescription = LocaleController.getString(badge == com.yiligram.badges.YiliBadges.Type.ADMIN ? R.string.YiliBadgeAdmin : R.string.YiliBadgeBeta);
                 } else {
                     nameTextView.setRightDrawable2(null);
                     nameTextViewRightDrawable2ContentDescription = null;
+                }
+                if (!(nameTextView.getRightDrawable2() instanceof com.yiligram.badges.YiliBadgeDrawable)) {
+                    nameTextView.setRightDrawable2OnClick(null);
                 }
                 if (user != null && !MessagesController.isSupportUser(user) && DialogObject.getEmojiStatusDocumentId(user.emoji_status) != 0) {
                     rightIconIsStatus = true;

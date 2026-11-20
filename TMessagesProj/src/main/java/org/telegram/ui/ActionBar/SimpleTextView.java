@@ -1328,8 +1328,49 @@ public class SimpleTextView extends View implements Drawable.Callback {
         rightDrawableOnClickListener = onClickListener;
     }
 
+    // YILI: taps on the second right drawable (YiliGram badges)
+    private OnClickListener rightDrawable2OnClickListener;
+    private boolean maybeClick2;
+
+    public void setRightDrawable2OnClick(OnClickListener onClickListener) {
+        rightDrawable2OnClickListener = onClickListener;
+    }
+
+    private boolean handleRightDrawable2Touch(MotionEvent event) {
+        if (rightDrawable2OnClickListener == null || rightDrawable2 == null) {
+            return false;
+        }
+        android.graphics.Rect b = rightDrawable2.getBounds();
+        AndroidUtilities.rectTmp.set(b.left - dp(12), b.top - dp(12), b.right + dp(12), b.bottom + dp(12));
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
+            maybeClick2 = true;
+            touchDownX = event.getX();
+            touchDownY = event.getY();
+            getParent().requestDisallowInterceptTouchEvent(true);
+            return true;
+        } else if (action == MotionEvent.ACTION_MOVE && maybeClick2) {
+            if (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop) {
+                maybeClick2 = false;
+                getParent().requestDisallowInterceptTouchEvent(false);
+            }
+            return true;
+        } else if (action == MotionEvent.ACTION_UP && maybeClick2) {
+            maybeClick2 = false;
+            playSoundEffect(android.view.SoundEffectConstants.CLICK);
+            rightDrawable2OnClickListener.onClick(this);
+            return true;
+        } else if (action == MotionEvent.ACTION_CANCEL) {
+            maybeClick2 = false;
+        }
+        return maybeClick2;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (handleRightDrawable2Touch(event)) {
+            return true;
+        }
         if (rightDrawableOnClickListener != null && rightDrawable != null) {
             AndroidUtilities.rectTmp.set(rightDrawableX - dp(16), rightDrawableY - dp(16), rightDrawableX + dp(16), rightDrawableY + dp(16));
             if (event.getAction() == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
