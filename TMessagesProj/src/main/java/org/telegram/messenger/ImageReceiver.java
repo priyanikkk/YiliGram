@@ -1886,7 +1886,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
     private boolean isRoundAvatar() {
         int r = roundRadius[0];
         return r > 0 && roundRadius[1] == r && roundRadius[2] == r && roundRadius[3] == r
-                && r * 2 >= Math.min(imageW, imageH) - 2;
+                && r * 2 >= Math.min(imageW, imageH) * 0.85f;
     }
 
     public boolean draw(Canvas canvas, BackgroundThreadDrawHolder backgroundThreadDrawHolder) {

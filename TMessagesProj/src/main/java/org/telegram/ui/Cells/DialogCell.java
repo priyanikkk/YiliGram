@@ -744,6 +744,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         drawMonoforumAvatar = false;
         drawCommunityAvatar = false;
         avatarImage.setRoundRadius(dp(26));
+        avatarImage.yiliAvatar = true; // YILI: avatar frames for placeholder avatars too
         for (int i = 0; i < thumbImage.length; ++i) {
             thumbImage[i] = new ImageReceiver(this);
             thumbImage[i].ignoreNotifications = true;
