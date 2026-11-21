@@ -1893,6 +1893,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         if (yiliAvatar && backgroundThreadDrawHolder == null && canvas != null && !com.yiligram.avatars.AvatarFrames.drawingFramed
                 && isRoundAvatar() && com.yiligram.avatars.AvatarFrames.begin(canvas, imageX, imageY, imageW, imageH)) {
             boolean wasRound = useRoundRadius;
+            if (emptyRoundRadius == null) {
+                emptyRoundRadius = new int[4];
+            }
             useRoundRadius = false;
             try {
                 return draw(canvas, null);
