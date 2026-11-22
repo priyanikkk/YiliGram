@@ -303,6 +303,13 @@ public class ProfileActionsView extends View {
                 action.rect.width() / 2.0f * (1.0f - action.getScale()),
                 action.rect.height() / 2.0f * (1.0f - action.getScale())
             );
+            if (yiliM3()) {
+                // YILI: Material 3 profile, tonal buttons in the scheme's secondary container
+                yiliPaint.setColor(com.yiligram.design.YiliTheme.colors().get(com.yiligram.design.color.ColorRole.SECONDARY_CONTAINER));
+                yiliPaint.setAlpha((int) (255 * action.getAlpha() * alphaFraction1));
+                canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, yiliPaint);
+                continue;
+            }
             if (glassFactory != null) {
                 drawGlass(canvas, AndroidUtilities.rectTmp, r, action.getAlpha() * alphaFraction1);
                 continue;
@@ -374,7 +381,9 @@ public class ProfileActionsView extends View {
         // over the photo the buttons are the dimmed photo on every Android (see ProfileButtonsGlass): white icons there
         final float useFilledWhiteIcon = !isButtonColorLight ? 1 : MathUtils.clamp((parentExpanded - 0.75f) / 0.25f, 0, 1);
 
-        final int textColor = ColorUtils.blendARGB(Color.BLACK, Color.WHITE, useFilledWhiteIcon);
+        final int textColor = yiliM3()
+                ? com.yiligram.design.YiliTheme.colors().get(com.yiligram.design.color.ColorRole.ON_SECONDARY_CONTAINER)
+                : ColorUtils.blendARGB(Color.BLACK, Color.WHITE, useFilledWhiteIcon);
         if (lastColorFilter == null || lastColorFilterColor != textColor) {
             lastColorFilterColor = textColor;
             lastColorFilter = new PorterDuffColorFilter(textColor, PorterDuff.Mode.SRC_IN);
@@ -469,7 +478,14 @@ public class ProfileActionsView extends View {
     }
 
     public float getRoundRadius() {
-        return dp(16);
+        return yiliM3() ? dp(26) : dp(16);
+    }
+
+    private final Paint yiliPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    /** YILI: Material 3 profile buttons, except over an expanded photo. */
+    private boolean yiliM3() {
+        return com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_PROFILE) && parentExpanded < 0.5f;
     }
 
     private Action hit = null;

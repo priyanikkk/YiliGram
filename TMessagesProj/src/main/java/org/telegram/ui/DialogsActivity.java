@@ -4441,6 +4441,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (contentView != null) {
                         contentView.updateBlurContent();
                     }
+                    yiliTrackTabsScroll(recyclerView, dy); // YILI
                     viewPage.dialogsItemAnimator.onListScroll(-dy);
                     int firstVisiblePosition = -1;
                     int lastVisiblePosition = -1;
@@ -13718,8 +13719,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         updateContextViewPosition();
     }
 
+    // YILI: the floating tab bar hides while scrolling down the chat list and comes back on the way up
+    private boolean yiliTabsHiddenByScroll;
+    private int yiliTabsScrollAccum;
+
+    private void yiliTrackTabsScroll(RecyclerView list, int dy) {
+        if (!com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TABS_HIDE_ON_SCROLL)) {
+            if (yiliTabsHiddenByScroll) {
+                yiliTabsHiddenByScroll = false;
+                checkUi_mainTabsVisible();
+            }
+            return;
+        }
+        if (dy == 0 || (dy > 0) != (yiliTabsScrollAccum > 0)) {
+            yiliTabsScrollAccum = 0;
+        }
+        yiliTabsScrollAccum += dy;
+        boolean hide = yiliTabsHiddenByScroll;
+        if (yiliTabsScrollAccum > dp(24) && list.canScrollVertically(1)) {
+            hide = true;
+        } else if (yiliTabsScrollAccum < -dp(12) || !list.canScrollVertically(-1)) {
+            hide = false;
+        }
+        if (hide != yiliTabsHiddenByScroll) {
+            yiliTabsHiddenByScroll = hide;
+            checkUi_mainTabsVisible();
+        }
+    }
+
     private void checkUi_mainTabsVisible() {
-        final boolean mainTabsVisible = !searching && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
+        final boolean mainTabsVisible = !searching && !yiliTabsHiddenByScroll && (blurredView == null || blurredView.getBackground() == null || blurredView.getAlpha() < 0.01f || blurredView.getVisibility() == View.GONE);
         if (mainTabsActivityController != null) {
             mainTabsActivityController.setTabsVisible(mainTabsVisible);
         }

@@ -530,4 +530,14 @@
     <string name="YiliUnhideChatConfirm">Вернуть этот чат в список чатов?</string>
     <string name="YiliTranslateTo">Перевести на: %1$s</string>
     <string name="YiliTranslateOther">Перевести на другой язык</string>
+    <string name="YiliNavHideOnScroll">Прятать панель вкладок при прокрутке</string>
+    <string name="YiliWallpaper">Обои чатов</string>
+    <string name="YiliWallpaperOff">Обои Telegram</string>
+    <string name="YiliWallpaperShapes">Фигуры M3</string>
+    <string name="YiliWallpaperBubbles">Пузыри</string>
+    <string name="YiliWallpaperWaves">Волны</string>
+    <string name="YiliShapeMorph">Морфинг форм</string>
+    <string name="YiliShapeMorphInfo">Аватарки перетекают в свою форму при открытии профиля и нажатии на чат</string>
+    <string name="YiliM3Profile">Профиль в стиле M3</string>
+    <string name="YiliM3ProfileInfo">Тональные кнопки с крупными скруглениями под аватаркой</string>
 </resources>

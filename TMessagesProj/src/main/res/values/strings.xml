@@ -11942,4 +11942,14 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliUnhideChatConfirm">Show this chat in the chat list again?</string>
     <string name="YiliTranslateTo">Translate to %1$s</string>
     <string name="YiliTranslateOther">Translate to another language</string>
+    <string name="YiliNavHideOnScroll">Hide the tab bar while scrolling</string>
+    <string name="YiliWallpaper">Chat wallpaper</string>
+    <string name="YiliWallpaperOff">Telegram\'s wallpaper</string>
+    <string name="YiliWallpaperShapes">M3 shapes</string>
+    <string name="YiliWallpaperBubbles">Bubbles</string>
+    <string name="YiliWallpaperWaves">Waves</string>
+    <string name="YiliShapeMorph">Shape morphing</string>
+    <string name="YiliShapeMorphInfo">Avatars spring into their shape when a profile opens or a chat is pressed</string>
+    <string name="YiliM3Profile">Material 3 profile</string>
+    <string name="YiliM3ProfileInfo">Tonal action buttons with large corners under the avatar</string>
 </resources>

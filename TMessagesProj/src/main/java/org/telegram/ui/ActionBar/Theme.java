@@ -10082,6 +10082,12 @@ public class Theme {
     }
 
     public static Drawable getCachedWallpaperNonBlocking() {
+        if (com.yiligram.wallpaper.YiliWallpaper.enabled()) {
+            Drawable yili = com.yiligram.wallpaper.YiliWallpaper.get(); // YILI: Material 3 wallpapers
+            if (yili != null) {
+                return yili;
+            }
+        }
         if (themedWallpaper != null) {
             return themedWallpaper;
         } else {

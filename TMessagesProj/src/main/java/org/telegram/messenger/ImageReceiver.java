@@ -1882,6 +1882,8 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
 
     // YILI: avatars set through setForUserOrChat can be cut to an M3 shape (AvatarFrames)
     public boolean yiliAvatar;
+    /** YILI: outline morph progress, see AvatarFrames.playMorph. */
+    public float yiliMorph = 1f;
 
     private boolean isRoundAvatar() {
         int r = roundRadius[0];
@@ -1891,7 +1893,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
 
     public boolean draw(Canvas canvas, BackgroundThreadDrawHolder backgroundThreadDrawHolder) {
         if (yiliAvatar && backgroundThreadDrawHolder == null && canvas != null && !com.yiligram.avatars.AvatarFrames.drawingFramed
-                && isRoundAvatar() && com.yiligram.avatars.AvatarFrames.begin(canvas, imageX, imageY, imageW, imageH)) {
+                && isRoundAvatar() && com.yiligram.avatars.AvatarFrames.begin(canvas, imageX, imageY, imageW, imageH, yiliMorph)) {
             boolean wasRound = useRoundRadius;
             if (emptyRoundRadius == null) {
                 emptyRoundRadius = new int[4];

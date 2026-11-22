@@ -729,6 +729,16 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         }
     }
 
+    // YILI: the avatar springs into its frame when the chat is pressed
+    @Override
+    public void setPressed(boolean pressed) {
+        boolean was = isPressed();
+        super.setPressed(pressed);
+        if (pressed && !was && com.yiligram.avatars.AvatarFrames.current() != com.yiligram.avatars.AvatarFrames.Frame.CIRCLE) {
+            com.yiligram.avatars.AvatarFrames.playMorph(avatarImage, this, 0);
+        }
+    }
+
     public DialogCell(DialogsActivity fragment, Context context, boolean needCheck, boolean forceThreeLines) {
         this(fragment, context, needCheck, forceThreeLines, UserConfig.selectedAccount, null);
     }

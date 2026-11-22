@@ -10035,6 +10035,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (isOpen && simpleActionBar != null) {
             simpleActionBar.setAlpha(1f);
         }
+        if (isOpen && !backward && avatarImage != null) {
+            com.yiligram.avatars.AvatarFrames.playMorph(avatarImage.getImageReceiver(), avatarImage, 0); // YILI
+        }
         if (isOpen) {
             if (!backward) {
                 if (playProfileAnimation != 0 && allowProfileAnimation) {

@@ -76,6 +76,11 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_AVATAR_FRAME = 26;
     private static final int ID_BUBBLE_SHAPE = 90;
     private static final int ID_APP_ICON = 91;
+    private static final int ID_TABS_HIDE_ON_SCROLL = 92;
+    private static final int ID_WALLPAPER = 93;
+    private static final int ID_SHAPE_MORPH = 94;
+    private static final int ID_M3_PROFILE = 95;
+    private static final int[] WALLPAPER_TITLES = {R.string.YiliWallpaperOff, R.string.YiliWallpaperShapes, R.string.YiliWallpaperBubbles, R.string.YiliWallpaperWaves};
     private static final int[] BUBBLE_SHAPE_TITLES = {R.string.YiliBubbleRounded, R.string.YiliBubblePill, R.string.YiliBubbleM3};
     private static final int REQUEST_ICON_PACK = 7304;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
@@ -171,6 +176,12 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asButton(ID_APP_ICON, getString(R.string.AppIcon), getString(currentAppIcon().title)));
         items.add(UItem.asButton(ID_AVATAR_FRAME, getString(R.string.AvatarFrame),
                 getString(com.yiligram.avatars.AvatarFrames.current().title)));
+        items.add(UItem.asButtonCheck(ID_M3_PROFILE, getString(R.string.YiliM3Profile), getString(R.string.YiliM3ProfileInfo))
+                .setChecked(YiliConfig.get(YiliConfig.M3_PROFILE)));
+        items.add(UItem.asButtonCheck(ID_SHAPE_MORPH, getString(R.string.YiliShapeMorph), getString(R.string.YiliShapeMorphInfo))
+                .setChecked(YiliConfig.get(YiliConfig.SHAPE_MORPH)));
+        items.add(UItem.asButton(ID_WALLPAPER, getString(R.string.YiliWallpaper),
+                getString(WALLPAPER_TITLES[YiliConfig.get(YiliConfig.M3_WALLPAPER).ordinal()])));
         items.add(UItem.asButton(ID_BUBBLE_SHAPE, getString(R.string.YiliBubbleShape),
                 getString(BUBBLE_SHAPE_TITLES[YiliConfig.get(YiliConfig.BUBBLE_SHAPE).ordinal()])));
         items.add(UItem.asButtonCheck(ID_BUBBLE_TAILS, getString(R.string.YiliBubbleTails), getString(R.string.YiliBubbleTailsInfo))
@@ -232,6 +243,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         // ---- Navigation
         items.add(UItem.asHeader(getString(R.string.YiliNavHeader)));
         items.add(UItem.asCheck(ID_TAB_LABELS, getString(R.string.YiliNavLabels)).setChecked(YiliConfig.get(YiliConfig.TAB_LABELS)));
+        items.add(UItem.asCheck(ID_TABS_HIDE_ON_SCROLL, getString(R.string.YiliNavHideOnScroll)).setChecked(YiliConfig.get(YiliConfig.TABS_HIDE_ON_SCROLL)));
         items.add(UItem.asCheck(ID_HIDE_CONTACTS, getString(R.string.YiliNavContacts)).setChecked(!YiliConfig.get(YiliConfig.HIDE_CONTACTS_TAB)));
         items.add(UItem.asCheck(ID_HIDE_PROFILE, getString(R.string.YiliNavProfile)).setChecked(!YiliConfig.get(YiliConfig.HIDE_PROFILE_TAB)));
         items.add(UItem.asShadow(getString(R.string.YiliNavInfo)));
@@ -351,6 +363,28 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                         .show();
                 break;
             }
+            case ID_M3_PROFILE:
+                YiliConfig.set(YiliConfig.M3_PROFILE, !YiliConfig.get(YiliConfig.M3_PROFILE));
+                listView.adapter.update(true);
+                break;
+            case ID_SHAPE_MORPH:
+                YiliConfig.set(YiliConfig.SHAPE_MORPH, !YiliConfig.get(YiliConfig.SHAPE_MORPH));
+                listView.adapter.update(true);
+                break;
+            case ID_WALLPAPER: {
+                com.yiligram.wallpaper.YiliWallpaper.Style[] values = com.yiligram.wallpaper.YiliWallpaper.Style.values();
+                CharSequence[] names = new CharSequence[values.length];
+                for (int i = 0; i < values.length; i++) names[i] = getString(WALLPAPER_TITLES[i]);
+                new AlertDialog.Builder(getContext(), getResourceProvider())
+                        .setTitle(getString(R.string.YiliWallpaper))
+                        .setItems(names, (d, which) -> {
+                            YiliConfig.set(YiliConfig.M3_WALLPAPER, values[which]);
+                            org.telegram.messenger.NotificationCenter.getGlobalInstance().postNotificationName(org.telegram.messenger.NotificationCenter.didSetNewWallpapper);
+                            listView.adapter.update(true);
+                        })
+                        .show();
+                break;
+            }
             case ID_BUBBLE_SHAPE: {
                 YiliConfig.BubbleShape[] values = YiliConfig.BubbleShape.values();
                 CharSequence[] names = new CharSequence[values.length];
@@ -369,6 +403,10 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 break;
             case ID_HEADER_CALL:
                 YiliConfig.set(YiliConfig.HEADER_CALL_BUTTON, !YiliConfig.get(YiliConfig.HEADER_CALL_BUTTON));
+                break;
+            case ID_TABS_HIDE_ON_SCROLL:
+                YiliConfig.set(YiliConfig.TABS_HIDE_ON_SCROLL, !YiliConfig.get(YiliConfig.TABS_HIDE_ON_SCROLL));
+                listView.adapter.update(true);
                 break;
             case ID_TAB_LABELS:
                 YiliConfig.set(YiliConfig.TAB_LABELS, !YiliConfig.get(YiliConfig.TAB_LABELS));

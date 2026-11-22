@@ -79,6 +79,13 @@ public final class YiliConfig {
     /** Avatar outline: a circle or an M3 Expressive shape. */
     public static final Key<com.yiligram.avatars.AvatarFrames.Frame> AVATAR_FRAME =
             new Key<>("avatar.frame", com.yiligram.avatars.AvatarFrames.Frame.class, com.yiligram.avatars.AvatarFrames.Frame.CIRCLE);
+    /** Chat wallpaper drawn from M3 shapes in the current scheme. */
+    public static final Key<com.yiligram.wallpaper.YiliWallpaper.Style> M3_WALLPAPER =
+            new Key<>("wallpaper.m3", com.yiligram.wallpaper.YiliWallpaper.Style.class, com.yiligram.wallpaper.YiliWallpaper.Style.OFF);
+    /** Avatars morph into their frame (profile opening, pressing a chat). */
+    public static final Key<Boolean> SHAPE_MORPH = new Key<>("shape.morph", Boolean.class, true);
+    /** Material 3 profile: tonal action buttons with large corners. */
+    public static final Key<Boolean> M3_PROFILE = new Key<>("profile.m3", Boolean.class, true);
     public static final Key<Boolean> BUBBLE_TAILS = new Key<>("shape.bubbleTails", Boolean.class, true);
     /** Message bubble outline: Telegram's rounded bubble, a pill, or M3 with a sharp corner on the sender's side. */
     public enum BubbleShape { ROUNDED, PILL, M3 }
@@ -105,6 +112,8 @@ public final class YiliConfig {
 
     public static final Key<Boolean> HIDE_CONTACTS_TAB = new Key<>("nav.hideContacts", Boolean.class, false);
     public static final Key<Boolean> TAB_LABELS = new Key<>("nav.labels", Boolean.class, true);
+    /** The floating tab bar hides while scrolling the chat list down. */
+    public static final Key<Boolean> TABS_HIDE_ON_SCROLL = new Key<>("nav.hideOnScroll", Boolean.class, true);
     public static final Key<Boolean> HIDE_PROFILE_TAB = new Key<>("nav.hideProfile", Boolean.class, false);
 
     /** Call button in a private chat's header; when off, Call moves to the ⋮ menu (Telegram's own fallback). */
