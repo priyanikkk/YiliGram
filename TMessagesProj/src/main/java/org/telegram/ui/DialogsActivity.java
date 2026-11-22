@@ -3830,7 +3830,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     }
                 } else if (id == 0x5A101) { // YILI: ghost mode
                     boolean on = !com.yiligram.features.YiliGhost.enabled();
-                    com.yiligram.config.YiliConfig.set(com.yiligram.config.YiliConfig.GHOST_MODE, on);
+                    com.yiligram.features.YiliGhost.setEnabled(on);
                     if (yiliGhostItem != null) {
                         yiliGhostItem.animate().alpha(on ? 1f : 0.45f).setDuration(180).start();
                     }

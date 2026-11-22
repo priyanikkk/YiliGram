@@ -20,6 +20,21 @@ public final class YiliGhost {
         return YiliConfig.get(YiliConfig.GHOST_MODE);
     }
 
+    /**
+     * Turns ghost mode on or off. Turning it on tells the server "offline" right away on every account:
+     * otherwise the last "online" stays visible for up to five minutes.
+     */
+    public static void setEnabled(boolean on) {
+        YiliConfig.set(YiliConfig.GHOST_MODE, on);
+        if (!on || !YiliConfig.get(YiliConfig.GHOST_ONLINE)) return;
+        for (int a = 0; a < org.telegram.messenger.UserConfig.MAX_ACCOUNT_COUNT; a++) {
+            if (!org.telegram.messenger.UserConfig.getInstance(a).isClientActivated()) continue;
+            TL_account.updateStatus req = new TL_account.updateStatus();
+            req.offline = true;
+            org.telegram.tgnet.ConnectionsManager.getInstance(a).sendRequest(req, null);
+        }
+    }
+
     /** True when the request must not reach the server; may also rewrite it (online → offline). */
     public static boolean intercept(TLObject request) {
         if (request == null || !enabled()) return false;

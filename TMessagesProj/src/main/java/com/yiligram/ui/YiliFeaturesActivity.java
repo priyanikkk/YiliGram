@@ -141,6 +141,11 @@ public class YiliFeaturesActivity extends UniversalFragment {
         }
         for (Toggle t : toggles) {
             if (t.id == item.id) {
+                if (t.key == YiliConfig.GHOST_MODE) {
+                    com.yiligram.features.YiliGhost.setEnabled(!YiliConfig.get(t.key));
+                    listView.adapter.update(true);
+                    return;
+                }
                 YiliConfig.set(t.key, !YiliConfig.get(t.key));
                 listView.adapter.update(true);
                 return;
