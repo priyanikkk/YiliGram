@@ -135,7 +135,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asHeader(getString(R.string.YiliStyleHeader)));
         com.yiligram.config.YiliStyles.Level style = com.yiligram.config.YiliStyles.current();
         for (com.yiligram.config.YiliStyles.Level l : com.yiligram.config.YiliStyles.Level.values()) {
-            items.add(UItem.asRadio(ID_STYLE_FIRST + l.ordinal(), getString(l.title), getString(l.info)).setChecked(l == style));
+            items.add(UItem.asRadio2(ID_STYLE_FIRST + l.ordinal(), getString(l.title), getString(l.info)).setChecked(l == style));
         }
         items.add(UItem.asShadow(getString(style == null ? R.string.YiliStyleCustom : R.string.YiliStyleInfo)));
 

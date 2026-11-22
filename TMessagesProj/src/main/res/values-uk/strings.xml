@@ -444,7 +444,6 @@
     <string name="YiliBubbleShape">Форма бульбашок</string>
     <string name="YiliBubbleRounded">Заокруглені</string>
     <string name="YiliBubblePill">Пігулки</string>
-    <string name="YiliBubbleM3">Material 3 (гострий кут)</string>
     <string name="YiliFeaturesHistory">Видалені та правки</string>
     <string name="YiliSaveDeleted">Зберігати видалені повідомлення</string>
     <string name="YiliSaveEdits">Зберігати історію правок</string>
@@ -491,4 +490,5 @@
     <string name="YiliStyleFullInfo">Фігурні аватарки й бульбашки, шпалери та профіль M3, пружні анімації</string>
     <string name="YiliStyleInfo">Кольори та шрифти не змінюються. Будь-яке налаштування нижче можна змінити окремо.</string>
     <string name="YiliStyleCustom">Власний набір налаштувань. Виберіть стиль, щоб привести форми, бульбашки та анімації до нього.</string>
+    <string name="YiliBubbleM3">Material 3</string>
 </resources>

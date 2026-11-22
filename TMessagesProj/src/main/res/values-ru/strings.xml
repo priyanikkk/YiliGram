@@ -503,7 +503,6 @@
     <string name="YiliBubbleShape">Форма пузырей</string>
     <string name="YiliBubbleRounded">Скруглённые</string>
     <string name="YiliBubblePill">Таблетки</string>
-    <string name="YiliBubbleM3">Material 3 (острый угол)</string>
     <string name="YiliFeaturesHistory">Удалённые и правки</string>
     <string name="YiliSaveDeleted">Сохранять удалённые сообщения</string>
     <string name="YiliSaveEdits">Сохранять историю правок</string>
@@ -550,4 +549,5 @@
     <string name="YiliStyleFullInfo">Фигурные аватарки и пузыри, обои и профиль M3, пружинистые анимации</string>
     <string name="YiliStyleInfo">Цвета и шрифты не меняются. Любую настройку ниже можно поменять отдельно.</string>
     <string name="YiliStyleCustom">Свой набор настроек. Выберите стиль, чтобы привести формы, пузыри и анимации к нему.</string>
+    <string name="YiliBubbleM3">Material 3</string>
 </resources>

@@ -11915,7 +11915,6 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliBubbleShape">Bubble shape</string>
     <string name="YiliBubbleRounded">Rounded</string>
     <string name="YiliBubblePill">Pill</string>
-    <string name="YiliBubbleM3">Material 3 (sharp corner)</string>
     <string name="YiliFeaturesHistory">Deleted and edited</string>
     <string name="YiliSaveDeleted">Keep deleted messages</string>
     <string name="YiliSaveEdits">Keep edit history</string>
@@ -11962,4 +11961,5 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliStyleFullInfo">Shaped avatars and bubbles, M3 wallpaper and profile, expressive motion</string>
     <string name="YiliStyleInfo">Colors and fonts stay as they are. Each setting below can still be changed on its own.</string>
     <string name="YiliStyleCustom">Your own mix of settings. Pick a style to reset shapes, bubbles and motion to it.</string>
+    <string name="YiliBubbleM3">Material 3</string>
 </resources>
