@@ -541,4 +541,13 @@
     <string name="YiliShapeMorphInfo">Аватарка перетекает в свою форму при открытии профиля</string>
     <string name="YiliGhostCounter">Скрыто от сервера с запуска приложения: %1$d</string>
     <string name="YiliGhostInfo">На этом телефоне сообщения отмечаются прочитанными, а собеседники видят их непрочитанными. Другие устройства с этим аккаунтом (Telegram Desktop, второй телефон) по-прежнему показывают вас в сети и отмечают прочитанное — закройте их. Отправка сообщения может ненадолго показать вас в сети.</string>
+    <string name="YiliStyleHeader">Стиль интерфейса</string>
+    <string name="YiliStyleTelegram">Как в Telegram</string>
+    <string name="YiliStyleTelegramInfo">Привычный вид, переключатели Telegram, круглые аватарки</string>
+    <string name="YiliStyleHalf">Наполовину M3</string>
+    <string name="YiliStyleHalfInfo">Цвета, переключатели и анимации M3 на привычном макете</string>
+    <string name="YiliStyleFull">Полностью M3</string>
+    <string name="YiliStyleFullInfo">Фигурные аватарки и пузыри, обои и профиль M3, пружинистые анимации</string>
+    <string name="YiliStyleInfo">Цвета и шрифты не меняются. Любую настройку ниже можно поменять отдельно.</string>
+    <string name="YiliStyleCustom">Свой набор настроек. Выберите стиль, чтобы привести формы, пузыри и анимации к нему.</string>
 </resources>

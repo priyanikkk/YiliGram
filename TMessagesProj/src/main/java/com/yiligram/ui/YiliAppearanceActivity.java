@@ -80,6 +80,7 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_WALLPAPER = 93;
     private static final int ID_SHAPE_MORPH = 94;
     private static final int ID_M3_PROFILE = 95;
+    private static final int ID_STYLE_FIRST = 200;
     private static final int[] WALLPAPER_TITLES = {R.string.YiliWallpaperOff, R.string.YiliWallpaperShapes, R.string.YiliWallpaperBubbles, R.string.YiliWallpaperWaves};
     private static final int[] BUBBLE_SHAPE_TITLES = {R.string.YiliBubbleRounded, R.string.YiliBubblePill, R.string.YiliBubbleM3};
     private static final int REQUEST_ICON_PACK = 7304;
@@ -129,6 +130,14 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asCustom(preview));
+
+        // ---- How much Material 3
+        items.add(UItem.asHeader(getString(R.string.YiliStyleHeader)));
+        com.yiligram.config.YiliStyles.Level style = com.yiligram.config.YiliStyles.current();
+        for (com.yiligram.config.YiliStyles.Level l : com.yiligram.config.YiliStyles.Level.values()) {
+            items.add(UItem.asRadio(ID_STYLE_FIRST + l.ordinal(), getString(l.title), getString(l.info)).setChecked(l == style));
+        }
+        items.add(UItem.asShadow(getString(style == null ? R.string.YiliStyleCustom : R.string.YiliStyleInfo)));
 
         // ---- Presets
         items.add(UItem.asHeader(getString(R.string.YiliPresetsHeader)));
@@ -287,6 +296,11 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
 
     @Override
     protected void onClick(UItem item, View view, int position, float x, float y) {
+        if (item.id >= ID_STYLE_FIRST && item.id < ID_STYLE_FIRST + com.yiligram.config.YiliStyles.Level.values().length) {
+            com.yiligram.config.YiliStyles.apply(com.yiligram.config.YiliStyles.Level.values()[item.id - ID_STYLE_FIRST]);
+            listView.adapter.update(true);
+            return;
+        }
         switch (item.id) {
             case ID_DYNAMIC:
                 YiliConfig.set(YiliConfig.DYNAMIC_COLOR, !YiliConfig.get(YiliConfig.DYNAMIC_COLOR));

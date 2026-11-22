@@ -11953,4 +11953,13 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliShapeMorphInfo">Avatars spring into their shape when a profile opens</string>
     <string name="YiliGhostCounter">Hidden from the server since the app started: %1$d</string>
     <string name="YiliGhostInfo">Messages are still marked as read on this phone, but others see them as unread. Other devices signed in to this account (Telegram Desktop, another phone) still show you online and send read receipts — close them or turn ghost mode on there too. Sending a message may show you online for a moment.</string>
+    <string name="YiliStyleHeader">Interface style</string>
+    <string name="YiliStyleTelegram">Telegram</string>
+    <string name="YiliStyleTelegramInfo">Familiar layout, Telegram\'s switches and round avatars</string>
+    <string name="YiliStyleHalf">Half Material 3</string>
+    <string name="YiliStyleHalfInfo">M3 colors, switches and motion on Telegram\'s layout</string>
+    <string name="YiliStyleFull">Full Material 3</string>
+    <string name="YiliStyleFullInfo">Shaped avatars and bubbles, M3 wallpaper and profile, expressive motion</string>
+    <string name="YiliStyleInfo">Colors and fonts stay as they are. Each setting below can still be changed on its own.</string>
+    <string name="YiliStyleCustom">Your own mix of settings. Pick a style to reset shapes, bubbles and motion to it.</string>
 </resources>
