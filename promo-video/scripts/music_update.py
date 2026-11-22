@@ -2,7 +2,7 @@
 
 A major, vi-IV-I-V at 122 BPM: plucked arpeggio, soft pad, bass, kick and claps from the second scene,
 a bell on every scene change. Scene lengths are read from src/update/Update.tsx.
-Run: python3 scripts/music_update.py
+Run: python3 scripts/music_update.py [source.tsx output.m4a transpose]
 """
 import math
 import os
@@ -10,10 +10,14 @@ import random
 import re
 import struct
 import subprocess
+import sys
 import wave
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-src = open(os.path.join(ROOT, "src", "update", "Update.tsx"), encoding="utf-8").read()
+SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join("src", "update", "Update.tsx")
+OUT_NAME = sys.argv[2] if len(sys.argv) > 2 else "music_update.m4a"
+TRANSPOSE = int(sys.argv[3]) if len(sys.argv) > 3 else 0
+src = open(os.path.join(ROOT, SRC), encoding="utf-8").read()
 SCENES = [float(v) for v in re.findall(r"\{key: '\w+', seconds: ([\d.]+)", src)]
 TOTAL = sum(SCENES)
 
@@ -26,7 +30,7 @@ out = [0.0] * N
 
 
 def midi(n):
-    return 440.0 * 2 ** ((n - 69) / 12)
+    return 440.0 * 2 ** ((n + TRANSPOSE - 69) / 12)
 
 
 # F#m D A E
@@ -78,13 +82,13 @@ fade_in, fade_out = int(0.6 * RATE), int(2.5 * RATE)
 for i in range(N):
     out[i] *= min(1.0, i / fade_in) * min(1.0, (N - i) / fade_out)
 peak = max(abs(s) for s in out) or 1
-wav = os.path.join(ROOT, "public", "music_update.wav")
+wav = os.path.join(ROOT, "public", OUT_NAME.rsplit(".", 1)[0] + ".wav")
 with wave.open(wav, "w") as w:
     w.setnchannels(1)
     w.setsampwidth(2)
     w.setframerate(RATE)
     w.writeframes(b"".join(struct.pack("<h", int(30000 * s / peak)) for s in out))
-m4a = os.path.join(ROOT, "public", "music_update.m4a")
+m4a = os.path.join(ROOT, "public", OUT_NAME)
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", wav, "-ar", "44100", "-c:a", "aac", "-b:a", "160k", m4a], check=True)
 os.remove(wav)
 print("written", os.path.abspath(m4a), f"{TOTAL:.1f}s at {BPM:.0f} BPM")

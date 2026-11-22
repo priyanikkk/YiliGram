@@ -10,9 +10,9 @@ import {FONT, mix, Roles, roles, sp, SPRING} from '../theme';
 import {ShapeName, shapePath} from '../shapes';
 
 type Sfx = 'poof' | 'pop' | 'click' | 'tick' | 'ding';
-type SceneDef = {key: string; seconds: number; C: React.FC; sfx: [number, Sfx][]};
+export type SceneDef = {key: string; seconds: number; C: React.FC; sfx: [number, Sfx][]};
 
-const useScene = () => {
+export const useScene = () => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
   const layout = useLayout();
@@ -22,7 +22,7 @@ const useScene = () => {
 };
 
 /** Headline on top (vertical) or on the left (horizontal), demo below or to the right. */
-const Stage: React.FC<{r: Roles; title: string; sub?: string; seed?: number; children: React.ReactNode}> = ({r, title, sub, seed = 1, children}) => {
+export const Stage: React.FC<{r: Roles; title: string; sub?: string; seed?: number; children: React.ReactNode}> = ({r, title, sub, seed = 1, children}) => {
   const {frame, fps, out, W, H, vertical, u} = useScene();
   return (
     <AbsoluteFill style={{background: r.surfaceContainerLow, opacity: 1 - out}}>
@@ -41,7 +41,7 @@ const Stage: React.FC<{r: Roles; title: string; sub?: string; seed?: number; chi
   );
 };
 
-const Card: React.FC<{r: Roles; w: number; children: React.ReactNode; style?: React.CSSProperties}> = ({r, w, children, style}) => {
+export const Card: React.FC<{r: Roles; w: number; children: React.ReactNode; style?: React.CSSProperties}> = ({r, w, children, style}) => {
   const {u} = useLayout();
   return (
     <div style={{width: w, borderRadius: 56 * u, background: r.surface, padding: 36 * u, boxShadow: `0 ${18 * u}px ${60 * u}px rgba(0,0,0,.14)`, fontFamily: FONT, ...style}}>
@@ -50,7 +50,7 @@ const Card: React.FC<{r: Roles; w: number; children: React.ReactNode; style?: Re
   );
 };
 
-const Bubble: React.FC<{r: Roles; out?: boolean; text: string; size: number; style?: React.CSSProperties; meta?: React.ReactNode}> = ({r, out, text, size, style, meta}) => (
+export const Bubble: React.FC<{r: Roles; out?: boolean; text: string; size: number; style?: React.CSSProperties; meta?: React.ReactNode}> = ({r, out, text, size, style, meta}) => (
   <div style={{
     alignSelf: out ? 'flex-end' : 'flex-start', maxWidth: '82%', padding: `${size * 0.45}px ${size * 0.7}px`, borderRadius: size * 0.9,
     borderBottomRightRadius: out ? size * 0.25 : size * 0.9, borderBottomLeftRadius: out ? size * 0.9 : size * 0.25,
@@ -61,7 +61,7 @@ const Bubble: React.FC<{r: Roles; out?: boolean; text: string; size: number; sty
   </div>
 );
 
-const Avatar: React.FC<{r: Roles; size: number; letter: string; color?: string; shape?: ShapeName}> = ({r, size, letter, color, shape = 'circle'}) => (
+export const Avatar: React.FC<{r: Roles; size: number; letter: string; color?: string; shape?: ShapeName}> = ({r, size, letter, color, shape = 'circle'}) => (
   <div style={{position: 'relative', width: size, height: size, flexShrink: 0}}>
     <ShapeSvg name={shape} size={size} fill={color ?? r.tertiaryContainer} />
     <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FONT,
@@ -71,7 +71,11 @@ const Avatar: React.FC<{r: Roles; size: number; letter: string; color?: string; 
 
 // ---------------------------------------------------------------- scenes
 
-const Intro: React.FC = () => {
+/** Version and subtitle shown by the intro (each video sets its own). */
+export const IntroText = React.createContext({version: '0.1.4', subtitle: 'Что нового'});
+
+export const Intro: React.FC = () => {
+  const text = React.useContext(IntroText);
   const {frame, fps, out, W, H, vertical, u} = useScene();
   const r = roles(undefined, true);
   const seq: ShapeName[] = ['sunny', 'cookie9', 'flower', 'circle'];
@@ -93,15 +97,15 @@ const Intro: React.FC = () => {
         <Headline text="YiliGram" color={r.onSurface} size={(vertical ? 160 : 120) * u} delay={30} weight={850} />
         <div style={{display: 'flex', justifyContent: 'center', marginTop: 10 * u}}>
           <div style={{transform: `scale(${ver})`, padding: `${14 * u}px ${44 * u}px`, borderRadius: 60 * u, background: r.primary, color: r.onPrimary,
-            fontFamily: FONT, fontSize: (vertical ? 64 : 52) * u, fontVariationSettings: `'wght' 760`}}>0.1.4</div>
+            fontFamily: FONT, fontSize: (vertical ? 64 : 52) * u, fontVariationSettings: `'wght' 760`}}>{text.version}</div>
         </div>
-        <Body text="Что нового" color={r.primary} size={(vertical ? 56 : 44) * u} delay={60} weight={600} style={{marginTop: 30 * u}} />
+        <Body text={text.subtitle} color={r.primary} size={(vertical ? 56 : 44) * u} delay={60} weight={600} style={{marginTop: 30 * u}} />
       </div>
     </AbsoluteFill>
   );
 };
 
-const Ghost: React.FC = () => {
+export const Ghost: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.showcaseSeeds[1], true);
   const on = sp(frame, fps, sec(1.3), SPRING.spatialFast);
@@ -143,7 +147,7 @@ const Ghost: React.FC = () => {
   );
 };
 
-const Deleted: React.FC = () => {
+export const Deleted: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.showcaseSeeds[3]);
   const w = (vertical ? 860 : 820) * u, fs = 42 * u;
@@ -182,7 +186,7 @@ const Deleted: React.FC = () => {
   );
 };
 
-const Hidden: React.FC = () => {
+export const Hidden: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.showcaseSeeds[2], true);
   const w = (vertical ? 860 : 820) * u;
@@ -224,7 +228,7 @@ const Hidden: React.FC = () => {
   );
 };
 
-const Templates: React.FC = () => {
+export const Templates: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.seed);
   const w = (vertical ? 900 : 840) * u, fs = 44 * u;
@@ -266,7 +270,7 @@ const Templates: React.FC = () => {
   );
 };
 
-const Voice: React.FC = () => {
+export const Voice: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.showcaseSeeds[1]);
   const w = (vertical ? 880 : 820) * u;
@@ -301,7 +305,7 @@ const Voice: React.FC = () => {
   );
 };
 
-const Wallpapers: React.FC = () => {
+export const Wallpapers: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.seed);
   const pw = (vertical ? 270 : 230) * u, ph = pw * 1.9;
@@ -359,7 +363,7 @@ const Wallpapers: React.FC = () => {
   );
 };
 
-const Profile: React.FC = () => {
+export const Profile: React.FC = () => {
   const {frame, fps, sec, vertical, u} = useScene();
   const r = roles(CONFIG.showcaseSeeds[3], true);
   const w = (vertical ? 860 : 800) * u;
@@ -393,7 +397,7 @@ const Profile: React.FC = () => {
   );
 };
 
-const Extras: React.FC = () => {
+export const Extras: React.FC = () => {
   const {frame, fps, vertical, u} = useScene();
   const r = roles(CONFIG.seed, true);
   const items = ['ID в профилях', 'К первому сообщению', 'Бэкап настроек', 'Сила вибрации', 'Расписание темы', 'Иконки бесплатно', 'Монохромные иконки', 'Перевод по умолчанию'];
@@ -411,7 +415,7 @@ const Extras: React.FC = () => {
   );
 };
 
-const Outro: React.FC = () => {
+export const Outro: React.FC = () => {
   const {frame, fps, out, W, H, vertical, u} = useScene();
   const r = roles(undefined, true);
   const logo = sp(frame, fps, 2, SPRING.spatialFast);
@@ -453,9 +457,11 @@ export const UPDATE_FPS = CONFIG.fps;
 const frames = (s: number) => Math.round(s * UPDATE_FPS);
 export const UPDATE_FRAMES = UPDATE.reduce((n, s) => n + frames(s.seconds), 0);
 
-export const UpdateTrack: React.FC = () => {
+export const sceneFramesOf = (list: SceneDef[]) => list.reduce((n, s) => n + frames(s.seconds), 0);
+
+export const makeTrack = (list: SceneDef[], music: string): React.FC => () => {
   let at = 0;
-  const parts = UPDATE.map((s) => {
+  const parts = list.map((s) => {
     const from = at;
     at += frames(s.seconds);
     return {s, from};
@@ -467,7 +473,7 @@ export const UpdateTrack: React.FC = () => {
           <s.C />
         </Sequence>
       ))}
-      <Audio src={staticFile('music_update.m4a')} volume={0.65} />
+      <Audio src={staticFile(music)} volume={0.65} />
       {parts.flatMap(({s, from}) => s.sfx.map(([t, name], i) => (
         <Sequence key={`${s.key}-${i}`} from={from + frames(t)} durationInFrames={UPDATE_FPS}>
           <Audio src={staticFile(`sfx/${name}.wav`)} volume={0.5} />
@@ -476,3 +482,5 @@ export const UpdateTrack: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+export const UpdateTrack = makeTrack(UPDATE, 'music_update.m4a');
