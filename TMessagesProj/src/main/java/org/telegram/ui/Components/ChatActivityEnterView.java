@@ -664,6 +664,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     private ImageView scheduledButton;
     @Nullable
     private ImageView giftButton;
+    private ImageView yiliTemplatesButton; // YILI
     private boolean scheduleButtonHidden;
     private AnimatorSet scheduledButtonAnimation;
     @Nullable
@@ -3759,6 +3760,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                     dp(-DEFAULT_HEIGHT) +
                     innerTranslationX + attachLayoutPaddingTranslationX + attachLayoutTranslationX +
                     dp(giftButton != null && giftButton.getVisibility() == View.VISIBLE ? -DEFAULT_HEIGHT : 0) * (giftButton == null ? 0 : giftButton.getAlpha()) +
+                    dp(yiliTemplatesButton != null && yiliTemplatesButton.getVisibility() == View.VISIBLE ? -DEFAULT_HEIGHT : 0) * (yiliTemplatesButton == null ? 0 : yiliTemplatesButton.getAlpha()) +
                     dp(botButton != null && botButton.getVisibility() == VISIBLE ? -DEFAULT_HEIGHT : 0) * (botButton == null ? 0 : botButton.getAlpha())
                 );
             }
@@ -5120,6 +5122,25 @@ public class ChatActivityEnterView extends FrameLayout implements
         }
 
         ItemOptions options = ItemOptions.makeOptions(this, resourcesProvider, sendButton);
+
+        // YILI: translate the typed text before sending
+        if (messageEditText != null && messageEditText.length() > 0 && !isInScheduleMode()) {
+            final String lang = com.yiligram.features.YiliTranslate.lastLanguage();
+            options.add(R.drawable.msg_translate, LocaleController.formatString(R.string.YiliTranslateTo, com.yiligram.features.YiliTranslate.languageName(lang)), () -> {
+                if (messageSendPreview != null) messageSendPreview.dismiss(false);
+                yiliTranslateField(lang);
+            });
+            options.add(R.drawable.msg_language, getString(R.string.YiliTranslateOther), () -> {
+                if (messageSendPreview != null) messageSendPreview.dismiss(false);
+                String[] codes = com.yiligram.features.YiliTranslate.LANGUAGES;
+                CharSequence[] names = new CharSequence[codes.length];
+                for (int i = 0; i < codes.length; i++) names[i] = com.yiligram.features.YiliTranslate.languageName(codes[i]);
+                new AlertDialog.Builder(getContext(), resourcesProvider)
+                        .setTitle(getString(R.string.YiliTranslateOther))
+                        .setItems(names, (d, which) -> yiliTranslateField(codes[which]))
+                        .show();
+            });
+        }
 
         final boolean self = parentFragment != null && UserObject.isUserSelf(parentFragment.getCurrentUser());
         boolean scheduleButtonValue = parentFragment != null && parentFragment.canScheduleMessage();
@@ -11131,7 +11152,67 @@ public class ChatActivityEnterView extends FrameLayout implements
         setFieldText(text);
     }
 
+    private void yiliTranslateField(String lang) {
+        if (messageEditText == null || messageEditText.length() == 0) return;
+        final String original = messageEditText.getText().toString();
+        com.yiligram.features.YiliTranslate.translate(currentAccount, original, lang, (translated, error) -> {
+            if (error || translated == null) {
+                if (parentFragment != null) {
+                    BulletinFactory.of(parentFragment).createErrorBulletin(getString(R.string.TranslationFailedAlert2)).show();
+                }
+                return;
+            }
+            if (messageEditText != null && original.equals(messageEditText.getText().toString())) {
+                setFieldText(translated);
+                messageEditText.setSelection(messageEditText.length());
+            }
+        });
+    }
+
+    /** YILI: reply templates button next to the attach button, shown while the field is empty. */
+    public void updateYiliTemplatesButton(boolean animated) {
+        final boolean visible = parentFragment != null
+                && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TEMPLATES_BUTTON)
+                && !com.yiligram.features.YiliTemplates.list().isEmpty();
+        if (!visible && yiliTemplatesButton == null) {
+            return;
+        }
+        if (yiliTemplatesButton == null) {
+            yiliTemplatesButton = new ImageView(getContext());
+            yiliTemplatesButton.setImageResource(R.drawable.msg_text_outlined);
+            ThemeBind.colorFilter(yiliTemplatesButton, Theme.key_glass_defaultIcon, resourcesProvider, PorterDuff.Mode.MULTIPLY);
+            yiliTemplatesButton.setVisibility(GONE);
+            yiliTemplatesButton.setContentDescription(getString(R.string.YiliTemplates));
+            yiliTemplatesButton.setScaleType(ImageView.ScaleType.CENTER);
+            ThemeBind.selectorBackground(yiliTemplatesButton, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
+            attachLayout.addView(yiliTemplatesButton, 0, LayoutHelper.createLinear(DEFAULT_HEIGHT, DEFAULT_HEIGHT));
+            yiliTemplatesButton.setOnClickListener(v -> showYiliTemplates());
+        }
+        AndroidUtilities.updateViewVisibilityAnimated(yiliTemplatesButton, visible, 1f, true, 1f, animated, null);
+    }
+
+    private void showYiliTemplates() {
+        if (parentFragment == null) return;
+        java.util.ArrayList<String> templates = com.yiligram.features.YiliTemplates.list();
+        ItemOptions options = ItemOptions.makeOptions(parentFragment, yiliTemplatesButton);
+        for (String t : templates) {
+            String title = t.length() > 40 ? t.substring(0, 40) + "…" : t;
+            options.add(R.drawable.msg_text_outlined, title, () -> {
+                String text = com.yiligram.features.YiliTemplates.expand(t, parentFragment.getCurrentUser(), parentFragment.getCurrentChat());
+                setFieldText(text);
+                if (messageEditText != null) {
+                    messageEditText.setSelection(messageEditText.length());
+                    messageEditText.requestFocus();
+                }
+            });
+        }
+        options.addGap();
+        options.add(R.drawable.msg_customize, getString(R.string.YiliTemplatesManage), () -> parentFragment.presentFragment(new com.yiligram.ui.YiliTemplatesActivity()));
+        options.setDrawScrim(false).setDimAlpha(0).show();
+    }
+
     public void updateGiftButton(boolean animated) {
+        updateYiliTemplatesButton(animated);
 
         final TLRPC.UserFull userInfo = getParentFragment() == null ? null : getParentFragment().getCurrentUserInfo();
         final TLRPC.UserFull myUserInfo = MessagesController.getInstance(currentAccount).getUserFull(UserConfig.getInstance(currentAccount).getClientUserId());

@@ -4044,9 +4044,12 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                     audioPlayer.preparePlayer(uri, "other");
                     isStreamingCurrentAudio = true;
                 }
+                if (messageObject.isVoice() && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.VOICE_SKIP_SILENCE)) {
+                    audioPlayer.setSkipSilence(true); // YILI
+                }
                 if (messageObject.isVoice()) {
                     String name = messageObject.getFileName();
-                    if (name != null && messageObject.getDuration() >= 5 * 60) {
+                    if (name != null && messageObject.getDuration() >= (com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.VOICE_RESUME) ? 30 : 5 * 60)) {
                         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("media_saved_pos", Activity.MODE_PRIVATE);
                         float pos = preferences.getFloat(name, -1);
                         if (pos > 0 && pos < 0.99f) {

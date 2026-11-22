@@ -80,6 +80,9 @@ public final class YiliConfig {
     public static final Key<com.yiligram.avatars.AvatarFrames.Frame> AVATAR_FRAME =
             new Key<>("avatar.frame", com.yiligram.avatars.AvatarFrames.Frame.class, com.yiligram.avatars.AvatarFrames.Frame.CIRCLE);
     public static final Key<Boolean> BUBBLE_TAILS = new Key<>("shape.bubbleTails", Boolean.class, true);
+    /** Message bubble outline: Telegram's rounded bubble, a pill, or M3 with a sharp corner on the sender's side. */
+    public enum BubbleShape { ROUNDED, PILL, M3 }
+    public static final Key<BubbleShape> BUBBLE_SHAPE = new Key<>("shape.bubble", BubbleShape.class, BubbleShape.ROUNDED);
     public static final Key<Float> SHAPE_ROUNDNESS = new Key<>("shape.roundness", Float.class, 1f);
 
     // Type
@@ -115,6 +118,37 @@ public final class YiliConfig {
 
     /** Check GitHub Releases on start and offer in-app updates. */
     public static final Key<Boolean> AUTO_UPDATE_CHECK = new Key<>("update.autoCheck", Boolean.class, true);
+
+    // Features
+    /** User and chat ids in profiles. */
+    public static final Key<com.yiligram.features.YiliHaptics.Strength> HAPTICS =
+            new Key<>("features.haptics", com.yiligram.features.YiliHaptics.Strength.class, com.yiligram.features.YiliHaptics.Strength.SYSTEM);
+    /** Ghost mode and what it hides. */
+    public static final Key<Boolean> GHOST_MODE = new Key<>("ghost.enabled", Boolean.class, false);
+    /** Ghost button on the chat list's top bar. */
+    public static final Key<Boolean> GHOST_BUTTON = new Key<>("ghost.button", Boolean.class, true);
+    public static final Key<Boolean> GHOST_READ = new Key<>("ghost.read", Boolean.class, true);
+    public static final Key<Boolean> GHOST_TYPING = new Key<>("ghost.typing", Boolean.class, true);
+    public static final Key<Boolean> GHOST_ONLINE = new Key<>("ghost.online", Boolean.class, true);
+    public static final Key<Boolean> GHOST_STORIES = new Key<>("ghost.stories", Boolean.class, true);
+    /** Reply templates (JSON array of strings) and their button in the message field. */
+    public static final Key<String> TEMPLATES = new Key<>("templates.list", String.class, "[]");
+    public static final Key<Boolean> TEMPLATES_BUTTON = new Key<>("templates.button", Boolean.class, true);
+    /** Keep deleted messages and earlier versions of edited ones on this device. */
+    public static final Key<Boolean> SAVE_DELETED = new Key<>("history.deleted", Boolean.class, true);
+    public static final Key<Boolean> SAVE_EDITS = new Key<>("history.edits", Boolean.class, true);
+    /** Hidden chats ("account:dialogId", comma-separated) and whether opening them asks for the screen lock. */
+    public static final Key<String> HIDDEN_CHATS = new Key<>("hidden.chats", String.class, "");
+    public static final Key<Boolean> HIDDEN_CHATS_LOCK = new Key<>("hidden.lock", Boolean.class, true);
+    /** Last language chosen for translating your own text. */
+    public static final Key<String> TRANSLATE_OUT_LANG = new Key<>("translate.outLang", String.class, "en");
+    public static final Key<Boolean> SHOW_IDS = new Key<>("features.showIds", Boolean.class, true);
+    /** Voice messages: skip silent parts while playing. */
+    public static final Key<Boolean> VOICE_SKIP_SILENCE = new Key<>("voice.skipSilence", Boolean.class, false);
+    /** Voice messages: continue where you stopped (from 30 seconds instead of Telegram's 5 minutes). */
+    public static final Key<Boolean> VOICE_RESUME = new Key<>("voice.resume", Boolean.class, true);
+    /** The speed button cycles 1x → 1.5x → 2x → 3x. */
+    public static final Key<Boolean> VOICE_SPEED_3X = new Key<>("voice.speed3x", Boolean.class, true);
 
     public static final Key<Boolean> PLUGINS_ENABLED = new Key<>("plugins.enabled", Boolean.class, true);
     public static final Key<Boolean> PLUGINS_DEV_MODE = new Key<>("plugins.devMode", Boolean.class, false);

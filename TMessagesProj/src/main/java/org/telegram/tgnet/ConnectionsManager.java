@@ -420,6 +420,9 @@ public class ConnectionsManager extends BaseController {
     }
 
     private void sendRequestInternal(TLObject object0, RequestDelegate onComplete0, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
+        if (com.yiligram.features.YiliGhost.intercept(object0)) {
+            return; // YILI: ghost mode
+        }
         // YILI: plugin pre_request_hook / post_request_hook (exteraGram-compatible)
         TLObject hookedObject = object0;
         RequestDelegate hookedOnComplete = onComplete0;

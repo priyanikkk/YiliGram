@@ -297,7 +297,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                     boolean b2 = newProgress > 1f;
                     if (b1 != b2) {
                         try {
-                            recyclerListView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                            com.yiligram.features.YiliHaptics.click(recyclerListView); // YILI
                         } catch (Exception ignore) {}
                     }
                     if (pullingLeftOffset < 0) {
@@ -330,7 +330,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                     boolean b2 = newProgress > 1f;
                     if (b1 != b2) {
                         try {
-                            recyclerListView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                            com.yiligram.features.YiliHaptics.click(recyclerListView); // YILI
                         } catch (Exception ignore) {}
                     }
                     if (customReactionsContainer != null) {
@@ -1585,7 +1585,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
         }
         if (type == TYPE_MESSAGE_EFFECTS) {
             try {
-                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
+                com.yiligram.features.YiliHaptics.click(this); // YILI
             } catch (Exception ignore) {}
         }
     }

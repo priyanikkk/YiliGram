@@ -18938,6 +18938,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 dialogs_read_outbox_max.put(dialogId, Math.max(value, update.max_id));
             } else if (baseUpdate instanceof TL_update.TL_updateDeleteMessages) {
                 TL_update.TL_updateDeleteMessages update = (TL_update.TL_updateDeleteMessages) baseUpdate;
+                com.yiligram.features.YiliHistory.onDeleted(currentAccount, 0, update.messages); // YILI
                 if (deletedMessages == null) {
                     deletedMessages = new LongSparseArray<>();
                 }
@@ -19471,6 +19472,7 @@ public class MessagesController extends BaseController implements NotificationCe
                     deletedMessages = new LongSparseArray<>();
                 }
                 long dialogId = -update.channel_id;
+                com.yiligram.features.YiliHistory.onDeleted(currentAccount, dialogId, update.messages); // YILI
                 ArrayList<Integer> arrayList = deletedMessages.get(dialogId);
                 if (arrayList == null) {
                     arrayList = new ArrayList<>();
@@ -19573,6 +19575,7 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
                     }
                 }
+                com.yiligram.features.YiliHistory.onEdited(currentAccount, message); // YILI
                 if (!fromGetDifference) {
                     for (int a = 0, count = message.entities.size(); a < count; a++) {
                         TLRPC.MessageEntity entity = message.entities.get(a);

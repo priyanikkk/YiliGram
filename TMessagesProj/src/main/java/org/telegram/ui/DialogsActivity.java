@@ -502,6 +502,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private ValueAnimator contactsAlphaAnimator;
     private ViewPage[] viewPages;
     private ActionBarMenuItem passcodeItem;
+    private ActionBarMenuItem yiliGhostItem; // YILI
     private ActionBarMenuItem downloadsItem;
     private DownloadProgressIcon downloadProgressIcon;
     private boolean downloadsItemVisible;
@@ -3193,6 +3194,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             passcodeItem = menu.addItem(1, R.drawable.outline_header_lock_24);
             passcodeItem.setContentDescription(getString(R.string.AccDescrPasscodeLock));
 
+            if (com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.GHOST_BUTTON)) { // YILI
+                yiliGhostItem = menu.addItem(0x5A101, R.drawable.ghost);
+                yiliGhostItem.setContentDescription(getString(R.string.YiliGhost));
+                yiliGhostItem.setAlpha(com.yiligram.features.YiliGhost.enabled() ? 1f : 0.45f);
+            }
+
             downloadsItem = menu.addItem(3, new ColorDrawable(Color.TRANSPARENT));
             downloadsItem.addView(downloadProgressIcon = new DownloadProgressIcon(currentAccount, context));
             downloadsItem.setContentDescription(getString(R.string.DownloadsTabs));
@@ -3821,6 +3828,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     } else if (onlySelect || folderId != 0 || communityId != 0) {
                         finishFragment();
                     }
+                } else if (id == 0x5A101) { // YILI: ghost mode
+                    boolean on = !com.yiligram.features.YiliGhost.enabled();
+                    com.yiligram.config.YiliConfig.set(com.yiligram.config.YiliConfig.GHOST_MODE, on);
+                    if (yiliGhostItem != null) {
+                        yiliGhostItem.animate().alpha(on ? 1f : 0.45f).setDuration(180).start();
+                    }
+                    com.yiligram.features.YiliHaptics.click(actionBar);
+                    BulletinFactory.of(DialogsActivity.this).createSimpleBulletin(R.raw.contact_check,
+                            getString(on ? R.string.YiliGhostOn : R.string.YiliGhostOff)).show();
                 } else if (id == 1) {
                     if (getParentActivity() == null) {
                         return;
@@ -10931,7 +10947,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
         MessagesController messagesController = AccountInstance.getInstance(currentAccount).getMessagesController();
         if (dialogsType == DIALOGS_TYPE_DEFAULT) {
-            return messagesController.getDialogs(folderId);
+            return com.yiligram.features.YiliHiddenChats.filter(currentAccount, messagesController.getDialogs(folderId)); // YILI
         } else if (dialogsType == DIALOGS_TYPE_WIDGET || dialogsType == DIALOGS_TYPE_IMPORT_HISTORY) {
             return messagesController.dialogsServerOnly;
         } else if (dialogsType == DIALOGS_TYPE_ADD_USERS_TO) {
@@ -10971,12 +10987,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         } else if (dialogsType == 7 || dialogsType == 8) {
             MessagesController.DialogFilter dialogFilter = messagesController.selectedDialogFilter[dialogsType == 7 ? 0 : 1];
             if (dialogFilter == null) {
-                return messagesController.getDialogs(folderId);
+                return com.yiligram.features.YiliHiddenChats.filter(currentAccount, messagesController.getDialogs(folderId)); // YILI
             } else {
                 if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
                     return dialogFilter.dialogsForward;
                 }
-                return dialogFilter.dialogs;
+                return com.yiligram.features.YiliHiddenChats.filter(currentAccount, dialogFilter.dialogs); // YILI
             }
         } else if (dialogsType == DIALOGS_TYPE_BLOCK) {
             return messagesController.dialogsForBlock;

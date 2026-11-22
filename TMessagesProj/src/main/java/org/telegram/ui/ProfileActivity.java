@@ -672,6 +672,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int userInfoRow;
     private int channelInfoRow;
     private int usernameRow;
+    private int yiliIdRow = -1; // YILI
     private int notificationsDividerRow;
     private int notificationsRow;
     private int bizHoursRow;
@@ -4480,6 +4481,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         showDialog(new CommunitySheet(this, user.linked_community_id));
                     }
                 }
+            } else if (position == yiliIdRow) { // YILI
+                com.yiligram.features.YiliIds.copy(ProfileActivity.this, userId != 0 ? com.yiligram.features.YiliIds.userId(userId) : com.yiligram.features.YiliIds.chatId(currentChat));
             } else if (position == locationRow) {
                 if (chatInfo.location instanceof TLRPC.TL_channelLocation) {
                     LocationActivity fragment = new LocationActivity(LocationActivity.LOCATION_TYPE_GROUP_VIEW);
@@ -10895,6 +10898,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         locationRow = -1;
         channelInfoRow = -1;
         usernameRow = -1;
+        yiliIdRow = -1;
         settingsTimerRow = -1;
         settingsKeyRow = -1;
         notificationsDividerRow = -1;
@@ -11089,6 +11093,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (user != null && username != null) {
                     usernameRow = rowCount++;
                 }
+                if (user != null && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.SHOW_IDS)) {
+                    yiliIdRow = rowCount++; // YILI
+                }
                 if (userInfo != null) {
                     if (userInfo.birthday != null) {
                         birthdayRow = rowCount++;
@@ -11247,6 +11254,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (ChatObject.isPublic(currentChat)) {
                     usernameRow = rowCount++;
                 }
+            }
+            if (currentChat != null && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.SHOW_IDS)) {
+                yiliIdRow = rowCount++; // YILI
             }
             if (emptyRow < 0 && emptyRow2 < 0) {
                 if (hasMusic || hasBalance || peerColor != null || actionsView == null) {
@@ -13781,6 +13791,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             usernames = new ArrayList<>();
                         }
                         detailCell.setTextAndValue(text, alsoUsernamesString(username, usernames, value), infoEndRowEmpty == -1 && (isTopic || bizHoursRow != -1 || bizLocationRow != -1) && birthdayRow < 0);
+                    } else if (position == yiliIdRow) { // YILI
+                        detailCell.setTextAndValue(userId != 0 ? com.yiligram.features.YiliIds.userId(userId) : com.yiligram.features.YiliIds.chatId(currentChat), "ID", false);
                     } else if (position == locationRow) {
                         if (chatInfo != null && chatInfo.location instanceof TLRPC.TL_channelLocation) {
                             TLRPC.TL_channelLocation location = (TLRPC.TL_channelLocation) chatInfo.location;
@@ -14522,7 +14534,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (position == infoHeaderRow || position == membersHeaderRow || position == settingsSectionRow2 ||
                     position == numberSectionRow || position == helpHeaderRow || position == debugHeaderRow || position == botPermissionsHeader) {
                 return VIEW_TYPE_HEADER;
-            } else if (position == phoneRow || position == locationRow || position == numberRow || position == birthdayRow) {
+            } else if (position == phoneRow || position == locationRow || position == numberRow || position == birthdayRow || position == yiliIdRow) {
                 return VIEW_TYPE_TEXT_DETAIL;
             } else if (position == usernameRow || position == setUsernameRow) {
                 return VIEW_TYPE_TEXT_DETAIL_MULTILINE;
@@ -15852,6 +15864,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             put(++pointer, userInfoRow, sparseIntArray);
             put(++pointer, channelInfoRow, sparseIntArray);
             put(++pointer, usernameRow, sparseIntArray);
+            put(++pointer, yiliIdRow, sparseIntArray);
             put(++pointer, notificationsDividerRow, sparseIntArray);
             put(++pointer, reportDividerRow, sparseIntArray);
             put(++pointer, notificationsRow, sparseIntArray);

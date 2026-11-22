@@ -874,7 +874,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             }
         });
         playbackSpeedButton.setIcon(speedIcon = new SpeedIconDrawable(true));
-        final float[] toggleSpeeds = new float[] { 1.0F, 1.5F, 2F };
+        final float[] toggleSpeeds = com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.VOICE_SPEED_3X) ? new float[] { 1.0F, 1.5F, 2F, 3F } : new float[] { 1.0F, 1.5F, 2F };
         speedSlider = new ActionBarMenuSlider.SpeedSlider(getContext(), resourcesProvider);
         speedSlider.setRoundRadiusDp(6);
         speedSlider.setDrawShadow(true);

@@ -1297,6 +1297,7 @@ public class ChatActivity extends BaseFragment implements
     public final static int OPTION_WELCOME_REVERT = 116;
     public final static int OPTION_SEND_MONEY = 117;
     public final static int OPTION_STOP_LIVE_LOCATION = 118;
+    public final static int OPTION_YILI_EDIT_HISTORY = 0x5A102; // YILI
 
     private final static int[] allowedNotificationsDuringChatListAnimations = new int[]{
             NotificationCenter.messagesRead,
@@ -1723,6 +1724,9 @@ public class ChatActivity extends BaseFragment implements
     private final static int share = 69;
     private final static int open_direct = 70;
     private final static int remove_fee = 71;
+    private final static int yili_first_message = 0x5A100; // YILI
+    private final static int yili_deleted = 0x5A103; // YILI
+    private final static int yili_hide_chat = 0x5A104; // YILI
     private final static int charge_fee = 72;
 
     private final static int chat_menu_topic_create = 73;
@@ -3994,6 +3998,17 @@ public class ChatActivity extends BaseFragment implements
                     getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of("/help", dialog_id, null, null, null, false, null, null, null, true, 0, 0, null, false));
                 } else if (id == bot_settings) {
                     getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of("/settings", dialog_id, null, null, null, false, null, null, null, true, 0, 0, null, false));
+                } else if (id == yili_first_message) { // YILI
+                    jumpToDate(1);
+                } else if (id == yili_hide_chat) { // YILI
+                    boolean hide = !com.yiligram.features.YiliHiddenChats.isHidden(currentAccount, dialog_id);
+                    com.yiligram.features.YiliHiddenChats.setHidden(currentAccount, dialog_id, hide);
+                    getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload);
+                    if (hide) {
+                        finishFragment();
+                    }
+                } else if (id == yili_deleted) { // YILI
+                    presentFragment(new com.yiligram.ui.YiliDeletedActivity(dialog_id));
                 } else if (id == search) {
                     openSearchWithText(isSupportedTags() ? "" : null);
                 } else if (id == translate) {
@@ -4403,6 +4418,16 @@ public class ChatActivity extends BaseFragment implements
 
             if (searchItem != null) {
                 headerItem.lazilyAddSubItem(search, R.drawable.msg_search, LocaleController.getString(R.string.Search));
+            }
+            if (!isSecretChat() && chatMode == 0) {
+                headerItem.lazilyAddSubItem(yili_first_message, R.drawable.msg_go_up, LocaleController.getString(R.string.YiliFirstMessage)); // YILI
+            }
+            if (chatMode == 0 && !isSecretChat()) {
+                headerItem.lazilyAddSubItem(yili_hide_chat, R.drawable.msg_archive_hide, LocaleController.getString(
+                        com.yiligram.features.YiliHiddenChats.isHidden(currentAccount, dialog_id) ? R.string.YiliUnhideChat : R.string.YiliHideChat)); // YILI
+            }
+            if (chatMode == 0 && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.SAVE_DELETED)) {
+                headerItem.lazilyAddSubItem(yili_deleted, R.drawable.msg_delete, LocaleController.getString(R.string.YiliDeletedMessages)); // YILI
             }
             if (ChatObject.isBoostSupported(currentChat) && (getUserConfig().isPremium() || ChatObject.isBoosted(chatInfo) || ChatObject.hasAdminRights(currentChat))) {
                 RLottieDrawable drawable = new RLottieDrawable(R.raw.boosts, dp(24), dp(24));
@@ -5096,9 +5121,7 @@ public class ChatActivity extends BaseFragment implements
                     } else if (startedTrackingSlidingView) {
                         if (Math.abs(dx) >= AndroidUtilities.dp(50)) {
                             if (!wasTrackingVibrate) {
-                                try {
-                                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-                                } catch (Exception ignore) {}
+                                com.yiligram.features.YiliHaptics.heavy(this); // YILI
                                 wasTrackingVibrate = true;
                             }
                         } else {
@@ -34900,6 +34923,12 @@ public class ChatActivity extends BaseFragment implements
                 showDialog(builder.create());
                 break;
             }
+            case OPTION_YILI_EDIT_HISTORY: {
+                if (selectedObject != null) {
+                    com.yiligram.ui.YiliEditHistory.show(this, selectedObject);
+                }
+                break;
+            }
             case OPTION_STOP_LIVE_LOCATION: {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), themeDelegate);
                 builder.setTitle(getString(R.string.StopLiveLocationAlertToTitle));
@@ -47126,6 +47155,12 @@ public class ChatActivity extends BaseFragment implements
             items.add(getString(R.string.WelcomeMessageRevert));
             options.add(OPTION_WELCOME_REVERT);
             icons.add(R.drawable.outline_revert_24);
+        }
+        if (primaryMessage != null && primaryMessage.isEdited()
+                && com.yiligram.features.YiliHistory.hasEdits(currentAccount, primaryMessage.getDialogId(), primaryMessage.getId())) {
+            items.add(getString(R.string.YiliEditHistory)); // YILI
+            options.add(OPTION_YILI_EDIT_HISTORY);
+            icons.add(R.drawable.msg_recent);
         }
         // YILI: message menu items the user hid in YiliGram settings
         com.yiligram.config.YiliMenus.filterMessageOptions(items, options, icons);

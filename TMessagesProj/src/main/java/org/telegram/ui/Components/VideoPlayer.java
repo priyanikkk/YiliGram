@@ -1465,6 +1465,15 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
         }
     }
 
+    /** YILI: ExoPlayer's silence skipping, for voice messages. */
+    public void setSkipSilence(boolean enabled) {
+        try {
+            if (player != null) {
+                player.setSkipSilenceEnabled(enabled);
+            }
+        } catch (Exception ignore) {}
+    }
+
     public void setPlaybackSpeed(float speed) {
         try {
             if (player != null) {

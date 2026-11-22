@@ -74,6 +74,9 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
     private static final int ID_ICON_IMPORT = 24;
     private static final int ID_ICON_DELETE = 25;
     private static final int ID_AVATAR_FRAME = 26;
+    private static final int ID_BUBBLE_SHAPE = 90;
+    private static final int ID_APP_ICON = 91;
+    private static final int[] BUBBLE_SHAPE_TITLES = {R.string.YiliBubbleRounded, R.string.YiliBubblePill, R.string.YiliBubbleM3};
     private static final int REQUEST_ICON_PACK = 7304;
     private static final String EXPORT_NAME = "yiligram-settings.yiliconfig";
 
@@ -165,8 +168,11 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
         items.add(UItem.asHeader(getString(R.string.YiliShapeHeader)));
         items.add(UItem.asIntSlideView(1, 0, Math.round(YiliConfig.get(YiliConfig.SHAPE_ROUNDNESS) * 100), 200,
                 val -> val + "%", val -> YiliConfig.set(YiliConfig.SHAPE_ROUNDNESS, val / 100f)));
+        items.add(UItem.asButton(ID_APP_ICON, getString(R.string.AppIcon), getString(currentAppIcon().title)));
         items.add(UItem.asButton(ID_AVATAR_FRAME, getString(R.string.AvatarFrame),
                 getString(com.yiligram.avatars.AvatarFrames.current().title)));
+        items.add(UItem.asButton(ID_BUBBLE_SHAPE, getString(R.string.YiliBubbleShape),
+                getString(BUBBLE_SHAPE_TITLES[YiliConfig.get(YiliConfig.BUBBLE_SHAPE).ordinal()])));
         items.add(UItem.asButtonCheck(ID_BUBBLE_TAILS, getString(R.string.YiliBubbleTails), getString(R.string.YiliBubbleTailsInfo))
                 .setChecked(YiliConfig.get(YiliConfig.BUBBLE_TAILS)));
         items.add(UItem.asButtonCheck(ID_M3_CONTROLS, getString(R.string.YiliM3Controls), getString(R.string.YiliM3ControlsInfo))
@@ -332,6 +338,32 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
             case ID_M3_CONTROLS:
                 YiliConfig.set(YiliConfig.M3_CONTROLS, !YiliConfig.get(YiliConfig.M3_CONTROLS));
                 break;
+            case ID_APP_ICON: {
+                org.telegram.ui.LauncherIconController.LauncherIcon[] icons = org.telegram.ui.LauncherIconController.LauncherIcon.values();
+                CharSequence[] names = new CharSequence[icons.length];
+                for (int i = 0; i < icons.length; i++) names[i] = getString(icons[i].title);
+                new AlertDialog.Builder(getContext(), getResourceProvider())
+                        .setTitle(getString(R.string.AppIcon))
+                        .setItems(names, (d, which) -> {
+                            org.telegram.ui.LauncherIconController.setIcon(icons[which]);
+                            listView.adapter.update(true);
+                        })
+                        .show();
+                break;
+            }
+            case ID_BUBBLE_SHAPE: {
+                YiliConfig.BubbleShape[] values = YiliConfig.BubbleShape.values();
+                CharSequence[] names = new CharSequence[values.length];
+                for (int i = 0; i < values.length; i++) names[i] = getString(BUBBLE_SHAPE_TITLES[i]);
+                new AlertDialog.Builder(getContext(), getResourceProvider())
+                        .setTitle(getString(R.string.YiliBubbleShape))
+                        .setItems(names, (d, which) -> {
+                            YiliConfig.set(YiliConfig.BUBBLE_SHAPE, values[which]);
+                            listView.adapter.update(true);
+                        })
+                        .show();
+                break;
+            }
             case ID_BUBBLE_TAILS:
                 YiliConfig.set(YiliConfig.BUBBLE_TAILS, !YiliConfig.get(YiliConfig.BUBBLE_TAILS));
                 break;
@@ -388,6 +420,13 @@ public class YiliAppearanceActivity extends UniversalFragment implements YiliCon
                 .setTitle(getString(R.string.YiliSchemeStyle))
                 .setItems(names, (d, which) -> YiliConfig.set(YiliConfig.SCHEME_VARIANT, values[which]))
                 .show();
+    }
+
+    private static org.telegram.ui.LauncherIconController.LauncherIcon currentAppIcon() {
+        for (org.telegram.ui.LauncherIconController.LauncherIcon icon : org.telegram.ui.LauncherIconController.LauncherIcon.values()) {
+            if (org.telegram.ui.LauncherIconController.isEnabled(icon)) return icon;
+        }
+        return org.telegram.ui.LauncherIconController.LauncherIcon.DEFAULT;
     }
 
     private void showAvatarFramePicker() {

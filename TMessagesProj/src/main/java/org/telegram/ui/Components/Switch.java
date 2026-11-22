@@ -296,6 +296,7 @@ public class Switch extends View implements Theme.Colorable {
         if (checked != isChecked) {
             isChecked = checked;
             if (attachedToWindow && animated) {
+                com.yiligram.features.YiliHaptics.tick(this); // YILI
                 animateToCheckedState(checked);
             } else {
                 cancelCheckAnimator();

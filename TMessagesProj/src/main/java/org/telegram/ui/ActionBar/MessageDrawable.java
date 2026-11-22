@@ -704,7 +704,15 @@ public class MessageDrawable extends Drawable {
     private void generatePath(Path path, Rect bounds, int padding, int rad, int smallRad, int nearRad, int top, boolean drawFullBottom, boolean drawFullTop, boolean customPaint) {
         path.rewind();
         // YILI: bubbles without tails (all corners rounded), YiliGram appearance -> Bubbles
-        final boolean noTail = currentType == TYPE_TEXT && !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.BUBBLE_TAILS);
+        final com.yiligram.config.YiliConfig.BubbleShape bubbleShape = com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.BUBBLE_SHAPE);
+        final boolean noTail = currentType == TYPE_TEXT && (bubbleShape != com.yiligram.config.YiliConfig.BubbleShape.ROUNDED
+                || !com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.BUBBLE_TAILS));
+        if (currentType == TYPE_TEXT && bubbleShape == com.yiligram.config.YiliConfig.BubbleShape.PILL) {
+            rad = Math.max(rad, dp(22));
+            nearRad = Math.max(nearRad, dp(10));
+        }
+        // M3: the corner on the sender's side stays sharp, as in Google Messages.
+        final int senderCorner = currentType == TYPE_TEXT && bubbleShape == com.yiligram.config.YiliConfig.BubbleShape.M3 ? dp(4) : -1;
         int heightHalf = (bounds.height() - padding) >> 1;
         if (rad > heightHalf) {
             rad = heightHalf;
@@ -765,7 +773,7 @@ public class MessageDrawable extends Drawable {
                 }
             } else {
                 if (noTail && (drawFullBubble || customPaint || drawFullBottom)) {
-                    int radToUse = botButtonsBottom ? nearRad : rad;
+                    int radToUse = senderCorner >= 0 ? senderCorner : botButtonsBottom ? nearRad : rad;
                     path.lineTo(bounds.right - dp(8), bounds.bottom - padding - radToUse);
                     rect.set(bounds.right - dp(8) - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - dp(8), bounds.bottom - padding);
                     path.arcTo(rect, 0, 90, false);
@@ -827,7 +835,7 @@ public class MessageDrawable extends Drawable {
                 }
             } else {
                 if (noTail && (drawFullBubble || customPaint || drawFullBottom)) {
-                    int radToUse = botButtonsBottom ? nearRad : rad;
+                    int radToUse = senderCorner >= 0 ? senderCorner : botButtonsBottom ? nearRad : rad;
                     path.lineTo(bounds.left + dp(8), bounds.bottom - padding - radToUse);
                     rect.set(bounds.left + dp(8), bounds.bottom - padding - radToUse * 2, bounds.left + dp(8) + radToUse * 2, bounds.bottom - padding);
                     path.arcTo(rect, 180, -90, false);
