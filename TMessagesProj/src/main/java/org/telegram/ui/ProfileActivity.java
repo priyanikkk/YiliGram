@@ -11258,15 +11258,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     usernameRow = rowCount++;
                 }
             }
-            if (currentChat != null && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.SHOW_IDS)) {
-                yiliIdRow = rowCount++; // YILI
-            }
             if (emptyRow < 0 && emptyRow2 < 0) {
                 if (hasMusic || hasBalance || peerColor != null || actionsView == null) {
                     emptyRow2 = rowCount++;
                 } else {
                     emptyRow = rowCount++;
                 }
+            }
+            if (currentChat != null && com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.SHOW_IDS)) {
+                yiliIdRow = rowCount++; // YILI: after the header spacer, with the chat's info
             }
             if (actionsView == null) {
                 if (infoHeaderRow != -1) {

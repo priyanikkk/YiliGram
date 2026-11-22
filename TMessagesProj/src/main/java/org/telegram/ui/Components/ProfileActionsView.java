@@ -478,14 +478,15 @@ public class ProfileActionsView extends View {
     }
 
     public float getRoundRadius() {
-        return yiliM3() ? dp(26) : dp(16);
+        return yiliM3() ? dp(20) : dp(16);
     }
 
     private final Paint yiliPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     /** YILI: Material 3 profile buttons, except over an expanded photo. */
     private boolean yiliM3() {
-        return com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_PROFILE) && parentExpanded < 0.5f;
+        // a profile with its own color keeps Telegram's glass buttons, they match that header
+        return com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.M3_PROFILE) && parentExpanded < 0.5f && !hasColorById;
     }
 
     private Action hit = null;

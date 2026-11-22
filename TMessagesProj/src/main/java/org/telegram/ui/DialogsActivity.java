@@ -3195,7 +3195,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             passcodeItem.setContentDescription(getString(R.string.AccDescrPasscodeLock));
 
             if (com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.GHOST_BUTTON)) { // YILI
-                yiliGhostItem = menu.addItem(0x5A101, R.drawable.ghost);
+                yiliGhostItem = menu.addItem(0x5A101, R.drawable.yili_ghost_24);
                 yiliGhostItem.setContentDescription(getString(R.string.YiliGhost));
                 yiliGhostItem.setAlpha(com.yiligram.features.YiliGhost.enabled() ? 1f : 0.45f);
             }
