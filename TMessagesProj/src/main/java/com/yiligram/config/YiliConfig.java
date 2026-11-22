@@ -113,7 +113,7 @@ public final class YiliConfig {
     public static final Key<Boolean> HIDE_CONTACTS_TAB = new Key<>("nav.hideContacts", Boolean.class, false);
     public static final Key<Boolean> TAB_LABELS = new Key<>("nav.labels", Boolean.class, true);
     /** The floating tab bar hides while scrolling the chat list down. */
-    public static final Key<Boolean> TABS_HIDE_ON_SCROLL = new Key<>("nav.hideOnScroll", Boolean.class, true);
+    public static final Key<Boolean> TABS_HIDE_ON_SCROLL = new Key<>("nav.hideOnScroll2", Boolean.class, false);
     public static final Key<Boolean> HIDE_PROFILE_TAB = new Key<>("nav.hideProfile", Boolean.class, false);
 
     /** Call button in a private chat's header; when off, Call moves to the ⋮ menu (Telegram's own fallback). */

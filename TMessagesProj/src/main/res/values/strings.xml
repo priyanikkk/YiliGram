@@ -11895,7 +11895,6 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliGhostOnline">Stay offline</string>
     <string name="YiliGhostStories">Don\'t mark stories as viewed</string>
     <string name="YiliGhostButton">Ghost button above the chat list</string>
-    <string name="YiliGhostInfo">Messages are still marked as read on this phone, but others see them as unread. When you send a message in a chat, it may be marked as read there.</string>
     <string name="YiliGhostOn">Ghost mode is on</string>
     <string name="YiliGhostOff">Ghost mode is off</string>
     <string name="YiliBackup">Settings backup</string>
@@ -11949,7 +11948,9 @@ Plugins run with full access to your account. The file is checked against the re
     <string name="YiliWallpaperBubbles">Bubbles</string>
     <string name="YiliWallpaperWaves">Waves</string>
     <string name="YiliShapeMorph">Shape morphing</string>
-    <string name="YiliShapeMorphInfo">Avatars spring into their shape when a profile opens or a chat is pressed</string>
     <string name="YiliM3Profile">Material 3 profile</string>
     <string name="YiliM3ProfileInfo">Tonal action buttons with large corners under the avatar</string>
+    <string name="YiliShapeMorphInfo">Avatars spring into their shape when a profile opens</string>
+    <string name="YiliGhostCounter">Hidden from the server since the app started: %1$d</string>
+    <string name="YiliGhostInfo">Messages are still marked as read on this phone, but others see them as unread. Other devices signed in to this account (Telegram Desktop, another phone) still show you online and send read receipts — close them or turn ghost mode on there too. Sending a message may show you online for a moment.</string>
 </resources>

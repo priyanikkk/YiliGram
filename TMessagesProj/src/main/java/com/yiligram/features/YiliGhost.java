@@ -13,6 +13,9 @@ import org.telegram.tgnet.tl.TL_stories;
  */
 public final class YiliGhost {
 
+    /** Requests kept from the server since the app started: read receipts, typing, story views, "online". */
+    public static final java.util.concurrent.atomic.AtomicInteger hidden = new java.util.concurrent.atomic.AtomicInteger();
+
     private YiliGhost() {
     }
 
@@ -44,17 +47,23 @@ public final class YiliGhost {
                 || request instanceof TLRPC.TL_messages_readDiscussion
                 || request instanceof TLRPC.TL_messages_readMessageContents
                 || request instanceof TLRPC.TL_channels_readMessageContents)) {
+            hidden.incrementAndGet();
             return true;
         }
         if (YiliConfig.get(YiliConfig.GHOST_TYPING) && (request instanceof TLRPC.TL_messages_setTyping
                 || request instanceof TLRPC.TL_messages_setEncryptedTyping)) {
+            hidden.incrementAndGet();
             return true;
         }
         if (YiliConfig.get(YiliConfig.GHOST_STORIES) && (request instanceof TL_stories.TL_stories_readStories
                 || request instanceof TL_stories.TL_stories_incrementStoryViews)) {
+            hidden.incrementAndGet();
             return true;
         }
         if (YiliConfig.get(YiliConfig.GHOST_ONLINE) && request instanceof TL_account.updateStatus) {
+            if (!((TL_account.updateStatus) request).offline) {
+                hidden.incrementAndGet();
+            }
             ((TL_account.updateStatus) request).offline = true;
         }
         return false;

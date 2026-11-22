@@ -13722,6 +13722,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     // YILI: the floating tab bar hides while scrolling down the chat list and comes back on the way up
     private boolean yiliTabsHiddenByScroll;
     private int yiliTabsScrollAccum;
+    private long yiliTabsToggledAt;
 
     private void yiliTrackTabsScroll(RecyclerView list, int dy) {
         if (!com.yiligram.config.YiliConfig.get(com.yiligram.config.YiliConfig.TABS_HIDE_ON_SCROLL)) {
@@ -13741,7 +13742,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         } else if (yiliTabsScrollAccum < -dp(12) || !list.canScrollVertically(-1)) {
             hide = false;
         }
-        if (hide != yiliTabsHiddenByScroll) {
+        long now = System.currentTimeMillis();
+        if (hide != yiliTabsHiddenByScroll && now - yiliTabsToggledAt > 350) {
+            yiliTabsToggledAt = now;
+            yiliTabsScrollAccum = 0;
             yiliTabsHiddenByScroll = hide;
             checkUi_mainTabsVisible();
         }

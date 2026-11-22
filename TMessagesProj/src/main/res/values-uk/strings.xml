@@ -424,7 +424,6 @@
     <string name="YiliGhostOnline">Залишатися не в мережі</string>
     <string name="YiliGhostStories">Не позначати історії переглянутими</string>
     <string name="YiliGhostButton">Кнопка-привид над списком чатів</string>
-    <string name="YiliGhostInfo">На цьому телефоні повідомлення позначаються прочитаними, але співрозмовники бачать їх непрочитаними. Якщо ви надішлете повідомлення в чат, сервер може позначити його прочитаним.</string>
     <string name="YiliGhostOn">Режим привида увімкнено</string>
     <string name="YiliGhostOff">Режим привида вимкнено</string>
     <string name="YiliBackup">Резервна копія налаштувань</string>
@@ -478,7 +477,9 @@
     <string name="YiliWallpaperBubbles">Бульбашки</string>
     <string name="YiliWallpaperWaves">Хвилі</string>
     <string name="YiliShapeMorph">Морфінг форм</string>
-    <string name="YiliShapeMorphInfo">Аватарки перетікають у свою форму під час відкриття профілю та натискання на чат</string>
     <string name="YiliM3Profile">Профіль у стилі M3</string>
     <string name="YiliM3ProfileInfo">Тональні кнопки з великими заокругленнями під аватаркою</string>
+    <string name="YiliShapeMorphInfo">Аватарка перетікає у свою форму під час відкриття профілю</string>
+    <string name="YiliGhostCounter">Приховано від сервера з запуску застосунку: %1$d</string>
+    <string name="YiliGhostInfo">На цьому телефоні повідомлення позначаються прочитаними, а співрозмовники бачать їх непрочитаними. Інші пристрої з цим акаунтом (Telegram Desktop, другий телефон) і далі показують вас у мережі та позначають прочитане — закрийте їх. Надсилання повідомлення може ненадовго показати вас у мережі.</string>
 </resources>

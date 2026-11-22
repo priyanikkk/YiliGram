@@ -68,7 +68,9 @@ public class YiliFeaturesActivity extends UniversalFragment {
         check(items, 23, YiliConfig.GHOST_ONLINE, R.string.YiliGhostOnline);
         check(items, 24, YiliConfig.GHOST_STORIES, R.string.YiliGhostStories);
         check(items, 25, YiliConfig.GHOST_BUTTON, R.string.YiliGhostButton);
-        items.add(UItem.asShadow(getString(R.string.YiliGhostInfo)));
+        items.add(UItem.asShadow(YiliConfig.get(YiliConfig.GHOST_MODE)
+                ? org.telegram.messenger.LocaleController.formatString(R.string.YiliGhostCounter, com.yiligram.features.YiliGhost.hidden.get()) + "\n\n" + getString(R.string.YiliGhostInfo)
+                : getString(R.string.YiliGhostInfo)));
 
         items.add(UItem.asHeader(getString(R.string.YiliFeaturesHistory)));
         check(items, 40, YiliConfig.SAVE_DELETED, R.string.YiliSaveDeleted);
