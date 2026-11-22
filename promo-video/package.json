@@ -9,6 +9,8 @@
     "render:vertical": "remotion render YiliGramVertical out/yiligram-1080x1920.mp4 --codec h264",
     "render:horizontal": "remotion render YiliGramHorizontal out/yiligram-1920x1080.mp4 --codec h264",
     "render:teaser": "remotion render YiliGramTeaser out/yiligram-teaser.mp4 --codec h264",
+    "render:update": "remotion render Update014Vertical out/yiligram-0.1.4-1080x1920.mp4 --codec h264 && remotion render Update014Horizontal out/yiligram-0.1.4-1920x1080.mp4 --codec h264",
+    "music:update": "python3 scripts/music_update.py",
     "render:gif": "remotion render YiliGramTeaser out/yiligram-teaser.gif --codec gif --scale 0.4 --every-nth-frame 2",
     "stills": "node scripts/stills.mjs",
     "typecheck": "tsc --noEmit",

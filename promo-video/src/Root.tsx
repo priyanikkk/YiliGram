@@ -10,6 +10,7 @@ import {Customization} from './scenes/Customization';
 import {Plugins} from './scenes/Plugins';
 import {Details} from './scenes/Details';
 import {Disclaimer, Download, OpenSource, Push} from './scenes/Outro';
+import {UPDATE_FPS, UPDATE_FRAMES, UpdateTrack} from './update/Update';
 
 // Roboto Flex (variable: weight 100–1000, width 25–151) for the kinetic type.
 const fontHandle = delayRender('Roboto Flex');
@@ -92,6 +93,8 @@ export const RemotionRoot: React.FC = () => (
   <>
     <Composition id="YiliGramVertical" component={Track} durationInFrames={TOTAL_FRAMES} fps={CONFIG.fps} width={1080} height={1920} />
     <Composition id="YiliGramHorizontal" component={Track} durationInFrames={TOTAL_FRAMES} fps={CONFIG.fps} width={1920} height={1080} />
+    <Composition id="Update014Vertical" component={UpdateTrack} durationInFrames={UPDATE_FRAMES} fps={UPDATE_FPS} width={1080} height={1920} />
+    <Composition id="Update014Horizontal" component={UpdateTrack} durationInFrames={UPDATE_FRAMES} fps={UPDATE_FPS} width={1920} height={1080} />
     <Composition id="YiliGramTeaser" component={Teaser} durationInFrames={TEASER_FRAMES} fps={CONFIG.fps} width={1080} height={1920} />
   </>
 );
