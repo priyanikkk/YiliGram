@@ -29,3 +29,5 @@ The plugin engine implements the publicly documented exteraGram plugin SDK
 LSPlant and DexBuilder are linked statically into `libyilihook.so`; their complete source is
 part of this repository (submodule), which satisfies LGPL-3.0 §4 for a GPL-3.0 application.
 
+Лопата челлендж
+
